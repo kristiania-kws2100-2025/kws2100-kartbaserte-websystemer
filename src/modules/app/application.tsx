@@ -1,5 +1,5 @@
-import React, { MouseEvent, useEffect, useRef } from "react";
-import { Map, MapBrowserEvent, View } from "ol";
+import React, { useEffect, useRef } from "react";
+import { Feature, Map, MapBrowserEvent, View } from "ol";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
 
@@ -47,15 +47,15 @@ const map = new Map({
 });
 
 export function Application() {
-  const mapRef = useRef();
-  const focusFeatures = useRef([]);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const focusFeatures = useRef<Feature[]>([]);
 
   function handlePointerMove(e: MapBrowserEvent<MouseEvent>) {
     for (const feature of focusFeatures.current) {
       feature.setStyle(undefined);
     }
     const features = municipalityLayer
-      .getSource()
+      .getSource()!
       .getFeaturesAtCoordinate(e.coordinate);
     for (const feature of features) {
       feature.setStyle(focusStyle);
@@ -64,7 +64,7 @@ export function Application() {
   }
 
   useEffect(() => {
-    map.setTarget(mapRef.current);
+    map.setTarget(mapRef.current!);
     map.on("pointermove", handlePointerMove);
   }, []);
   return <div ref={mapRef}></div>;
