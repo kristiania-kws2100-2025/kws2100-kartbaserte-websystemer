@@ -1,5 +1,7 @@
 # KWS2100 Geographic Information Web Systems
 
+[![Running website](https://img.shields.io/badge/Course-website-green)](https://kristiania-kws2100-2025.github.io/kws2100-kartbaserte-websystemer/)
+
 Welcome to this course in Geographic Information Systems (GIS) for the web. In this course, we will use popular and
 powerful open-source software to explore geographic information systems on the web. The course will
 use [OpenLayers](https://openlayers.org/) as a web framework for information systems and [PostGIS](https://postgis.net/)
@@ -131,8 +133,6 @@ projection. In the process, we will learn that the earth is indeed round.
 - [UTM 32V i Store Norske Leksikon](https://snl.no/UTM)
 - [Map Men: Why Every Map is Wrong](https://www.youtube.com/watch?v=jtBV3GgQLg8) (silly, but educational)
 
-### No lecture in week 8
-
 ### Lecture 8: Geographical databases
 
 [![Lecture 8 code](https://img.shields.io/badge/Lecture_8-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/08)
@@ -203,16 +203,20 @@ import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
 import { useGeographic } from "ol/proj";
 
+// Styling of OpenLayers components like zoom and pan controls
+import "ol/ol.css";
+
 // By calling the "useGeographic" function in OpenLayers, we tell that we want coordinates to be in degrees
-//  instead of meters, which is the default. Without this `center: [11, 60]` doesn't work on the view
+//  instead of meters, which is the default. Without this `center: [10.6, 59.9]` brings us to "null island"
 useGeographic();
 
-// Here we create a Map object. Make sure you `import { Map } from "ol"` or otherwise, standard Javascript
+// Here we create a Map object. Make sure you `import { Map } from "ol"`. Otherwise, the standard Javascript
 //  map data structure will be used
 const map = new Map({
-  // The map will be centered on 60 degrees latitude and 11 degrees longitude, with a certain zoom level
-  view: new View({ center: [11, 60], zoom: 10 }),
-  // images displayed on the map will be from the Open Street Map (OSM) tile layer
+  // The map will be centered on a position in longitude (x-coordinate, east) and latitude (y-coordinate, north),
+  //   with a certain zoom level
+  view: new View({ center: [10.6, 59.9], zoom: 10 }),
+  // map tile images will be from the Open Street Map (OSM) tile layer
   layers: [new TileLayer({ source: new OSM() })],
 });
 

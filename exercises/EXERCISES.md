@@ -8,11 +8,21 @@
 Create a React application that displays information on a map
 
 1. Use [Vite](https://vitejs.dev/guide/) to create a React + Typescript application
+   * `npm install --save-dev vite && npm install react react-dom`
+   * `npm pkg set scripts.dev="vite"`
+   * Create `index.html` (critical line `<script src="src/main.tsx" type="module"></script>`)
+   * Create `src/main.tsx` (critical line: `createRoot(document.getElementById("root")).render(<h1>Hello World</h1>)`)
 2. Verify that you can make changes and see them displayed in the web page
+   * If you want, you can deploy the application to GitHub pages now
 3. Replace the App component with a component that uses OpenLayers to display a map
+   * See [reference material](../README.md#creating-a-openlayers-map-in-react)
 4. Add [fylker in Norway](https://github.com/robhop/fylker-og-kommuner/blob/main/Fylker-M.geojson) as a vector layer
-5. (Optional) Deploy the application using GitHub pages
-6. (Optional) Style the vector layer
+   * Place the file in `public/geojson/fylker.json`
+   * Add a layer to the map layers array: `new VectorLayer({source: new VectorSource({url: "/geojson/fylker.json", format: new GeoJSON()})})`
+5. (Optional) Style the vector layer
+6. (Optional) Change the style on hover
+7. (Optional) Add schools from https://kart.dsb.no/ (Sårbare objekter > Videregående skoler)
+8. (Optional) Deploy to GitHub pages
 
 ## Tips:
 
