@@ -9,6 +9,8 @@ import "ol/ol.css"
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import {GeoJSON} from "ol/format";
+import {Fill, Stroke, Style, Text} from "ol/style";
+import {ColorType} from "ol/expr/expression";
 
 useGeographic();
 
@@ -19,6 +21,16 @@ const map = new Map({
             source: new VectorSource({
                 url: "/kws2100-kartbaserte-websystemer/geojson/kommuner.geojson",
                 format: new GeoJSON()
+            }),
+            style: feature => new Style({
+                stroke: new Stroke({
+                    width: 2
+                }),
+                text: new Text(({
+                    text: feature.getProperties().name,
+                    fill: new Fill({color: "green"}),
+                    stroke: new Stroke({color: "white", width: 2})
+                }))
             })
         }),
         new VectorLayer({
@@ -28,7 +40,7 @@ const map = new Map({
             })
         })
     ],
-    view: new View({center: [10.6, 59.9], zoom: 11})
+    view: new View({center: [10.9, 59.9], zoom: 11})
 })
 
 function Application() {
