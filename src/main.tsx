@@ -46,7 +46,16 @@ const map = new Map({
 function Application() {
     const mapRef = useRef();
     useEffect(() => {
-        map.setTarget(mapRef.current)
+        map.setTarget(mapRef.current);
+        navigator.geolocation.getCurrentPosition(pos => {
+            const {longitude, latitude  } = pos.coords;
+            map.getView().animate({
+                center: [longitude, latitude],
+                zoom: 14
+            })
+        }, error => {
+            alert(error.message)
+        })
     }, []);
 
     return <div ref={mapRef}></div>;
