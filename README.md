@@ -224,8 +224,7 @@ const map = new Map({
 export function Application() {
   // `useRef` bridges the gap between JavaScript functions that expect DOM objects and React components
   // `as MutableRefObject` is required by TypeScript to avoid us binding the wrong ref to the wrong component
-  const mapRef = useRef() as MutableRefObject<HTMLDivElement>;
-
+  const mapRef = useRef()
   // When we display the page, we want the OpenLayers map object to target the DOM object refererred to by the
   // map React component
   useEffect(() => {
