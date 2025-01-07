@@ -14,6 +14,6 @@
     "dev": "vite",
     "build": "vite build",
     "prepare": "husky",
-    "test": "echo no tests"
+    "test": "prettier --check ."
   }
 }
