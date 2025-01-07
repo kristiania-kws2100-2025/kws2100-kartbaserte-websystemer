@@ -20,6 +20,12 @@ const map = new Map({
                 url: "/kws2100-kartbaserte-websystemer/geojson/kommuner.geojson",
                 format: new GeoJSON()
             })
+        }),
+        new VectorLayer({
+            source: new VectorSource({
+                url: "/kws2100-kartbaserte-websystemer/geojson/vgs.geojson",
+                format: new GeoJSON()
+            })
         })
     ],
     view: new View({center: [10.6, 59.9], zoom: 11})
