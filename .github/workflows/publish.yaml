@@ -15,7 +15,7 @@ jobs:
           node-version: 20.x
       - run: npm install
       - run: npm run build
-      - uses: action/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
-      - uses: action/deploy-pages@v4
+      - uses: actions/deploy-pages@v4
