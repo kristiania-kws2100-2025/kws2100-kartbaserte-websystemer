@@ -42,11 +42,17 @@ const map = new Map({
 
 export function Application() {
     const mapRef = useRef()
+    const focusFeatures = useRef([]);
 
     function handlePointerMove(e: MapBrowserEvent<MouseEvent>) {
-        for (const feature of municipalityLayer.getSource().getFeaturesAtCoordinate(e.coordinate)) {
+        for (const feature of focusFeatures.current) {
+            feature.setStyle(undefined);
+        }
+        const features = municipalityLayer.getSource().getFeaturesAtCoordinate(e.coordinate);
+        for (const feature of features) {
             feature.setStyle(focusStyle);
         }
+        focusFeatures.current = features;
     }
 
     useEffect(() => {
