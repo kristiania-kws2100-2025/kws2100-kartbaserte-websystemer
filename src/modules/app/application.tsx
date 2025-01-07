@@ -15,8 +15,11 @@ const map = new Map({
     layers: [
         new TileLayer({source: new OSM()}),
         new VectorLayer({
-            source: new VectorSource({ url: "/kws2100-kartbaserte-websystemer/geojson/kommuner.json", format: new GeoJSON() })
-        })
+            source: new VectorSource({ url: "/kws2100-kartbaserte-websystemer/geojson/kommuner.json", format: new GeoJSON() }),
+        }),
+        new VectorLayer({
+            source: new VectorSource({ url: "/kws2100-kartbaserte-websystemer/geojson/vgs.json", format: new GeoJSON() }),
+        }),
     ],
     view: new View({center: [10.6, 59.9], zoom: 12})
 })
