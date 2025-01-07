@@ -1,6 +1,6 @@
-import React, {useEffect, useRef} from "react";
+import React, {act, useEffect, useRef} from "react";
 import {createRoot} from "react-dom/client";
-import {Map, View} from "ol";
+import {Map, MapBrowserEvent, View} from "ol";
 import TileLayer from "ol/layer/Tile";
 import {OSM} from "ol/source";
 import {useGeographic} from "ol/proj";
@@ -10,29 +10,35 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import {GeoJSON} from "ol/format";
 import {Fill, Stroke, Style, Text} from "ol/style";
-import {ColorType} from "ol/expr/expression";
 
 useGeographic();
 
+const focusedStyle = feature => new Style({
+    stroke: new Stroke({
+        width: 2
+    }),
+    text: new Text(({
+        text: feature.getProperties().name,
+        fill: new Fill({color: "green"}),
+        stroke: new Stroke({color: "white", width: 2})
+    }))
+});
+let municipalityLayer = new VectorLayer({
+    source: new VectorSource({
+        url: "/kws2100-kartbaserte-websystemer/geojson/kommuner.geojson",
+        format: new GeoJSON()
+    }),
+    style: new Style({
+        stroke: new Stroke({
+            color: "blue",
+            width: 2
+        })
+    })
+});
 const map = new Map({
     layers: [
         new TileLayer({ source: new OSM() }),
-        new VectorLayer({
-            source: new VectorSource({
-                url: "/kws2100-kartbaserte-websystemer/geojson/kommuner.geojson",
-                format: new GeoJSON()
-            }),
-            style: feature => new Style({
-                stroke: new Stroke({
-                    width: 2
-                }),
-                text: new Text(({
-                    text: feature.getProperties().name,
-                    fill: new Fill({color: "green"}),
-                    stroke: new Stroke({color: "white", width: 2})
-                }))
-            })
-        }),
+        municipalityLayer,
         new VectorLayer({
             source: new VectorSource({
                 url: "/kws2100-kartbaserte-websystemer/geojson/vgs.geojson",
@@ -45,17 +51,32 @@ const map = new Map({
 
 function Application() {
     const mapRef = useRef();
+    const activeFeatures = useRef([]);
+
+    function handlePointerMove(event: MapBrowserEvent<MouseEvent>) {
+        for (const feature of activeFeatures.current) {
+            feature.setStyle(undefined);
+        }
+        const focusedFeatures = municipalityLayer.getSource().getFeaturesAtCoordinate(event.coordinate);
+        for (const feature of focusedFeatures) {
+            feature.setStyle(focusedStyle)
+        }
+        activeFeatures.current = focusedFeatures;
+    }
+
     useEffect(() => {
         map.setTarget(mapRef.current);
         navigator.geolocation.getCurrentPosition(pos => {
-            const {longitude, latitude  } = pos.coords;
+            const {longitude, latitude } = pos.coords;
             map.getView().animate({
                 center: [longitude, latitude],
-                zoom: 14
+                zoom: 11
             })
         }, error => {
             alert(error.message)
         })
+
+        map.on("pointermove", handlePointerMove);
     }, []);
 
     return <div ref={mapRef}></div>;
