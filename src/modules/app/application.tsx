@@ -8,14 +8,19 @@ import {useGeographic} from "ol/proj";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import {GeoJSON} from "ol/format";
-import {Stroke, Style} from "ol/style";
+import {Fill, Stroke, Style, Text} from "ol/style";
 
 useGeographic();
 
 const municipalityLayer = new VectorLayer({
     source: new VectorSource({ url: "/kws2100-kartbaserte-websystemer/geojson/kommuner.json", format: new GeoJSON() }),
-    style: new Style({
-        stroke: new Stroke({ color: "red", width: 2 })
+    style: feature => new Style({
+        stroke: new Stroke({ color: "red", width: 2 }),
+        text: new Text({
+            text: feature.getProperties().name,
+            fill: new Fill({ color: "red" }),
+            stroke: new Stroke({ color: "white" }),
+        })
     })
 });
 
