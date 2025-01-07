@@ -1,5 +1,8 @@
 {
   "devDependencies": {
+    "husky": "^9.1.7",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
     "vite": "^6.0.7"
   },
   "dependencies": {
@@ -9,6 +12,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "prepare": "husky",
+    "test": "echo no tests"
   }
 }
