@@ -31,13 +31,13 @@ from [Open Street Map](https://www.openstreetmap.org/) and a [vector layer](http
 
 During the exercise for the first lecture, we will slow code the exercise together.
 
-### Lecture 2: Deploying applications to the web
+### Lecture 2: Git, GitHub, React and TypeScript
 
 [![Lecture 2 code](https://img.shields.io/badge/Lecture_2-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/02)
 [![Lecture 2 reference](https://img.shields.io/badge/Lecture_2-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/02)
 [![Lecture 2 exercise](https://img.shields.io/badge/Lecture_2-exercise-pink)](./exercises/EXERCISES.md#exercise-2)
 
-We will publish a basic React + Hono application with TypeScript and Vite to Heroku and add a map to the application
+In this lecture, we review some of the basics. If you don't yet feel super strong on React, TypeScript, Git or GitHub!
 
 ### Lecture 3: Interacting with the polygon elements
 
@@ -47,12 +47,21 @@ We will publish a basic React + Hono application with TypeScript and Vite to Her
 
 In this lecture, we will make sure that the user can interact with kommuner, so clicking a feature on the map should bring up an overlay for the user
 
-### Lecture 4: TypeScript and React review
+### Lecture 3: Geographical databases
+
+[![Lecture 8 code](https://img.shields.io/badge/Lecture_8-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/08)
+
+In this lecture, we will provide our own own datasource by importing datasets from Geonorge into PostGIS and creating a backend with them
+
+- [Administrative enheter - kommuner](https://kartkatalog.geonorge.no/metadata/administrative-enheter-kommuner/041f1e6e-bdbc-4091-b48f-8a5990f3cc5b)
+- [Statistiske enheter - grunnkretser](https://kartkatalog.geonorge.no/metadata/statistiske-enheter-grunnkretser/51d279f8-e2be-4f5e-9f72-1a53f7535ec1)
+
+### Lecture 4: Deployment to Heroku
 
 [![Lecture 4 code](https://img.shields.io/badge/Lecture_4-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/04)
 [![Lecture 4 reference](https://img.shields.io/badge/Lecture_4-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/04)
 
-In this lecture, we review some of the basics. If you don't yet feel super strong on React and TypeScript, this is your chance to catch up!
+We will publish a basic React + Hono application with TypeScript and Vite to Heroku and add a map to the application
 
 - [We follow the React getting started guide](https://react.dev/learn)
 - We go through essential React concepts: Components
@@ -132,15 +141,6 @@ projection. In the process, we will learn that the earth is indeed round.
 
 - [UTM 32V i Store Norske Leksikon](https://snl.no/UTM)
 - [Map Men: Why Every Map is Wrong](https://www.youtube.com/watch?v=jtBV3GgQLg8) (silly, but educational)
-
-### Lecture 8: Geographical databases
-
-[![Lecture 8 code](https://img.shields.io/badge/Lecture_8-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/08)
-
-In this lecture, we will provide our own own datasource by importing datasets from Geonorge into PostGIS and creating a backend with them
-
-- [Administrative enheter - kommuner](https://kartkatalog.geonorge.no/metadata/administrative-enheter-kommuner/041f1e6e-bdbc-4091-b48f-8a5990f3cc5b)
-- [Statistiske enheter - grunnkretser](https://kartkatalog.geonorge.no/metadata/statistiske-enheter-grunnkretser/51d279f8-e2be-4f5e-9f72-1a53f7535ec1)
 
 ### Lecture 9: Vector Tile Layers
 
