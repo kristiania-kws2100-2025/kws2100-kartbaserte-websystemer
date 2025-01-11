@@ -160,20 +160,9 @@ Follow the official [Thinking in React](https://react.dev/learn/thinking-in-reac
    ```
 3. When you have gotten the code to work locally, you can commit and push and the application should update
 
-### Develop a feature on a branch
+### Introduce TypeScript on a branch
 
 1. In IntelliJ: Go to the Git view ☰ > View > Tool Windows > Git
-2. Right-click the `main` branch in the Git Windows and select "New branch from main..."
-3. Enter a branch name
-4. Develop the [FilterableProductTable](https://react.dev/learn/thinking-in-react#step-3-find-the-minimal-but-complete-representation-of-ui-state) feature in the React tutorial
-5. Commit and push as normal
-6. In GitHub go to Pull requests and press New pull request
-7. The other developer can now view the pull request, comment and ultimately merge the pull request into main
-8. GitHub Actions will build the project based on which trigger (`on`) rules you have defined. You should try to customize this to only deploy when the pull request is merged
-
-### Introduce TypeScript
-
-1. Create a new branch (as in the last step)
 2. Install TypeScript: `npm i -D typescript`
 3. Setup TypeScript's `tsconfig.json`-file: `npx tsc --init --jsx react`
 4. Format `tsconfig.json`-file: `npx prettier --write tsconfig.json`
@@ -191,54 +180,41 @@ You now get a lot of errors when you run `npm test`. Here is how to fix them:
     // ...
    }
    ```
-3. A good next step is `function SearchBar` signature:
-   ```tsx
-   function SearchBar({
-     filterText,
-     inStockOnly,
-     onFilterTextChange,
-     onInStockOnlyChange,
-    }: {
-     filterText: string;
-     inStockOnly: boolean;
-     onFilterTextChange: (s: string) => void;
-     onInStockOnlyChange: (b: boolean) => void;
-   }) {
-     // ...
-   }
-   ```
-4. `function ProductRow`:
+3. `function ProductRow`:
    ```tsx
    function ProductRow({ product }: { product: Product }) {
      // ..
    }
    ```
-5. `function ProductCategoryRow`:
+4. `function ProductCategoryRow`:
    ```tsx
    function ProductCategoryRow({ category }: { category: ReactNode }) {
      // ..
    }
    ```
-6. `function ProductCategoryRow`:
+5. `function ProductCategoryRow`:
    ```tsx
-   function ProductTable({
-     products,
-     filterText,
-     inStockOnly,
-   }: {
-     products: Product[];
-     filterText: string;
-     inStockOnly: boolean;
-   }) {
+   function ProductTable({ products }: { products: Product[] }) {
      const rows: ReactNode[] = [];
      let lastCategory: ReactNode = null;
      // ..
    }
    ```
-7. `npm test` should now run without error
-8. Rename `main.tsx` and update the reference to this in `index.html`. This should leave you with one simple issue to fix
-9. Commit and push the branch
-10. Create a pull request, do a code review and merge the pull request
+6. `npm test` should now run without error
+7. Rename `main.tsx` and update the reference to this in `index.html`. This should leave you with one simple issue to fix
+8. Commit and push the branch
+9. In GitHub go to Pull requests and press New pull request
+10. The other developer can now view the pull request, comment and ultimately merge the pull request into main
+11. GitHub Actions will build the project based on which trigger (`on`) rules you have defined. You should try to customize this to only deploy when the pull request is merged
+
+### Develop a feature on a branch
+
+1. Create a new branch (as in the last step)
+2. Right-click the `main` branch in the Git Windows and select "New branch from main..."
+3. Enter a branch name
+4. Develop the [FilterableProductTable](https://react.dev/learn/thinking-in-react#step-3-find-the-minimal-but-complete-representation-of-ui-state) feature in the React tutorial
+5. Commit and push as normal
+6. Create a pull request, do a code review and merge the pull request
 
 ### Implement multiple languages by using TypeScript
 
