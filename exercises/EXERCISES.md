@@ -253,7 +253,7 @@ function SearchBar(/* ... parameter definition ... */) {
 ### Be prepared:
 
 1. Make sure you have solved [exercise 1](#exercise-1) before your start. You need to have a working React application that displays kommuner on a map
-2. You don't have to have created a Heroku application, but it can be fun to show your work if you have
+2. You don't have to have published an application to the Internet with [exercise 2](#exercise-2), but it can be fun to show your work if you can
 
 ### Interactions with the map
 
