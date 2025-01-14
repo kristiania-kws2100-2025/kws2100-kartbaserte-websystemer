@@ -1,6 +1,6 @@
-import React, { ReactNode, useMemo, useState } from "react";
+import React, { ReactNode, useContext, useMemo, useState } from "react";
 
-const applicationTexts = {
+const en = {
   labels: {
     search: "Search...",
     showOnlyInStock: "Only show products in stock",
@@ -10,6 +10,8 @@ const applicationTexts = {
     price: "Price",
   },
 };
+
+const ApplicationTextsContext = React.createContext(en);
 
 function ProductCategoryRow({ category }: { category: ReactNode }) {
   return (
@@ -37,6 +39,7 @@ function ProductRow({ product }: { product: Product }) {
 }
 
 function ProductTable({ products }: { products: Product[] }) {
+  const applicationTexts = useContext(ApplicationTextsContext);
   const rows: ReactNode[] = [];
   let lastCategory: ReactNode = null;
 
@@ -77,6 +80,7 @@ function SearchBar({
   onFilterTextChange: (value: string) => void;
   onInStockOnlyChange: (value: boolean) => void;
 }) {
+  const applicationTexts = useContext(ApplicationTextsContext);
   return (
     <form>
       <input
