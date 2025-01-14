@@ -20,6 +20,18 @@ function MapView() {
   return <div ref={mapRef}></div>;
 }
 
+function ZoomToMeButton() {
+  function handleClick() {
+    navigator.geolocation.getCurrentPosition(
+      ({ coords: { latitude, longitude } }) => {
+        map.getView().animate({ center: [longitude, latitude], zoom: 15 });
+      },
+    );
+  }
+
+  return <button onClick={handleClick}>Zoom to my location</button>;
+}
+
 export function Application() {
   return (
     <>
@@ -27,7 +39,7 @@ export function Application() {
         <h1>Skoler i Norge</h1>
       </header>
       <nav>
-        <button>Zoom to my location</button>
+        <ZoomToMeButton />
       </nav>
       <MapView />
     </>
