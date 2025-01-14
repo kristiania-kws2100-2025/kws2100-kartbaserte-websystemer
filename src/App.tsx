@@ -1,4 +1,10 @@
-import React, { ReactNode, useContext, useMemo, useState } from "react";
+import React, {
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 const english = {
   labels: {
@@ -148,7 +154,16 @@ const PRODUCTS = [
 ];
 
 export default function App() {
-  const applicationTexts = navigator.language === "no" ? norwegian : english;
+  const [applicationTexts, setApplicationTexts] = useState(() =>
+    navigator.language === "no" ? norwegian : english,
+  );
+
+  useEffect(() => {
+    addEventListener("languagechange", () => {
+      setApplicationTexts(navigator.language === "no" ? norwegian : english);
+    });
+  }, []);
+
   return (
     <ApplicationTextsContext value={applicationTexts}>
       <FilterableProductTable products={PRODUCTS} />
