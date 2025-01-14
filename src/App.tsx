@@ -1,6 +1,6 @@
 import React, { ReactNode, useContext, useMemo, useState } from "react";
 
-const en = {
+const english = {
   labels: {
     search: "Search...",
     showOnlyInStock: "Only show products in stock",
@@ -10,8 +10,18 @@ const en = {
     price: "Price",
   },
 };
+const norwegian = {
+  labels: {
+    search: "Søk...",
+    showOnlyInStock: "Vis bare produkter på lager",
+  },
+  productProperties: {
+    name: "Navn",
+    price: "Pris",
+  },
+};
 
-const ApplicationTextsContext = React.createContext(en);
+const ApplicationTextsContext = React.createContext(english);
 
 function ProductCategoryRow({ category }: { category: ReactNode }) {
   return (
@@ -138,5 +148,10 @@ const PRODUCTS = [
 ];
 
 export default function App() {
-  return <FilterableProductTable products={PRODUCTS} />;
+  const applicationTexts = navigator.language === "no" ? norwegian : english;
+  return (
+    <ApplicationTextsContext value={applicationTexts}>
+      <FilterableProductTable products={PRODUCTS} />
+    </ApplicationTextsContext>
+  );
 }
