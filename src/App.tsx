@@ -9,7 +9,7 @@ import React, {
 interface ApplicationTexts {
   labels: { search: string; showOnlyInStock: string };
   productProperties: { name: string; price: string };
-  productCategories: { Fruits: string; Vegetables: string };
+  productCategories: Record<ProductCategory, string>;
 }
 
 const english: ApplicationTexts = {
@@ -23,7 +23,7 @@ const english: ApplicationTexts = {
   },
   productCategories: {
     Fruits: "Fruits",
-    Vegetables: "Vegatables",
+    Vegetables: "Vegetables",
   },
 };
 const norwegian: ApplicationTexts = {
