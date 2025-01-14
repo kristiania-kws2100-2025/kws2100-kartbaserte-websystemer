@@ -5,13 +5,12 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "reference/*" ]
+    branches: ["reference/*"]
   pull_request:
-    branches: [ "reference/*" ]
+    branches: ["reference/*"]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +19,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22.x
-          cache: 'npm'
+          cache: "npm"
       - run: npm ci
       - run: npm run build --if-present
       - run: npm test

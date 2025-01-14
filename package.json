@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "prettier --check .",
     "dev": "vite"
   },
   "repository": {
@@ -19,6 +19,7 @@
   "homepage": "https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer#readme",
   "description": "",
   "devDependencies": {
+    "prettier": "^3.4.2",
     "vite": "^6.0.7"
   },
   "dependencies": {
