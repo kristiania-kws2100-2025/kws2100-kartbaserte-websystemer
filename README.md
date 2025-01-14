@@ -33,7 +33,7 @@ During the exercise for the first lecture, we will slow code the exercise togeth
 
 ### Lecture 2: Git, GitHub, React and TypeScript
 
-[![Lecture 2 code](https://img.shields.io/badge/Lecture_2-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/02)
+[![Lecture 2 code](https://img.shields.io/badge/Lecture_2-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-lecture-02)
 [![Lecture 2 reference](https://img.shields.io/badge/Lecture_2-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/02)
 [![Lecture 2 exercise](https://img.shields.io/badge/Lecture_2-exercise-pink)](./exercises/EXERCISES.md#exercise-2)
 
@@ -196,12 +196,13 @@ Experiment with different type of objects as well. Try and save the objects to `
 npm init -y
 npm install -D vite
 npm install react react-dom
-
-npm pkg set scripts.build="vite build"
+npm pkg set scripts.dev=vite
 
 npm install -D prettier
 npm pkg set scripts.test="prettier --check ."
 npx prettier --write .
+
+npm pkg set scripts.build="vite build"
 
 npm i -D typescript
 npm install -D @types/react @types/react-dom
