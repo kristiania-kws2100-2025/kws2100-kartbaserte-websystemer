@@ -12,3 +12,8 @@ header,
 nav {
   padding: 0.25rem;
 }
+
+nav {
+  display: flex;
+  gap: 0.25rem;
+}
