@@ -47,84 +47,26 @@ In this lecture, we review some of the basics. If you don't yet feel super stron
 
 In this lecture, we will make sure that the user can interact with kommuner, so clicking a feature on the map should bring up an overlay for the user
 
-### Lecture 3: Geographical databases
+### Lecture 4: Geographical databases
 
-[![Lecture 8 code](https://img.shields.io/badge/Lecture_8-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/08)
+[![Lecture 4 code](https://img.shields.io/badge/Lecture_4-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/04)
 
 In this lecture, we will provide our own own datasource by importing datasets from Geonorge into PostGIS and creating a backend with them
 
 - [Administrative enheter - kommuner](https://kartkatalog.geonorge.no/metadata/administrative-enheter-kommuner/041f1e6e-bdbc-4091-b48f-8a5990f3cc5b)
 - [Statistiske enheter - grunnkretser](https://kartkatalog.geonorge.no/metadata/statistiske-enheter-grunnkretser/51d279f8-e2be-4f5e-9f72-1a53f7535ec1)
 
-### Lecture 4: Deployment to Heroku
-
-[![Lecture 4 code](https://img.shields.io/badge/Lecture_4-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/04)
-[![Lecture 4 reference](https://img.shields.io/badge/Lecture_4-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/04)
-
-We will publish a basic React + Hono application with TypeScript and Vite to Heroku and add a map to the application
-
-- [We follow the React getting started guide](https://react.dev/learn)
-- We go through essential React concepts: Components
-    - Component definitions
-    - Component usage
-    - Props
-    - Event handlers
-- We go through essential React [hooks](https://react.dev/reference/react/hooks)
-    - useState
-    - useEffect
-    - useContext
-    - useMemo
-    - useRef
-- TypeScript demonstration
-    - string union types
-    - interface types
-    - return types
-    - higher order types
-
-***Exercise***:
-
-[![Lecture 4 exercise](https://img.shields.io/badge/Lecture_4-exercise:_official_react_tutorial-pink)](https://react.dev/learn/tutorial-tic-tac-toe)
-[![Lecture 4 exercise](https://img.shields.io/badge/Lecture_4-exercise:_thinking_in_react-pink)](https://react.dev/learn/tutorial-tic-tac-toe)
-
-1. Follow the Official React Tutorials
-2. Convert the code to TypeScript
-3. Convert the Thinking in React example to support multiple languages
-
-### Lecture 5: Vector layers as data
+### Lecture 5: Deployment to Heroku
 
 [![Lecture 5 code](https://img.shields.io/badge/Lecture_5-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/05)
 [![Lecture 5 reference](https://img.shields.io/badge/Lecture_5-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/05)
 
-In this lecture, we will continue out exploration of vector layers. We will start with an "empty" map and add
-a [polygon feature layer](https://www.eriksmistad.no/norges-fylker-og-kommuner-i-geojson-format/) with an aside that
-stays in sync with the visible object on the map. We will then add more feature layers
-from [international](https://github.com/datasets/geo-countries) and [Norwegian](https://kart.dsb.no/) sources.
+We will publish a basic React + Hono application with TypeScript and Vite to Heroku and add a map to the application
 
-- Starting point: Empty map
-- Add kommune layer with checkbox
-- Add kommune aside with list of kommune
-- Understanding GeoJSON properties
-- Limit kommune aside to current view
-- Add fylker (why are polygons `number[][][]`)
-- Highlight active features in map
-- Add layers with countries and stations (points)
+### Lecture 6: Tile layers and map projections
 
-### Lecture 6: Point vector layers
-
-[![Lecture 6 code](https://img.shields.io/badge/Lecture_6-lecture_code-blue)](https://github.com/kristiania-kws2100-2026/kws2100-kartbaserte-websystemer/tree/lecture/06)
-[![Lecture 6 reference](https://img.shields.io/badge/Lecture_6-reference_code-blue)](https://github.com/kristiania-kws2100-2026/kws2100-kartbaserte-websystemer/tree/reference/06)
-
-We will draw points on the map from a vector source and allow the user to interact with them. We will explore styling
-based on feature properties.
-
-- Style functions
-- Style text for a point
-- Finding hovered point features
-
-### Lecture 7: Tile layers and map projections
-
-[![Lecture 7 code](https://img.shields.io/badge/Lecture_7-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/07)
-[![Lecture 7 reference](https://img.shields.io/badge/Lecture_7-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/07)
+[![Lecture 6 code](https://img.shields.io/badge/Lecture_6-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/06)
+[![Lecture 6 reference](https://img.shields.io/badge/Lecture_6-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/06)
 
 **"Damn you, Gerhard!"**
 
@@ -141,6 +83,25 @@ projection. In the process, we will learn that the earth is indeed round.
 
 - [UTM 32V i Store Norske Leksikon](https://snl.no/UTM)
 - [Map Men: Why Every Map is Wrong](https://www.youtube.com/watch?v=jtBV3GgQLg8) (silly, but educational)
+
+### Lecture 7: Vector layers as data
+
+[![Lecture 7 code](https://img.shields.io/badge/Lecture_7-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/07)
+[![Lecture 7 reference](https://img.shields.io/badge/Lecture_7-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/07)
+
+In this lecture, we will continue out exploration of vector layers. We will start with an "empty" map and add
+a [polygon feature layer](https://www.eriksmistad.no/norges-fylker-og-kommuner-i-geojson-format/) with an aside that
+stays in sync with the visible object on the map. We will then add more feature layers
+from [international](https://github.com/datasets/geo-countries) and [Norwegian](https://kart.dsb.no/) sources.
+
+- Starting point: Empty map
+- Add kommune layer with checkbox
+- Add kommune aside with list of kommune
+- Understanding GeoJSON properties
+- Limit kommune aside to current view
+- Add fylker (why are polygons `number[][][]`)
+- Highlight active features in map
+- Add layers with countries and stations (points)
 
 ### Lecture 9: Vector Tile Layers
 
@@ -211,7 +172,7 @@ npx prettier --write tsconfig.json
 npm pkg set scripts.test="tsc --noEmit && prettier --check ."
 
 npm install -D husky
-npx init husky
+npx husky init
 ```
 
 #### Minimal index.html
@@ -245,6 +206,36 @@ export default defineConfig({
 
 ```
 
+#### Minimal `.github/workflows/publish-to-github-pages.yml`
+
+<details>
+
+```yml
+on:
+  push:
+    branches: ["main", "reference/*", "lecture/*"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22.x, cache: "npm" }
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+      - uses: actions/deploy-pages@v4
+
+    permissions:
+      id-token: write
+      pages: write
+```
+</details>
+
 
 ### Creating a OpenLayers map in React
 
@@ -271,7 +262,7 @@ useGeographic();
 const map = new Map({
   // The map will be centered on a position in longitude (x-coordinate, east) and latitude (y-coordinate, north),
   //   with a certain zoom level
-  view: new View({ center: [10.6, 59.9], zoom: 10 }),
+  view: new View({ center: [10.8, 59.9], zoom: 13 }),
   // map tile images will be from the Open Street Map (OSM) tile layer
   layers: [new TileLayer({ source: new OSM() })],
 });
