@@ -12,6 +12,7 @@ import { ShowMeCheckbox } from "../location/showMeCheckbox";
 import { ZoomToMeButton } from "../location/zoomToMeButton";
 import { Layer } from "ol/layer";
 import { KommuneLayerCheckbox } from "../layers/kommuneLayerCheckbox";
+import { SchoolLayerCheckbox } from "../layers/schoolLayerCheckbox";
 
 useGeographic();
 
@@ -45,6 +46,7 @@ export function Application() {
         <ZoomToMeButton view={view} />
         <ShowMeCheckbox vectorSource={userSource} />
         <KommuneLayerCheckbox setLayers={setLayers} map={map} />
+        <SchoolLayerCheckbox setLayers={setLayers} map={map} />
       </nav>
       <MapView />
     </>
