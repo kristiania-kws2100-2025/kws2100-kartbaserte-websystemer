@@ -40,6 +40,20 @@ const norwegian: ApplicationTexts = {
     Vegetables: "Grønnsaker",
   },
 };
+const swedish: ApplicationTexts = {
+  labels: {
+    search: "Sök...",
+    showOnlyInStock: "Visa bara produkter i lager",
+  },
+  productProperties: {
+    name: "Namn",
+    price: "Pris",
+  },
+  productCategories: {
+    Fruits: "Frukt",
+    Vegetables: "Grönsaker",
+  },
+};
 
 const ApplicationTextsContext = React.createContext<ApplicationTexts>(english);
 
@@ -173,14 +187,20 @@ const PRODUCTS: Product[] = [
   { category: "Vegetables", price: "$1", stocked: true, name: "Peas" },
 ];
 
+function getApplicationTexts() {
+  if (navigator.language === "no") return norwegian;
+  if (navigator.language === "sv") return swedish;
+  return english;
+}
+
 export default function App() {
   const [applicationTexts, setApplicationTexts] = useState<ApplicationTexts>(
-    () => (navigator.language === "no" ? norwegian : english),
+    () => getApplicationTexts(),
   );
 
   useEffect(() => {
     addEventListener("languagechange", () => {
-      setApplicationTexts(navigator.language === "no" ? norwegian : english);
+      setApplicationTexts(getApplicationTexts());
     });
   }, []);
 
