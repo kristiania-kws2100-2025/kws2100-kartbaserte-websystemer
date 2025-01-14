@@ -6,7 +6,13 @@ import React, {
   useState,
 } from "react";
 
-const english = {
+interface ApplicationTexts {
+  labels: { search: string; showOnlyInStock: string };
+  productProperties: { name: string; price: string };
+  productCategories: { Fruits: string; Vegetables: string };
+}
+
+const english: ApplicationTexts = {
   labels: {
     search: "Search...",
     showOnlyInStock: "Only show products in stock",
@@ -15,8 +21,12 @@ const english = {
     name: "Name",
     price: "Price",
   },
+  productCategories: {
+    Fruits: "Fruits",
+    Vegetables: "Vegatables",
+  },
 };
-const norwegian = {
+const norwegian: ApplicationTexts = {
   labels: {
     search: "Søk...",
     showOnlyInStock: "Vis bare produkter på lager",
@@ -25,9 +35,13 @@ const norwegian = {
     name: "Navn",
     price: "Pris",
   },
+  productCategories: {
+    Fruits: "Frukt",
+    Vegetables: "Grønnsaker",
+  },
 };
 
-const ApplicationTextsContext = React.createContext(english);
+const ApplicationTextsContext = React.createContext<ApplicationTexts>(english);
 
 function ProductCategoryRow({ category }: { category: ReactNode }) {
   return (
@@ -37,7 +51,13 @@ function ProductCategoryRow({ category }: { category: ReactNode }) {
   );
 }
 
-type Product = (typeof PRODUCTS)[number];
+type ProductCategory = "Fruits" | "Vegetables";
+type Product = {
+  price: string;
+  name: string;
+  category: ProductCategory;
+  stocked: boolean;
+};
 
 function ProductRow({ product }: { product: Product }) {
   const name = product.stocked ? (
@@ -63,7 +83,7 @@ function ProductTable({ products }: { products: Product[] }) {
     if (product.category !== lastCategory) {
       rows.push(
         <ProductCategoryRow
-          category={product.category}
+          category={applicationTexts.productCategories[product.category]}
           key={product.category}
         />,
       );
@@ -144,7 +164,7 @@ function FilterableProductTable({ products }: { products: Product[] }) {
   );
 }
 
-const PRODUCTS = [
+const PRODUCTS: Product[] = [
   { category: "Fruits", price: "$1", stocked: true, name: "Apple" },
   { category: "Fruits", price: "$1", stocked: true, name: "Dragonfruit" },
   { category: "Fruits", price: "$2", stocked: false, name: "Passionfruit" },
@@ -154,8 +174,8 @@ const PRODUCTS = [
 ];
 
 export default function App() {
-  const [applicationTexts, setApplicationTexts] = useState(() =>
-    navigator.language === "no" ? norwegian : english,
+  const [applicationTexts, setApplicationTexts] = useState<ApplicationTexts>(
+    () => (navigator.language === "no" ? norwegian : english),
   );
 
   useEffect(() => {
