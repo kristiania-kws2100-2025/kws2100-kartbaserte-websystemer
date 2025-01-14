@@ -12,7 +12,8 @@ export function CheckboxButton({
   return (
     <label>
       <button onClick={onClick}>
-        <input type={"checkbox"} checked={checked} readOnly /> {children}
+        <input type={"checkbox"} checked={checked} readOnly tabIndex={-1} />{" "}
+        {children}
       </button>
     </label>
   );
