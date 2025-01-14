@@ -1,10 +1,16 @@
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { GeoJSON } from "ol/format";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Layer } from "ol/layer";
 import { CheckboxButton } from "../widgets/checkboxButton";
-import { Feature, Map, MapBrowserEvent } from "ol";
+import { Feature, Map, MapBrowserEvent, Overlay } from "ol";
 
 type TypedFeature<T> = { getProperties(): T } & Feature;
 
@@ -20,6 +26,10 @@ const source = new VectorSource<TypedFeature<KommuneProperties>>({
   format: new GeoJSON(),
 });
 const municipalityLayer = new VectorLayer({ source });
+const overlay = new Overlay({
+  autoPan: true,
+  positioning: "bottom-center",
+});
 
 export function KommuneLayerCheckbox({
   setLayers,
@@ -28,14 +38,23 @@ export function KommuneLayerCheckbox({
   setLayers: Dispatch<SetStateAction<Layer[]>>;
   map: Map;
 }) {
-  const [checked, setChecked] = useState(false);
-
   function handleClick(e: MapBrowserEvent<MouseEvent>) {
-    for (const feature of source.getFeaturesAtCoordinate(e.coordinate)) {
-      const { kommunenavn, kommunenummer } = feature.getProperties();
-      console.log({ kommunenummer, kommunenavn });
+    const kommuner = source
+      .getFeaturesAtCoordinate(e.coordinate)
+      .map((f) => f.getProperties());
+    if (kommuner.length > 0) {
+      overlay.setPosition(e.coordinate);
+    } else {
+      overlay.setPosition(undefined);
     }
   }
+
+  const [checked, setChecked] = useState(true);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    overlay.setElement(overlayRef.current || undefined);
+    map.addOverlay(overlay);
+  }, []);
 
   useEffect(() => {
     if (checked) {
@@ -49,6 +68,7 @@ export function KommuneLayerCheckbox({
   return (
     <CheckboxButton checked={checked} onClick={() => setChecked((s) => !s)}>
       Show municipalities
+      <div ref={overlayRef}>Overlay</div>
     </CheckboxButton>
   );
 }
