@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useMemo, useState } from "react";
 
 function ProductCategoryRow({ category }: { category: ReactNode }) {
   return (
@@ -25,25 +25,11 @@ function ProductRow({ product }: { product: Product }) {
   );
 }
 
-function ProductTable({
-  products,
-  filterText,
-  inStockOnly,
-}: {
-  products: Product[];
-  filterText: string;
-  inStockOnly: boolean;
-}) {
+function ProductTable({ products }: { products: Product[] }) {
   const rows: ReactNode[] = [];
   let lastCategory: ReactNode = null;
 
   products.forEach((product) => {
-    if (product.name.toLowerCase().indexOf(filterText.toLowerCase()) === -1) {
-      return;
-    }
-    if (inStockOnly && !product.stocked) {
-      return;
-    }
     if (product.category !== lastCategory) {
       rows.push(
         <ProductCategoryRow
@@ -103,6 +89,17 @@ function SearchBar({
 function FilterableProductTable({ products }: { products: Product[] }) {
   const [filterText, setFilterText] = useState("");
   const [inStockOnly, setInStockOnly] = useState(false);
+
+  const filteredProducts = useMemo(
+    () =>
+      products.filter(
+        ({ name, stocked }) =>
+          name.toLowerCase().indexOf(filterText.toLowerCase()) !== -1 &&
+          !(inStockOnly && !stocked),
+      ),
+    [products, filterText, inStockOnly],
+  );
+
   return (
     <div>
       <SearchBar
@@ -111,11 +108,7 @@ function FilterableProductTable({ products }: { products: Product[] }) {
         inStockOnly={inStockOnly}
         onInStockOnlyChange={setInStockOnly}
       />
-      <ProductTable
-        products={products}
-        filterText={filterText}
-        inStockOnly={inStockOnly}
-      />
+      <ProductTable products={filteredProducts} />
     </div>
   );
 }
