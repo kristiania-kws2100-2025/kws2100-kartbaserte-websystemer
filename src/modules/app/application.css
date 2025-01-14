@@ -17,3 +17,22 @@ nav {
   display: flex;
   gap: 0.25rem;
 }
+
+.overlay {
+  background-color: white;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transform: translateY(-1rem);
+}
+
+.overlay::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 100%);
+  border-style: solid;
+  border-color: transparent;
+  border-width: 1rem 0.4rem 0 0.4rem;
+  border-top-color: white;
+  bottom: 0;
+}

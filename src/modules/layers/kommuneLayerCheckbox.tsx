@@ -31,6 +31,20 @@ const overlay = new Overlay({
   positioning: "bottom-center",
 });
 
+function KommuneOverlay({ features }: { features: KommuneProperties[] }) {
+  if (features.length > 0) {
+    return (
+      <div>
+        <h3>{features[0].kommunenavn}</h3>
+        <p>
+          <strong>Navn:</strong> {features[0].kommunenavn}
+        </p>
+      </div>
+    );
+  }
+  return <div></div>;
+}
+
 export function KommuneLayerCheckbox({
   setLayers,
   map,
@@ -47,28 +61,35 @@ export function KommuneLayerCheckbox({
     } else {
       overlay.setPosition(undefined);
     }
+    setSelectedFeatures(kommuner);
   }
 
-  const [checked, setChecked] = useState(true);
+  const [selectedFeatures, setSelectedFeatures] = useState<KommuneProperties[]>(
+    [],
+  );
+  const [checked, setChecked] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    overlay.setElement(overlayRef.current || undefined);
-    map.addOverlay(overlay);
-  }, []);
+  useEffect(() => overlay.setElement(overlayRef.current || undefined), []);
 
   useEffect(() => {
     if (checked) {
       setLayers((old) => [...old, municipalityLayer]);
       map.on("click", handleClick);
-    } else {
-      setLayers((old) => old.filter((l) => l !== municipalityLayer));
+      map.addOverlay(overlay);
     }
-    return () => map.un("click", handleClick);
+    return () => {
+      overlay.setPosition(undefined);
+      map.removeOverlay(overlay);
+      map.un("click", handleClick);
+      setLayers((old) => old.filter((l) => l !== municipalityLayer));
+    };
   }, [checked]);
   return (
     <CheckboxButton checked={checked} onClick={() => setChecked((s) => !s)}>
       Show municipalities
-      <div ref={overlayRef}>Overlay</div>
+      <div ref={overlayRef} className={"overlay"}>
+        <KommuneOverlay features={selectedFeatures} />
+      </div>
     </CheckboxButton>
   );
 }
