@@ -1,5 +1,16 @@
 import React, { ReactNode, useMemo, useState } from "react";
 
+const applicationTexts = {
+  labels: {
+    search: "Search...",
+    showOnlyInStock: "Only show products in stock",
+  },
+  productProperties: {
+    name: "Name",
+    price: "Price",
+  },
+};
+
 function ProductCategoryRow({ category }: { category: ReactNode }) {
   return (
     <tr>
@@ -46,8 +57,8 @@ function ProductTable({ products }: { products: Product[] }) {
     <table>
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Price</th>
+          <th>{applicationTexts.productProperties.name}</th>
+          <th>{applicationTexts.productProperties.price}</th>
         </tr>
       </thead>
       <tbody>{rows}</tbody>
@@ -72,7 +83,7 @@ function SearchBar({
         type="text"
         value={filterText}
         onChange={(e) => onFilterTextChange(e.target.value)}
-        placeholder="Search..."
+        placeholder={applicationTexts.labels.search}
       />
       <label>
         <input
@@ -80,7 +91,7 @@ function SearchBar({
           checked={inStockOnly}
           onChange={(e) => onInStockOnlyChange(e.target.checked)}
         />{" "}
-        Only show products in stock
+        {applicationTexts.labels.showOnlyInStock}
       </label>
     </form>
   );
