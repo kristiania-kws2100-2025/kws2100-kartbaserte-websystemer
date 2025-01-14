@@ -44,7 +44,7 @@ export function Application() {
       <nav>
         <ZoomToMeButton view={view} />
         <ShowMeCheckbox vectorSource={userSource} />
-        <KommuneLayerCheckbox setLayers={setLayers} />
+        <KommuneLayerCheckbox setLayers={setLayers} map={map} />
       </nav>
       <MapView />
     </>
