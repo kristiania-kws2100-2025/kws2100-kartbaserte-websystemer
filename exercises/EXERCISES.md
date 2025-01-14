@@ -63,9 +63,10 @@ In the exercise, we will follow the official [Thinking in React](https://react.d
 1. [Create a new repository](https://github.com/new) on GitHub
 2. In IntelliJ, select ☰ > File > New Project from Version Control and copy your new GitHub repo as the URL 
 3. Create the `package.json` files for your React application and a dev-script
-   1. `npm i -D vite`
-   2. `npm i react react-dom`
-   3. `npm pkg set scripts.dev=vite`
+   1. `npm init -y`
+   2. `npm i -D vite`
+   3. `npm i react react-dom`
+   4. `npm pkg set scripts.dev=vite`
 4. Open `package.json` in IntelliJ and press the green "play button" by "dev"
 5. Click on the URL in the console output to open a 404 page to the app
 6. Create `index.html` (ideally, you use the `doc` template, but this is the minimal code needed)
@@ -163,41 +164,47 @@ Follow the official [Thinking in React](https://react.dev/learn/thinking-in-reac
 ### Introduce TypeScript on a branch
 
 1. In IntelliJ: Go to the Git view ☰ > View > Tool Windows > Git
-2. Install TypeScript: `npm i -D typescript`
-3. Setup TypeScript's `tsconfig.json`-file: `npx tsc --init --jsx react`
-4. Format `tsconfig.json`-file: `npx prettier --write tsconfig.json`
-5. Add TypeScript checking to the `npm test`: `npm pkg set scripts.test="tsc --noEmit && prettier --check ."`
-6. Rename `src/App.jsx` to `src/App.tsx`
+2. Right-click the `main` branch in the Git Windows and select "New branch from main..."
+3. Enter a branch name
+4. Install TypeScript: `npm i -D typescript`
+5. Setup TypeScript's `tsconfig.json`-file: `npx tsc --init --jsx react`
+6. Format `tsconfig.json`-file: `npx prettier --write tsconfig.json`
+7. Add TypeScript checking to the `npm test`: `npm pkg set scripts.test="tsc --noEmit && prettier --check ."`
+8. Rename `src/App.jsx` to `src/App.tsx`
 
 You now get a lot of errors when you run `npm test`. Here is how to fix them:
 
 1. Install the TypeScript definitions for React and React-DOM: `npm install -D @types/react @types/react-dom`
-2. Define the TypeScript types in `App.tsx`. A good place to start is with defining the type of PRODUCTS:
+2. Define the TypeScript types in `App.tsx`. `function ProductCategoryRow`:
+   ```tsx
+   function ProductCategoryRow({ category }: { category: ReactNode }) {
+      return (
+        <tr>
+          <th colSpan={2}>{category}</th>
+        </tr>
+      );
+   }
+   ```
+3. For `function ProductRow`, you need to define the Product type based on PRODUCTS:
    ```tsx
    type Product = (typeof PRODUCTS)[number];
 
-   function FilterableProductTable({ products }: { products: Product[] }) {
-    // ...
-   }
-   ```
-3. `function ProductRow`:
-   ```tsx
    function ProductRow({ product }: { product: Product }) {
      // ..
    }
    ```
-4. `function ProductCategoryRow`:
-   ```tsx
-   function ProductCategoryRow({ category }: { category: ReactNode }) {
-     // ..
-   }
-   ```
-5. `function ProductCategoryRow`:
+4. `function ProductTable`:
    ```tsx
    function ProductTable({ products }: { products: Product[] }) {
      const rows: ReactNode[] = [];
      let lastCategory: ReactNode = null;
      // ..
+   }
+   ```
+5. `function FilterableProductTable`:
+   ```tsx
+   function FilterableProductTable({ products }: { products: Product[] }) {
+    // ...
    }
    ```
 6. `npm test` should now run without error
@@ -206,15 +213,16 @@ You now get a lot of errors when you run `npm test`. Here is how to fix them:
 9. In GitHub go to Pull requests and press New pull request
 10. The other developer can now view the pull request, comment and ultimately merge the pull request into main
 11. GitHub Actions will build the project based on which trigger (`on`) rules you have defined. You should try to customize this to only deploy when the pull request is merged
+12. To avoid commiting changes with TypeScript errors, you can install [Husky](https://typicode.github.io/husky/) which runs `npm test` for you before each commit
+    1. `npm install -D husky`
+    2. `npx husky init`
 
 ### Develop a feature on a branch
 
 1. Create a new branch (as in the last step)
-2. Right-click the `main` branch in the Git Windows and select "New branch from main..."
-3. Enter a branch name
-4. Develop the [FilterableProductTable](https://react.dev/learn/thinking-in-react#step-3-find-the-minimal-but-complete-representation-of-ui-state) feature in the React tutorial
-5. Commit and push as normal
-6. Create a pull request, do a code review and merge the pull request
+2. Develop the [FilterableProductTable](https://react.dev/learn/thinking-in-react#step-3-find-the-minimal-but-complete-representation-of-ui-state) feature in the React tutorial
+3. Commit and push as normal
+4. Create a pull request, do a code review and merge the pull request
 
 ### Implement multiple languages by using TypeScript
 

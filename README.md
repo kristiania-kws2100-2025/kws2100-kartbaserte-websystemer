@@ -190,6 +190,61 @@ Experiment with different type of objects as well. Try and save the objects to `
 
 ## Reference material
 
+### Creating a React application
+
+```shell
+npm init -y
+npm install -D vite
+npm install react react-dom
+
+npm pkg set scripts.build="vite build"
+
+npm install -D prettier
+npm pkg set scripts.test="prettier --check ."
+npx prettier --write .
+
+npm i -D typescript
+npm install -D @types/react @types/react-dom
+npx tsc --init --jsx react
+npx prettier --write tsconfig.json
+npm pkg set scripts.test="tsc --noEmit && prettier --check ."
+
+npm install -D husky
+npx init husky
+```
+
+#### Minimal index.html
+
+```html
+<html lang="en">
+<body>
+<div id="root"></div>
+</body>
+<script src="src/main.tsx" type="module"></script>
+</html>
+```
+
+#### Minimal `main.tsx`
+
+```jsx
+import React from "react";
+import { createRoot } from "react-dom/client";
+
+createRoot(document.getElementById("root")).render(<h1>Hello React</h1>);
+```
+
+#### Minimal `vite.config.ts`
+
+```ts
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  base: "/kws2100-kartbaserte-websystemer",
+});
+
+```
+
+
 ### Creating a OpenLayers map in React
 
 First you need to install the `ol` dependency:
