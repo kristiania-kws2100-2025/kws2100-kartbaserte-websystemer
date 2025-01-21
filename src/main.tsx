@@ -39,7 +39,7 @@ function Application() {
     <>
       <nav>
         <button onClick={handleClick}>Center on me</button>
-        <SchoolLayerCheckbox setLayers={setLayers} />
+        <SchoolLayerCheckbox setLayers={setLayers} map={map} />
       </nav>
       <main>
         <div ref={mapRef}></div>
