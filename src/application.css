@@ -6,9 +6,10 @@
   display: grid;
   grid-template-rows: auto 1fr;
   height: 100dvh;
-  background-color: red;
 }
 
 nav {
+  display: flex;
   padding: 0.5rem;
+  gap: 0.25rem;
 }
