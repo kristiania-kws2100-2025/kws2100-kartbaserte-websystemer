@@ -3,10 +3,13 @@ import { createRoot } from "react-dom/client";
 import { Map, View } from "ol";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
+import { useGeographic } from "ol/proj";
+
+useGeographic();
 
 const map = new Map({
   layers: [new TileLayer({ source: new OSM() })],
-  view: new View({ center: [59.9, 10.8], zoom: 10 }),
+  view: new View({ center: [10.8, 59.9], zoom: 12 }),
 });
 
 function Application() {
