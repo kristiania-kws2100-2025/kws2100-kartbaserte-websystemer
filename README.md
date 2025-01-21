@@ -175,7 +175,7 @@ npm install -D husky
 npx husky init
 ```
 
-#### Minimal index.html
+#### Minimal `index.html`
 
 ```html
 <html lang="en">
@@ -186,7 +186,7 @@ npx husky init
 </html>
 ```
 
-#### Minimal `main.tsx`
+#### Minimal `src/main.tsx`
 
 ```jsx
 import React from "react";
@@ -243,8 +243,10 @@ First you need to install the `ol` dependency:
 
 - `npm install ol`
 
+Add the file `src/modules/app/application.tsx`
+
 ```tsx
-import React, { MutableRefObject, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Map, View } from "ol";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
@@ -270,12 +272,11 @@ const map = new Map({
 // A functional React component
 export function Application() {
   // `useRef` bridges the gap between JavaScript functions that expect DOM objects and React components
-  // `as MutableRefObject` is required by TypeScript to avoid us binding the wrong ref to the wrong component
-  const mapRef = useRef()
+  const mapRef = useRef<HTMLDivElement>(null);
   // When we display the page, we want the OpenLayers map object to target the DOM object refererred to by the
   // map React component
   useEffect(() => {
-    map.setTarget(mapRef.current);
+    map.setTarget(mapRef.current!);
   }, []);
 
   // This is the location (in React) where we want the map to be displayed
