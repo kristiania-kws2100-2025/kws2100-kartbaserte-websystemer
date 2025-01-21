@@ -272,7 +272,7 @@ const map = new Map({
 // A functional React component
 export function Application() {
   // `useRef` bridges the gap between JavaScript functions that expect DOM objects and React components
-  const mapRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<HTMLDivElement | null>(null);
   // When we display the page, we want the OpenLayers map object to target the DOM object refererred to by the
   // map React component
   useEffect(() => {
