@@ -8,42 +8,12 @@ import { useGeographic } from "ol/proj";
 import "ol/ol.css";
 import "./application.css";
 import { Layer } from "ol/layer";
-import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
-import { GeoJSON } from "ol/format";
+import { SchoolLayerCheckbox } from "./modules/layers/schoolLayerCheckbox";
 
 useGeographic();
 
 const view = new View({ center: [10.8, 59.9], zoom: 10 });
 const map = new Map({ view });
-
-const schoolLayer = new VectorLayer({
-  source: new VectorSource({
-    url: "/kws2100-kartbaserte-websystemer/geojson/schools.geojson",
-    format: new GeoJSON(),
-  }),
-});
-
-function SchoolLayerCheckbox({
-  setLayers,
-}: {
-  setLayers: (value: (prevState: Layer[]) => Layer[]) => void;
-}) {
-  const [checked, setChecked] = useState(true);
-  useEffect(() => {
-    if (checked) {
-      setLayers((old) => [...old, schoolLayer]);
-    } else {
-      setLayers((old) => old.filter((l) => l !== schoolLayer));
-    }
-  }, [checked]);
-  return (
-    <button onClick={() => setChecked((b) => !b)}>
-      <input type={"checkbox"} checked={checked} />
-      Show schools on map
-    </button>
-  );
-}
 
 function Application() {
   const mapRef = useRef<HTMLDivElement>(null);
