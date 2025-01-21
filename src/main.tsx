@@ -6,6 +6,7 @@ import { OSM } from "ol/source";
 import { useGeographic } from "ol/proj";
 
 import "ol/ol.css";
+import "./application.css";
 
 useGeographic();
 
@@ -17,7 +18,16 @@ const map = new Map({
 function Application() {
   const mapRef = useRef<HTMLDivElement>(null);
   useEffect(() => map.setTarget(mapRef.current!), []);
-  return <div ref={mapRef}></div>;
+  return (
+    <>
+      <nav>
+        <button>Center on me</button>
+      </nav>
+      <main>
+        <div ref={mapRef}></div>
+      </main>
+    </>
+  );
 }
 
 createRoot(document.getElementById("root")!).render(<Application />);

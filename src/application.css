@@ -1,0 +1,14 @@
+* {
+  margin: unset;
+}
+
+#root {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100dvh;
+  background-color: red;
+}
+
+nav {
+  padding: 0.5rem;
+}
