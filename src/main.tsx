@@ -5,6 +5,8 @@ import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
 import { useGeographic } from "ol/proj";
 
+import "ol/ol.css";
+
 useGeographic();
 
 const map = new Map({
@@ -15,7 +17,7 @@ const map = new Map({
 function Application() {
   const mapRef = useRef<HTMLDivElement>(null);
   useEffect(() => map.setTarget(mapRef.current!), []);
-  return <div ref={mapRef}>Here is a map</div>;
+  return <div ref={mapRef}></div>;
 }
 
 createRoot(document.getElementById("root")!).render(<Application />);
