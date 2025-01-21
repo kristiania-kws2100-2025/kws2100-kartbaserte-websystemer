@@ -11,7 +11,9 @@ const source = new VectorSource({
   format: new GeoJSON(),
 });
 const schoolLayer = new VectorLayer({ source });
-const overlay = new Overlay({});
+const overlay = new Overlay({
+  positioning: "bottom-center",
+});
 
 export function SchoolLayerCheckbox({
   setLayers,

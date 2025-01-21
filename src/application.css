@@ -13,3 +13,10 @@ nav {
   padding: 0.5rem;
   gap: 0.25rem;
 }
+
+.ol-overlay-container {
+  background-color: white;
+  max-width: 25ch;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+}
