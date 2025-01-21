@@ -44,7 +44,7 @@ For a solution, check out [the reference code for lecture 1](https://github.com/
 ## Exercise 2
 ### Developing, verifying and deploying an application with Github
 
-<details open>
+<details>
 
 The goal of this exercise is the following:
 
@@ -256,7 +256,7 @@ function SearchBar(/* ... parameter definition ... */) {
 ## Exercise 3
 ### Interact with polygon elements
 
-<details>
+<details open>
 
 ### Be prepared:
 
@@ -268,6 +268,9 @@ function SearchBar(/* ... parameter definition ... */) {
 - The user should be able to focus on their own position
 - The user should be able to toggle display of kommune layer on and off
 - When the user clicks on the map with kommuner on, an overlay should show the name of the clicked feature
+
+Optional (this will probably be the topic for a later lecture)
+  
 - The system should show a list of features in an aside
 - When the user changes the view, the list of features in the aside should reflect what the user sees
 - When the user hovers on a feature in the map, the feature should be highlighted in the aside
