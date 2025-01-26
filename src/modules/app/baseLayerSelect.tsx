@@ -2,6 +2,7 @@ import TileLayer from "ol/layer/Tile";
 import { OSM, StadiaMaps } from "ol/source";
 import { Layer } from "ol/layer";
 import React, { useEffect, useMemo, useState } from "react";
+import { useSessionState } from "../../hooks/useSessionState";
 
 export const osmLayer = new TileLayer({ source: new OSM() });
 
@@ -18,8 +19,9 @@ export function BaseLayerSelect({
 }: {
   setBaseLayer: (layer: Layer) => void;
 }) {
-  const [selectedLayerValue, setSelectedLayerValue] =
-    useState<keyof LayerOptions>("osm");
+  const [selectedLayerValue, setSelectedLayerValue] = useSessionState<
+    keyof LayerOptions
+  >("osm", "baseLayer");
   const [colorScheme, setColorScheme] = useState<"dark" | "light">("dark");
   const stadiaLayer = useMemo<Layer>(
     () =>
@@ -61,6 +63,7 @@ export function BaseLayerSelect({
 
   return (
     <select
+      value={selectedLayerValue}
       onChange={(e) =>
         setSelectedLayerValue(e.target.value as keyof LayerOptions)
       }
