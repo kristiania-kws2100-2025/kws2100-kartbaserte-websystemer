@@ -30,15 +30,21 @@ proj4.defs(
 
  */
 //const projection = "urn:ogc:def:crs:EPSG:6.3:25832";
-proj4.defs(
-  "EPSG:25832",
-  "+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs",
-);
+proj4.defs([
+  [
+    "EPSG:25832",
+    "+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs",
+  ],
+  [
+    "EPSG:25833",
+    "+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs",
+  ],
+]);
 register(proj4);
 
-const kartverketTopo = new TileLayer();
-
 const parser = new WMTSCapabilities();
+
+const kartverketTopo = new TileLayer();
 fetch("https://cache.kartverket.no/v1/wmts/1.0.0/WMTSCapabilities.xml").then(
   async function (response) {
     const result = parser.read(await response.text());
@@ -49,6 +55,18 @@ fetch("https://cache.kartverket.no/v1/wmts/1.0.0/WMTSCapabilities.xml").then(
     kartverketTopo.setSource(new WMTS(options!));
   },
 );
+
+const aerialPhoto = new TileLayer();
+fetch(
+  "http://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2?SERVICE=WMTS&REQUEST=GetCapabilities",
+).then(async function (response) {
+  const result = parser.read(await response.text());
+  const options = optionsFromCapabilities(result, {
+    layer: "Nibcache_UTM33_EUREF89_v2",
+    matrixSet: "default028mm",
+  });
+  aerialPhoto.setSource(new WMTS(options!));
+});
 
 export function BaseLayerSelect({
   setBaseLayer,
@@ -83,6 +101,10 @@ export function BaseLayerSelect({
       kartverket: {
         label: "Kartverket Topo (mercator)",
         layer: kartverketTopo,
+      },
+      photo: {
+        label: "Flyfoto fra Kartverket",
+        layer: aerialPhoto,
       },
     }),
     [stadiaLayer],
