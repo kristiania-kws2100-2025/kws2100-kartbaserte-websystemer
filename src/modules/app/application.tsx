@@ -11,7 +11,7 @@ import { BaseLayerSelect, osmLayer } from "./baseLayerSelect";
 useGeographic();
 
 const map = new Map({
-  view: new View({ center: [10.8, 59.9], zoom: 12 }),
+  view: new View({ center: [10.8, 59.9], zoom: 7 }),
 });
 
 function MapNavMenu({ setBaseLayer }: { setBaseLayer(layer: Layer): void }) {
