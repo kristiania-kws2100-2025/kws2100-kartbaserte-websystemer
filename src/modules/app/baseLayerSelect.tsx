@@ -1,19 +1,35 @@
 import TileLayer from "ol/layer/Tile";
-import { OSM, StadiaMaps } from "ol/source";
+import { OSM, StadiaMaps, WMTS } from "ol/source";
 import { Layer } from "ol/layer";
 import React, { useEffect, useMemo } from "react";
 import { useSessionState } from "../../hooks/useSessionState";
 import { useColorScheme } from "../../hooks/useColorScheme";
+import { optionsFromCapabilities } from "ol/source/WMTS";
+import { WMTSCapabilities } from "ol/format";
 
 export const osmLayer = new TileLayer({ source: new OSM() });
 
 type LayerOptions = Record<
-  "osm" | "stadia",
+  "osm" | "stadia" | "kartverket",
   {
     layer: Layer;
     label: string;
   }
 >;
+
+const kartverketTopo = new TileLayer();
+
+const parser = new WMTSCapabilities();
+fetch("https://cache.kartverket.no/v1/wmts/1.0.0/WMTSCapabilities.xml").then(
+  async function (response) {
+    const result = parser.read(await response.text());
+    const options = optionsFromCapabilities(result, {
+      layer: "toporaster",
+      matrixSet: "webmercator",
+    });
+    kartverketTopo.setSource(new WMTS(options!));
+  },
+);
 
 export function BaseLayerSelect({
   setBaseLayer,
@@ -45,6 +61,10 @@ export function BaseLayerSelect({
         label: "Stadia",
         layer: stadiaLayer,
       },
+      kartverket: {
+        label: "Kartverket Topo (mercator)",
+        layer: kartverketTopo,
+      },
     }),
     [stadiaLayer],
   );
@@ -62,7 +82,7 @@ export function BaseLayerSelect({
     >
       {Object.entries(layerOptions).map(([k, v]) => (
         <option key={k} value={k}>
-          {v.label} ({colorScheme})
+          {v.label}
         </option>
       ))}
     </select>
