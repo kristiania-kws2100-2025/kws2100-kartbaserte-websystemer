@@ -1,0 +1,22 @@
+:root {
+  color-scheme: light dark;
+}
+
+* {
+  margin: unset;
+}
+
+#root {
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+}
+
+nav,
+header {
+  padding: 0.5rem;
+}
+
+nav li {
+  list-style: none;
+}

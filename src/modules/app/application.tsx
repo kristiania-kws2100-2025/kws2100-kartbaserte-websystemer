@@ -6,6 +6,8 @@ import { useGeographic } from "ol/proj";
 
 import "ol/ol.css";
 
+import "./application.css";
+
 useGeographic();
 
 const map = new Map({
@@ -29,5 +31,23 @@ const map = new Map({
 export function Application() {
   const mapRef = useRef<HTMLDivElement>(null);
   useEffect(() => map.setTarget(mapRef.current!), []);
-  return <div ref={mapRef} />;
+  return (
+    <>
+      <header>
+        <h1>The Map Application</h1>
+      </header>
+      <nav>
+        <li>
+          <select>
+            <option value="osm">OpenStreetMap</option>
+            <option value="stadia">Stadia</option>
+            <option value="photo">Flyfoto</option>
+          </select>
+        </li>
+      </nav>
+      <main>
+        <div ref={mapRef} />
+      </main>
+    </>
+  );
 }
