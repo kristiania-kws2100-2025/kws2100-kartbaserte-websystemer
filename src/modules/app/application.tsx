@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Map, View } from "ol";
 import TileLayer from "ol/layer/Tile";
-import { StadiaMaps } from "ol/source";
+import { OSM, StadiaMaps } from "ol/source";
 import { useGeographic } from "ol/proj";
 
 import "ol/ol.css";
@@ -14,6 +14,10 @@ const map = new Map({
       source: new StadiaMaps({
         layer: "alidade_smooth_dark",
       }),
+    }),
+    new TileLayer({
+      source: new OSM(),
+      opacity: 0.3,
     }),
   ],
   view: new View({
