@@ -51,6 +51,7 @@ In this lecture, we will make sure that the user can interact with kommuner, so 
 
 [![Lecture 4 code](https://img.shields.io/badge/Lecture_4-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/04)
 [![Lecture 4 reference](https://img.shields.io/badge/Lecture_4-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/04)
+[![Lecture 4 exercise](https://img.shields.io/badge/Lecture_4-exercise-pink)](./exercises/EXERCISES.md#exercise-4)
 
 **"Damn you, Gerhard!"**
 
@@ -59,8 +60,8 @@ projection. In the process, we will learn that the earth is indeed round.
 
 - Restructure the map layers to vary base layer
 - Use a few [Stadia maps](https://stadiamaps.com/)
+- Add [Norwegian official map](https://kartkatalog.geonorge.no/metadata/topografisk-norgeskart-wmts--cache/8f381180-1a47-4453-bee7-9a3d64843efa) ("Topografisk norgeskart"), introducing some projection strangeness
 - Add [aerial photos of Norway](https://kartkatalog.geonorge.no/metadata/norge-i-bilder-wmts-euref89-utm33/072662f8-41c9-4e9a-a55a-343dee0c3f84) ("Norge i bilder")
-- Add [Norwegian official map](https://kartkatalog.geonorge.no/metadata/norges-grunnkart-cache/860f8b53-1dcf-4a39-87a4-71b3e9125dcb) ("Norges grunnkart"), introducing some projection strangeness
 - Add [Arctic Spacial Data Infrastructure](https://arctic-sdi.org/services/topografic-basemap/) polar map, going all in on projections
 
 #### Reference:
@@ -71,18 +72,22 @@ projection. In the process, we will learn that the earth is indeed round.
 ### Lecture 5: Geographical databases
 
 [![Lecture 5 code](https://img.shields.io/badge/Lecture_5-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/05)
+[![Lecture 5 reference](https://img.shields.io/badge/Lecture_5-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/05)
+[![Lecture 5 exercise](https://img.shields.io/badge/Lecture_5-exercise-pink)](./exercises/EXERCISES.md#exercise-5)
 
-In this lecture, we will provide our own own datasource by importing datasets from Geonorge into PostGIS and creating a backend with them
+In this lecture, we will provide our own datasource by importing datasets from Geonorge into PostGIS and creating a backend with them
 
 - [Administrative enheter - kommuner](https://kartkatalog.geonorge.no/metadata/administrative-enheter-kommuner/041f1e6e-bdbc-4091-b48f-8a5990f3cc5b)
 - [Statistiske enheter - grunnkretser](https://kartkatalog.geonorge.no/metadata/statistiske-enheter-grunnkretser/51d279f8-e2be-4f5e-9f72-1a53f7535ec1)
+- [Grunnskoler](https://kartkatalog.geonorge.no/metadata/grunnskoler/db4b872f-264d-434c-9574-57232f1e90d2)
 
 ### Lecture 6: Deployment to Heroku
 
 [![Lecture 6 code](https://img.shields.io/badge/Lecture_6-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/06)
 [![Lecture 6 reference](https://img.shields.io/badge/Lecture_6-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/06)
 
-We will publish a basic React + Hono application with TypeScript and Vite to Heroku and add a map to the application
+We will publish a basic React + Hono application with TypeScript and Vite to Heroku and add a map to the application.
+This lets us deploy with a geographic database 
 
 ### Lecture 7: Vector layers as data
 
@@ -284,8 +289,10 @@ export function Application() {
 }
 ```
 
+Update `src/main.tsx` to render `<Application />` from `src/modules/app/application.tsx` instead of `<h1>Hello React</h1>`.
 
-### Starting PostGIS with Docker Compose
+
+### Starting PostGIS with Docker Compose (for lecture 6)
 
 ```yaml
 version: "3"
@@ -297,41 +304,38 @@ services:
       - "5432:5432"
 ```
 
-### Importing a dataset into a PostGIS server in docker
+### Importing a dataset into a PostGIS server in docker (for lecture 6)
 
 `docker exec -i /postgis /usr/bin/psql --user postgres norway_data < tmp/Basisdata_0000_Norge_25833_Kommuner_PostGIS.sql`
 
-### Creating a PostGIS API in Express
+### Creating a PostGIS API in Hono (for lecture 6)
 
 ```typescript
-import express from "express";
+import { Hono } from "hono";
+import { serve } from "@hono/node-server";
 import pg from "pg";
 
-const postgresql = new pg.Pool({
-  user: "postgres",
-  database: "norway_data",
-});
+const postgresql = new pg.Pool({ user: "postgres" });
 
-const app = express();
-
-app.get("/api/kommuner", async (req, res) => {
+const app = new Hono();
+app.get("/api/fylker", async (c) => {
   const result = await postgresql.query(
-    "select kommunenummer, kommunenavn, st_simplify(omrade, 0.0001)::json as geometry from kommuner",
+    "select fylkesnummer, fylkesnavn, st_transform(st_simplify(omrade, 10), 4326)::json as geometry from fylke",
   );
-  res.json({
+  return c.json({
     type: "FeatureCollection",
-    features: result.rows.map(({ kommunenavn, kommunenummer, geometry }) => ({
+    features: result.rows.map(({ fylkesnummer, fylkesnavn, geometry }) => ({
       type: "Feature",
       geometry,
-      properties: { kommunenummer, kommunenavn },
+      properties: { fylkesnummer, fylkesnavn },
     })),
   });
 });
 
-app.listen(3000);
+serve(app);
 ```
 
-### Generating TypeScript definitions from a `.proto` (protobuf) specification
+### Generating TypeScript definitions from a `.proto` (protobuf) specification (for lecture 10)
 
 1. Download [`protoc`](https://github.com/protocolbuffers/protobuf/releases) and store it locally (but `.gitignored` -
    it's pretty big)

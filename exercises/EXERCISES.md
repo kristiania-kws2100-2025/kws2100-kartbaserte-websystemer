@@ -256,7 +256,7 @@ function SearchBar(/* ... parameter definition ... */) {
 ## Exercise 3
 ### Interact with polygon elements
 
-<details open>
+<details>
 
 ### Be prepared:
 
@@ -292,6 +292,106 @@ Optional (this will probably be the topic for a later lecture)
 </details>
 
 ## Exercise 4
+### Change the background layer of your map
+
+<details open>
+
+### Preparations
+
+1. Create a repository in your GitHub account and clone into IntelliJ
+2. [Create a React Application](../README.md#creating-a-react-application) as described in the reference material
+3. Add a minimal [`index.html`](../README.md#minimal-indexhtml) and [`src/main.tsx`](../README.md#minimal-srcmaintsx) file
+4. Optionally, add [`.vite.config.ts`](../README.md#minimal-viteconfigts) and [`.github/workflows/publish-to-pages.yaml`](../README.md#minimal-githubworkflowspublish-to-github-pagesyml)
+   to deploy your application to GitHub pages
+5. [Add a basic OpenLayers Map](../README.md#creating-a-openlayers-map-in-react) to your application
+
+You should now have a basic OpenLayers application
+
+### The goal of the exercise
+
+Implement a select that lets you pick between OpenStreetMap, Stadia, Ortophoto of Norway and an Arctic map.
+
+### How to do it
+
+1. Change `layers` so it's a React state instead of a property to initialize the `Map` object
+   ```tsx
+   const osmLayer = new TileLayer({source: new OSM()});
+   
+   export function Application() {
+     // 
+     const [baseLayer, setBaseLayer] = useState<Layer>(osmLayer);
+     useEffect(() => map.setLayers([baseLayer]), [baseLayer]);
+     // ... the current implementation goes here
+   }
+   ```
+2. Implement a `<select />` that calls `setBaseLayer` to change the background layer. You can use
+   [StadiaMaps](https://openlayers.org/en/latest/apidoc//module-ol_source_StadiaMaps-StadiaMaps.html)
+   `const statiaLayer = new TileLayer({ source: new StadiaMaps({ layer: "alidade_smooth_dark" }) })` as the other
+   layer
+3. Implement an `<option>` in the select that uses [kartverkets topo background layer](https://kartkatalog.geonorge.no/metadata/topografisk-norgeskart-wmts--cache/8f381180-1a47-4453-bee7-9a3d64843efa)
+   (note: this may be slow!). You must load the map definitions using the definition of the map, so you need some extra loading code:
+   ```tsx
+    import { optionsFromCapabilities } from "ol/source/WMTS";
+    import { WMTSCapabilities } from "ol/format";
+    const parser = new WMTSCapabilities();
+    const kartverketTopoLayer = new TileLayer();
+    fetch("https://cache.kartverket.no/v1/wmts/1.0.0/WMTSCapabilities.xml").then(
+      async function (response) {
+        const result = parser.read(await response.text());
+        const options = optionsFromCapabilities(result, {
+          layer: "toporaster",
+          matrixSet: "webmercator",
+        });
+        kartverketTopo.setSource(new WMTS(options!));
+      },
+    ); 
+   ```
+4. Implement an `<option>` for [aerial photos of Norway](https://kartkatalog.geonorge.no/metadata/norge-i-bilder-wmts-euref89-utm33/072662f8-41c9-4e9a-a55a-343dee0c3f84).
+   **This is trickier than the last step**. The URL is `http://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2?SERVICE=WMTS&REQUEST=GetCapabilities`,
+  `{ layer: "Nibcache_UTM33_EUREF89_v2", matrixSet: "default028mm", }`. However, this map has a projection that isn't supported by OpenLayers by default.
+  In order to add projections support:
+    - `npm install proj4`
+    - Add the following code to define the projection: `proj4.defs([["EPSG:25833", "+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs"]])`
+      (I got this from [EPSG.io](https://epsg.io/25833))
+    - Add the projection definitions to OpenLayers: `register(proj4);`
+5. Implement an `<option>` for [a polar projection](https://arctic-sdi.org/services/topografic-basemap/). For unknown
+   reasons, the WMTS definition of this map doesn't support Cross-Origin Resource Sharing so you can't request it in your
+   application. Instead, download the XML-file and save it as `public/wmts/arctic-sdi.xml`.
+    - Use the options `{ layer: "arctic_cascading", matrixSet: "3575", }`
+    - Add the projection definition to the `proj4.defs` call: `["EPSG:3575", "+proj=laea +lat_0=90 +lon_0=10 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"]`
+6. The arctic map looks unimpressive and somewhat strange. This is because the OpenLayers view currently is 
+   Mercator-projection. It reshapes the arctic conic tiles to the Mercator cylindrical projection. To fix this, we need
+   OpenLayers to change the view when the projection changes.
+    - Instead of initializing the `view` option when creating the map, convert the view to `useState`:
+      `const [view, setView] = useState(new View({ center: [10.8, 59.9], zoom: 7 }));`
+    - Update the map view when the view is replaced: `useEffect(() => map.setView(view), [view])`
+    - Pass the `setView` variable to the BaseLayerSelect: `<BaseLayerSelect setBaseLayer={setBaseLayer} setView={setView} />`
+    - In the BaseLayerSelect, update the view when a new baseLayer is selected: 
+      `useEffect(() => setView((v) => new View({ center: v.getCenter(), zoom: v.getZoom(), projection: selectedLayer.getSource()?.getProjection() }), [selectedLayer])`
+
+### Additional task: Combine selecting a base layer with adding additional layers
+
+In [exercise 3](#exercise-3) you added checkboxes for adding municipalities and schools to the map. Try to combine
+the additional layers with the base layer selection.
+
+### Additional task: Change the background map based on the user color theme
+
+By using `window.matchMedia("(prefers-color-scheme: dark)")` you can determine whether the
+user has enabled a dark color theme. You can `addEventListener` to the result of this call to
+be updated when the user changes their settings.
+
+Can you variate the Stadia map theme between for example `alidade_smooth_dark` and `alidade_smooth` based on the
+user's preferences?
+
+
+</details>
+
+## Exercise 5
+#### Reading vector layers from a database
+
+
+
+## Exercise 6
 ### Deploy your map application to Heroku
 
 <details>
