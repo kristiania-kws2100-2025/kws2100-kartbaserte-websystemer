@@ -12,17 +12,11 @@ useGeographic();
 
 const map = new Map({});
 
-function MapNavMenu({
-  setBaseLayer,
-  setView,
-}: {
-  setBaseLayer(layer: Layer): void;
-  setView(fn: (prevState: View) => View): void;
-}) {
+function MapNavMenu({ setBaseLayer }: { setBaseLayer(layer: Layer): void }) {
   return (
     <nav>
       <li>
-        <BaseLayerSelect setBaseLayer={setBaseLayer} setView={setView} />
+        <BaseLayerSelect setBaseLayer={setBaseLayer} />
       </li>
     </nav>
   );
@@ -31,18 +25,27 @@ function MapNavMenu({
 export function Application() {
   const mapRef = useRef<HTMLDivElement>(null);
 
-  const [view, setView] = useState(new View({ center: [10.8, 59.9], zoom: 7 }));
-  useEffect(() => map.setView(view), [view]);
-
   const [baseLayer, setBaseLayer] = useState<Layer>(osmLayer);
   useEffect(() => map.setLayers([baseLayer]), [baseLayer]);
   useEffect(() => map.setTarget(mapRef.current!), []);
+
+  const [view, setView] = useState(new View({ center: [10.8, 59.9], zoom: 7 }));
+  useEffect(() => map.setView(view), [view]);
+  useEffect(() => {
+    const projection = baseLayer.getSource()?.getProjection();
+    if (projection) {
+      setView(
+        (v) =>
+          new View({ center: v.getCenter(), zoom: v.getZoom(), projection }),
+      );
+    }
+  }, [baseLayer]);
   return (
     <>
       <header>
         <h1>The Map Application</h1>
       </header>
-      <MapNavMenu setBaseLayer={setBaseLayer} setView={setView} />
+      <MapNavMenu setBaseLayer={setBaseLayer} />
       <main>
         <div ref={mapRef} />
       </main>

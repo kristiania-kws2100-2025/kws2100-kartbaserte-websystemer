@@ -77,10 +77,8 @@ fetch("/kws2100-kartbaserte-websystemer/wmts/arctic-sdi.xml").then(
 
 export function BaseLayerSelect({
   setBaseLayer,
-  setView,
 }: {
   setBaseLayer: (layer: Layer) => void;
-  setView(fn: (prevState: View) => View): void;
 }) {
   const [selectedLayerValue, setSelectedLayerValue] = useSessionState<
     keyof LayerOptions
@@ -123,19 +121,10 @@ export function BaseLayerSelect({
     [stadiaLayer],
   );
   const selectedLayer = useMemo(
-    () => layerOptions[selectedLayerValue],
+    () => layerOptions[selectedLayerValue].layer,
     [layerOptions, selectedLayerValue],
   );
-  useEffect(() => {
-    setBaseLayer(selectedLayer.layer);
-    const projection = selectedLayer.layer.getSource()?.getProjection();
-    if (projection) {
-      setView(
-        (v) =>
-          new View({ center: v.getCenter(), zoom: v.getZoom(), projection }),
-      );
-    }
-  }, [selectedLayer]);
+  useEffect(() => setBaseLayer(selectedLayer), [selectedLayer]);
   return (
     <select
       value={selectedLayerValue}
