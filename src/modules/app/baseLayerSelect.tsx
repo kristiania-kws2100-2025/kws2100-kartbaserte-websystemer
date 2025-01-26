@@ -9,6 +9,7 @@ import { WMTSCapabilities } from "ol/format";
 import proj4 from "proj4";
 
 import { register } from "ol/proj/proj4.js";
+import { View } from "ol";
 
 export const osmLayer = new TileLayer({ source: new OSM() });
 
@@ -76,8 +77,10 @@ fetch("/kws2100-kartbaserte-websystemer/wmts/arctic-sdi.xml").then(
 
 export function BaseLayerSelect({
   setBaseLayer,
+  setView,
 }: {
   setBaseLayer: (layer: Layer) => void;
+  setView(fn: (prevState: View) => View): void;
 }) {
   const [selectedLayerValue, setSelectedLayerValue] = useSessionState<
     keyof LayerOptions
@@ -123,7 +126,16 @@ export function BaseLayerSelect({
     () => layerOptions[selectedLayerValue],
     [layerOptions, selectedLayerValue],
   );
-  useEffect(() => setBaseLayer(selectedLayer.layer), [selectedLayer]);
+  useEffect(() => {
+    setBaseLayer(selectedLayer.layer);
+    const projection = selectedLayer.layer.getSource()?.getProjection();
+    if (projection) {
+      setView(
+        (v) =>
+          new View({ center: v.getCenter(), zoom: v.getZoom(), projection }),
+      );
+    }
+  }, [selectedLayer]);
   return (
     <select
       value={selectedLayerValue}

@@ -10,15 +10,19 @@ import { BaseLayerSelect, osmLayer } from "./baseLayerSelect";
 
 useGeographic();
 
-const map = new Map({
-  view: new View({ center: [10.8, 59.9], zoom: 7 }),
-});
+const map = new Map({});
 
-function MapNavMenu({ setBaseLayer }: { setBaseLayer(layer: Layer): void }) {
+function MapNavMenu({
+  setBaseLayer,
+  setView,
+}: {
+  setBaseLayer(layer: Layer): void;
+  setView(fn: (prevState: View) => View): void;
+}) {
   return (
     <nav>
       <li>
-        <BaseLayerSelect setBaseLayer={setBaseLayer} />
+        <BaseLayerSelect setBaseLayer={setBaseLayer} setView={setView} />
       </li>
     </nav>
   );
@@ -26,6 +30,9 @@ function MapNavMenu({ setBaseLayer }: { setBaseLayer(layer: Layer): void }) {
 
 export function Application() {
   const mapRef = useRef<HTMLDivElement>(null);
+
+  const [view, setView] = useState(new View({ center: [10.8, 59.9], zoom: 7 }));
+  useEffect(() => map.setView(view), [view]);
 
   const [baseLayer, setBaseLayer] = useState<Layer>(osmLayer);
   useEffect(() => map.setLayers([baseLayer]), [baseLayer]);
@@ -35,7 +42,7 @@ export function Application() {
       <header>
         <h1>The Map Application</h1>
       </header>
-      <MapNavMenu setBaseLayer={setBaseLayer} />
+      <MapNavMenu setBaseLayer={setBaseLayer} setView={setView} />
       <main>
         <div ref={mapRef} />
       </main>
