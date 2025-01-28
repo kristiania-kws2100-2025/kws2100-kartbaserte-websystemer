@@ -1,10 +1,12 @@
 import TileLayer from "ol/layer/Tile";
 import { OSM, StadiaMaps, WMTS } from "ol/source";
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { WMTSCapabilities } from "ol/format";
 import { optionsFromCapabilities } from "ol/source/WMTS";
 import { register } from "ol/proj/proj4";
 import proj4 from "proj4";
+import { View } from "ol";
+import { Layer } from "ol/layer";
 
 proj4.defs([
   [
@@ -22,6 +24,7 @@ interface BackgroundLayerSelectProps {
   setLayers: (
     value: ((prevState: TileLayer[]) => TileLayer[]) | TileLayer[],
   ) => void;
+  setView: (value: ((prevState: View) => View) | View) => void;
 }
 
 const stadiaLayer = new TileLayer({
@@ -78,21 +81,35 @@ fetch("/kws2100-kartbaserte-websystemer/wmts/arctic-sdi.xml")
 
 export function BackgroundLayerSelect({
   setLayers,
+  setView,
 }: BackgroundLayerSelectProps) {
+  const [backgroundLayer, setBackgroundLayer] = useState<TileLayer>(osmLayer);
+
   function handleChange(e: ChangeEvent<HTMLSelectElement>) {
     console.log(e.target.value);
     if (e.target.value === "stadia") {
-      setLayers([stadiaLayer]);
+      setBackgroundLayer(stadiaLayer);
     } else if (e.target.value === "kartverket") {
-      setLayers([kartverketLayer]);
+      setBackgroundLayer(kartverketLayer);
     } else if (e.target.value === "photo") {
-      setLayers([photoLayer]);
+      setBackgroundLayer(photoLayer);
     } else if (e.target.value === "arctic") {
-      setLayers([arcticLayer]);
+      setBackgroundLayer(arcticLayer);
     } else {
-      setLayers([osmLayer]);
+      setBackgroundLayer(osmLayer);
     }
   }
+
+  useEffect(() => {
+    setLayers([backgroundLayer]);
+    const projection = backgroundLayer.getSource()?.getProjection();
+    if (projection) {
+      setView(
+        (v) =>
+          new View({ center: v.getCenter(), zoom: v.getZoom(), projection }),
+      );
+    }
+  }, [backgroundLayer]);
 
   return (
     <select onChange={handleChange}>

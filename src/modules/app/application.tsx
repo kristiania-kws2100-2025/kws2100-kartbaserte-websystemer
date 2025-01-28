@@ -16,17 +16,18 @@ useGeographic();
 
 // Here we create a Map object. Make sure you `import { Map } from "ol"`. Otherwise, the standard Javascript
 //  map data structure will be used
-const map = new Map({
-  // The map will be centered on a position in longitude (x-coordinate, east) and latitude (y-coordinate, north),
-  //   with a certain zoom level
-  view: new View({ center: [10.8, 59.9], zoom: 10 }),
-});
+const map = new Map({});
 
 // A functional React component
 export function Application() {
   const [layers, setLayers] = useState<TileLayer[]>([
     new TileLayer({ source: new OSM() }),
   ]);
+
+  const [view, setView] = useState(
+    new View({ center: [10.8, 59.9], zoom: 10 }),
+  );
+
   // `useRef` bridges the gap between JavaScript functions that expect DOM objects and React components
   const mapRef = useRef<HTMLDivElement | null>(null);
   // When we display the page, we want the OpenLayers map object to target the DOM object refererred to by the
@@ -37,6 +38,9 @@ export function Application() {
   useEffect(() => {
     map.setLayers(layers);
   }, [layers]);
+  useEffect(() => {
+    map.setView(view);
+  }, [view]);
 
   // This is the location (in React) where we want the map to be displayed
   return (
@@ -45,7 +49,7 @@ export function Application() {
         <h1>My map application</h1>
       </header>
       <nav>
-        <BackgroundLayerSelect setLayers={setLayers} />
+        <BackgroundLayerSelect setLayers={setLayers} setView={setView} />
       </nav>
       <main>
         <div ref={mapRef}></div>
