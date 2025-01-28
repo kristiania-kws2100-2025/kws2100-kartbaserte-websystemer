@@ -24,7 +24,9 @@ const map = new Map({
 
 // A functional React component
 export function Application() {
-  const [layers, setLayers] = useState([new TileLayer({ source: new OSM() })]);
+  const [layers, setLayers] = useState<TileLayer[]>([
+    new TileLayer({ source: new OSM() }),
+  ]);
   // `useRef` bridges the gap between JavaScript functions that expect DOM objects and React components
   const mapRef = useRef<HTMLDivElement | null>(null);
   // When we display the page, we want the OpenLayers map object to target the DOM object refererred to by the
