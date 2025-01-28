@@ -6,10 +6,16 @@ import { optionsFromCapabilities } from "ol/source/WMTS";
 import { register } from "ol/proj/proj4";
 import proj4 from "proj4";
 
-proj4.defs(
-  "EPSG:25833",
-  "+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs",
-);
+proj4.defs([
+  [
+    "EPSG:25833",
+    "+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs",
+  ],
+  [
+    "EPSG:3571",
+    "+proj=laea +lat_0=90 +lon_0=180 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs",
+  ],
+]);
 register(proj4);
 
 interface BackgroundLayerSelectProps {
@@ -56,6 +62,20 @@ fetch(
     photoLayer.setSource(new WMTS(options!));
   });
 
+const arcticLayer = new TileLayer();
+fetch("/kws2100-kartbaserte-websystemer/wmts/arctic-sdi.xml")
+  .then(function (response) {
+    return response.text();
+  })
+  .then(function (text) {
+    const result = parser.read(text);
+    const options = optionsFromCapabilities(result, {
+      layer: "arctic_cascading",
+      matrixSet: "3571",
+    });
+    arcticLayer.setSource(new WMTS(options!));
+  });
+
 export function BackgroundLayerSelect({
   setLayers,
 }: BackgroundLayerSelectProps) {
@@ -67,6 +87,8 @@ export function BackgroundLayerSelect({
       setLayers([kartverketLayer]);
     } else if (e.target.value === "photo") {
       setLayers([photoLayer]);
+    } else if (e.target.value === "arctic") {
+      setLayers([arcticLayer]);
     } else {
       setLayers([osmLayer]);
     }
@@ -78,6 +100,7 @@ export function BackgroundLayerSelect({
       <option value={"stadia"}>Stadia</option>
       <option value={"kartverket"}>Kartverket</option>
       <option value={"photo"}>Flyfoto</option>
+      <option value={"arctic"}>Arktisk</option>
     </select>
   );
 }
