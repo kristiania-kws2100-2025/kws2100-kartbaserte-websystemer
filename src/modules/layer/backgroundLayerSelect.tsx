@@ -12,8 +12,8 @@ proj4.defs([
     "+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs",
   ],
   [
-    "EPSG:3571",
-    "+proj=laea +lat_0=90 +lon_0=180 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs",
+    "EPSG:3575",
+    "+proj=laea +lat_0=90 +lon_0=10 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs",
   ],
 ]);
 register(proj4);
@@ -71,7 +71,7 @@ fetch("/kws2100-kartbaserte-websystemer/wmts/arctic-sdi.xml")
     const result = parser.read(text);
     const options = optionsFromCapabilities(result, {
       layer: "arctic_cascading",
-      matrixSet: "3571",
+      matrixSet: "3575",
     });
     arcticLayer.setSource(new WMTS(options!));
   });
