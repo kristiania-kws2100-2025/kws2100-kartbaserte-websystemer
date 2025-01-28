@@ -1,0 +1,14 @@
+* {
+  margin: unset;
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: light dark;
+}
+
+#root {
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+}

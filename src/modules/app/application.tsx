@@ -8,6 +8,8 @@ import { useGeographic } from "ol/proj";
 import "ol/ol.css";
 import TileSource from "ol/source/Tile";
 
+import "./application.css";
+
 // By calling the "useGeographic" function in OpenLayers, we tell that we want coordinates to be in degrees
 //  instead of meters, which is the default. Without this `center: [10.6, 59.9]` brings us to "null island"
 useGeographic();
