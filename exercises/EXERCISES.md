@@ -345,7 +345,7 @@ Implement a select that lets you pick between OpenStreetMap, Stadia, Ortophoto o
           layer: "toporaster",
           matrixSet: "webmercator",
         });
-        kartverketTopo.setSource(new WMTS(options!));
+        kartverketTopoLayer.setSource(new WMTS(options!));
       },
     ); 
    ```
@@ -354,6 +354,8 @@ Implement a select that lets you pick between OpenStreetMap, Stadia, Ortophoto o
   `{ layer: "Nibcache_UTM33_EUREF89_v2", matrixSet: "default028mm", }`. However, this map has a projection that isn't supported by OpenLayers by default.
   In order to add projections support:
     - `npm install proj4`
+    - `npm install -D @types/proj4`
+    - Import proj4 in your code: `import proj4 from "proj4";`
     - Add the following code to define the projection: `proj4.defs([["EPSG:25833", "+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs"]])`
       (I got this from [EPSG.io](https://epsg.io/25833))
     - Add the projection definitions to OpenLayers: `register(proj4);`
