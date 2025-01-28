@@ -104,8 +104,8 @@ To avoid commiting with errors, you should install the Prettier IntelliJ plugin:
 
 ### Deploy your application with GitHub pages
 
-There is one tricky step to deployment - your application must run on `https://<your github username>.github.io/<your repository name>`.
-For this to work, you must run it locally at `http://localhost:5173/<your repository name>`.
+There is one tricky step to deployment. When your repository is named for example `https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer`,
+GitHub pages will deploy to `https://kristiania-kws2100-2025.github.io/kws2100-kartbaserte-websystemer`. By default your JavaScript will be loaded from files like `/asset.js`, but GitHub pages will move this file to a subdirectory. To fix, this you have to instruct Vite to locate your application in a subdirectory, by specifying the `base` configuration property.
 
 1. Create a `vite.config.js` file that specifies your base path:
    ```js
