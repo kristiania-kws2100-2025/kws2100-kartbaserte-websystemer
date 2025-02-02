@@ -13,7 +13,11 @@ app.get("/kws2100-kartbaserte-websystemer/api/skoler", async (c) => {
     `select
          skolenavn, eierforhold, besoksadresse_besoksadresse_adressenavn, besoksadresse_besoksadresse_postnummer, besoksadresse_besoksadresse_poststed,
          st_transform(posisjon, 4326)::json as posisjon
-    from grunnskoler_3697913259634315b061b324a3f2cf59.grunnskole
+    from grunnskoler_3697913259634315b061b324a3f2cf59.grunnskole s
+        inner join fylker_ba7aea2735714391a98b1a585644e98a.fylke f on st_contains(f.omrade, s.posisjon)
+        inner join fylker_ba7aea2735714391a98b1a585644e98a.administrativenhetnavn n on f.objid = n.fylke_fk
+    where
+        n.navn = 'Viken'
     `,
   );
   return c.json({

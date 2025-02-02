@@ -1,4 +1,4 @@
 node_modules/
 .idea/
 dist/
-/tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql
+tmp/
