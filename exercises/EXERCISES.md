@@ -297,7 +297,7 @@ Optional (this will probably be the topic for a later lecture)
 ## Exercise 4
 ### Change the background layer of your map
 
-<details open>
+<details>
 
 ### Preparations
 
@@ -393,6 +393,91 @@ user's preferences?
 
 ## Exercise 5
 #### Reading vector layers from a database
+
+<details open>
+The goals of this exercise is to use the old administrative borders to select a list of schools to show on a map.
+
+Use the following sources:
+
+- [Administrative enheter - fylker (2023)](https://kartkatalog.geonorge.no/metadata/administrative-enheter-fylker-historiske-data-2023/7284fe8e-fed6-4172-ae56-a7f7c9fd4759)
+- [Grunnskoler](https://kartkatalog.geonorge.no/metadata/grunnskoler/db4b872f-264d-434c-9574-57232f1e90d2)
+
+**Instructions:**
+
+### Preparations
+
+You can continue on a previous repository or add a new one
+
+1. Create a repository in your GitHub account and clone into IntelliJ
+2. [Create a React Application](../README.md#creating-a-react-application) as described in the reference material
+3. Add a minimal [`index.html`](../README.md#minimal-indexhtml) and [`src/main.tsx`](../README.md#minimal-srcmaintsx) file
+4. Optionally, add [`.vite.config.ts`](../README.md#minimal-viteconfigts) and [`.github/workflows/publish-to-pages.yaml`](../README.md#minimal-githubworkflowspublish-to-github-pagesyml)
+   to deploy your application to GitHub pages
+5. [Add a basic OpenLayers Map](../README.md#creating-a-openlayers-map-in-react) to your application
+
+### Install the datasets into PostgreSQL
+
+In order to query datasets, you need to have a database server. The easiest option is to do this with Docker.
+
+1. If you haven't already done so, install [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+2. Create a `docker-compose.yaml` file defining your docker dependencies
+   ```yaml
+    services:
+      postgis:
+        container_name: postgis
+        image: postgis/postgis
+        environment:
+          POSTGRES_PASSWORD: "postgres"
+          POSTGRES_HOST_AUTH_METHOD: "trust"
+        ports:
+          - "5432:5432"
+   ```
+3. Start Postgis by running `docker compose up --detach` (you can also add a command to do this in your `package.json`)
+4. Download the school dataset (I got the URL from [Geonorge](https://kartkatalog.geonorge.no/metadata/grunnskoler/db4b872f-264d-434c-9574-57232f1e90d2):
+   * Install the `download` NPM command for your scripts: `npm install -D download-cli`
+   * `npm pkg set scripts.db:schools="npm run db:schools:download && npm run db:schools:import"`
+   * `npm pkg set scripts.db:schools:download="download --extract --out tmp/ https://nedlasting.geonorge.no/geonorge/Befolkning/Grunnskoler/PostGIS/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.zip"`
+   * `npm pkg set scripts.db:schools:import="docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql"`
+   * `npm run db:schools`
+5. You can now add Postgresql as a data source in IntelliJ. Be sure to include the skole_* schema.
+6. You can now experiment with querying for schools
+7. Repeat step 4 for [the old county boundaries](https://kartkatalog.geonorge.no/metadata/administrative-enheter-fylker-historiske-data-2023/7284fe8e-fed6-4172-ae56-a7f7c9fd4759)
+
+### Creating a server application with Hono
+
+1. Create a directory to hold the server: `mkdir server`
+2. Go into the server directory: `cd server`
+3. Create a new package.json for the server: `npm init -y`
+4. Install the server library: `npm install hono @hono/node-server`
+5. Install Typescript executor to run ts files from in a Node application: `npm install -D tsx`
+6. Create a start script for the server: `npm pkg set scripts.dev="tsx --watch server.ts"`
+
+Create a minimal `server/server.ts` file:
+
+```typescript
+import { Hono } from "hono";
+import { serve } from "@hono/node-server";
+const app = new Hono();
+app.get("/api/hello", async (c) => {
+  return c.text("Hello World!");
+});
+serve(app);
+```
+Start the server by running `npm run dev` in the `server/`-directory and check the results at http://localhost:3000/api/hello
+
+#### Serve GeoJSON from Hono
+
+This is the hardest part and some assembly is necessary:
+
+1. You have to update `vite.config.ts` to point to the Hono server
+2. You have to change the Vector Layer source to use a Hono-served URL
+3. You have to create a `app.get` endpoint in Hono that returns a FeatureCollection
+
+See the [lecture reference code](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/05)
+for hints
+
+
+</details>
 
 
 

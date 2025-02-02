@@ -77,7 +77,7 @@ projection. In the process, we will learn that the earth is indeed round.
 
 In this lecture, we will provide our own datasource by importing datasets from Geonorge into PostGIS and creating a backend with them
 
-- [Administrative enheter - kommuner](https://kartkatalog.geonorge.no/metadata/administrative-enheter-kommuner/041f1e6e-bdbc-4091-b48f-8a5990f3cc5b)
+- [Administrative enheter - fylker (2023)](https://kartkatalog.geonorge.no/metadata/administrative-enheter-fylker-historiske-data-2023/7284fe8e-fed6-4172-ae56-a7f7c9fd4759)
 - [Statistiske enheter - grunnkretser](https://kartkatalog.geonorge.no/metadata/statistiske-enheter-grunnkretser/51d279f8-e2be-4f5e-9f72-1a53f7535ec1)
 - [Grunnskoler](https://kartkatalog.geonorge.no/metadata/grunnskoler/db4b872f-264d-434c-9574-57232f1e90d2)
 
@@ -168,8 +168,6 @@ npm install -D prettier
 npm pkg set scripts.test="prettier --check ."
 npx prettier --write .
 
-npm pkg set scripts.build="vite build"
-
 npm i -D typescript
 npm install -D @types/react @types/react-dom
 npx tsc --init --jsx react
@@ -178,6 +176,8 @@ npm pkg set scripts.test="tsc --noEmit && prettier --check ."
 
 npm install -D husky
 npx husky init
+
+npm pkg set scripts.build="vite build"
 ```
 
 #### Minimal `index.html`
@@ -295,13 +295,15 @@ Update `src/main.tsx` to render `<Application />` from `src/modules/app/applicat
 ### Starting PostGIS with Docker Compose (for lecture 6)
 
 ```yaml
-version: "3"
 services:
-  postgis:
-    container_name: postgis
-    image: postgis/postgis
-    ports:
-      - "5432:5432"
+   postgis:
+      container_name: postgis
+      image: postgis/postgis
+      environment:
+         POSTGRES_PASSWORD: "postgres"
+         POSTGRES_HOST_AUTH_METHOD: "trust"
+      ports:
+         - "5432:5432"
 ```
 
 ### Importing a dataset into a PostGIS server in docker (for lecture 6)
