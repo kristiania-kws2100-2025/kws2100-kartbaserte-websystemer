@@ -20,7 +20,7 @@ const municipalityLayer = new VectorLayer({
 });
 const skoleLayer = new VectorLayer({
   source: new VectorSource({
-    url: "/kws2100-kartbaserte-websystemer/geojson/skoler.geojson",
+    url: "/kws2100-kartbaserte-websystemer/api/skoler",
     format: new GeoJSON(),
   }),
 });
