@@ -13,7 +13,7 @@ app.get("/kws2100-kartbaserte-websystemer/api/skoler", async (c) => {
     `select
          skolenavn,
          besoksadresse_besoksadresse_adressenavn as adresse,
-         posisjon::json as coordinates
+         st_transform(posisjon, 4326)::json as geometry
     from grunnskoler_3697913259634315b061b324a3f2cf59.grunnskole
     `,
   );
@@ -25,14 +25,13 @@ app.get("/kws2100-kartbaserte-websystemer/api/skoler", async (c) => {
         name: "urn:ogc:def:crs:OGC:1.3:CRS84",
       },
     },
-    features: result.rows.map(({ coordinates, ...properties }) => ({
-      type: "Feature",
-      properties,
-      geometry: {
-        type: "Point",
-        coordinates,
-      },
-    })),
+    features: result.rows.map(
+      ({ geometry: { coordinates }, ...properties }) => ({
+        type: "Feature",
+        properties,
+        geometry: { type: "Point", coordinates },
+      }),
+    ),
   });
 });
 serve(app);
