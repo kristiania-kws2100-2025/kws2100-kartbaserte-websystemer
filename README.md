@@ -310,6 +310,15 @@ services:
 
 `docker exec -i /postgis /usr/bin/psql --user postgres norway_data < tmp/Basisdata_0000_Norge_25833_Kommuner_PostGIS.sql`
 
+Downloading and importing data into Postgis can be useful scripts to include in your package.json. Here is an example using schoole:
+
+1. We want to execute "download" as a command with npm: `npm install -D download-cli`
+2. Getting schools involves downloading and then importing the data: `npm pkg set scripts.db:schools="npm run db:schools:download && npm run db:schools:import"`
+3. Download the schools from Kartverket: `npm pkg set scripts.db:schools:download="download --extract --out tmp/ https://nedlasting.geonorge.no/geonorge/Befolkning/Grunnskoler/PostGIS/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.zip"` (replace the URL for other data sets)
+4. Install into Postgis using docker: `npm pkg set scripts.db:schools:import="docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql"` (replace file name when downloading another data set)
+5. Import the data using `npm run db:schools` (running the command multiple times will result in an error since the data already exists)
+
+
 ### Creating a PostGIS API in Hono (for lecture 6)
 
 ```typescript
