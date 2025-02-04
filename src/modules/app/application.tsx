@@ -14,7 +14,7 @@ useGeographic();
 const osmLayer = new TileLayer({ source: new OSM() });
 const municipalityLayer = new VectorLayer({
   source: new VectorSource({
-    url: "/geojson/kommuner.geojson",
+    url: "/kws2100-kartbaserte-websystemer/geojson/kommuner.geojson",
     format: new GeoJSON(),
   }),
 });
