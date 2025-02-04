@@ -10,11 +10,12 @@ app.get("/", async (c) => {
 });
 app.get("/kws2100-kartbaserte-websystemer/api/skoler", async (c) => {
   const result = await postgresql.query(
-    `select
-         skolenavn,
-         besoksadresse_besoksadresse_adressenavn as adresse,
-         st_transform(posisjon, 4326)::json as geometry
-    from grunnskoler_3697913259634315b061b324a3f2cf59.grunnskole
+    `
+      select skolenavn, fylke.fylkesnummer, st_transform(posisjon, 4326)::json as geometry
+      from grunnskoler_3697913259634315b061b324a3f2cf59.grunnskole
+               inner join fylker_ba7aea2735714391a98b1a585644e98a.fylke on st_contains(omrade, posisjon)
+      where fylke.objid in (select fylke_fk
+                            from fylker_ba7aea2735714391a98b1a585644e98a.administrativenhetnavn where navn = 'Viken')
     `,
   );
   return c.json({

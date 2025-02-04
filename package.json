@@ -7,6 +7,9 @@
     "dev": "vite",
     "prepare": "husky",
     "db:schools:import": "docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql",
+    "db:fylker2023": "npm run db:fylker2023:download && npm run db:fylker2023:import",
+    "db:fylker2023:download": "download --extract --out tmp https://nedlasting.geonorge.no/geonorge/Basisdata/Fylker2023/PostGIS/Basisdata_0000_Norge_25833_Fylker2023_PostGIS.zip",
+    "db:fylker2023:import": "docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Basisdata_0000_Norge_25833_Fylker_PostGIS.sql",
     "postinstall": "cd server && npm install",
     "build": "vite build"
   },
@@ -25,6 +28,7 @@
   "devDependencies": {
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
+    "download-cli": "^1.1.1",
     "husky": "^9.1.7",
     "prettier": "^3.4.2",
     "typescript": "^5.7.3",
