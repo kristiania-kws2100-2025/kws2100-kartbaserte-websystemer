@@ -10,16 +10,17 @@
     "db:kommuner": "npm run db:kommuner:download && npm run db:kommuner:import",
     "db:kommuner:download": "download --extract --out tmp https://nedlasting.geonorge.no/geonorge/Basisdata/Kommuner/POSTGIS/Basisdata_0000_Norge_25833_Kommuner_POSTGIS.zip",
     "db:kommuner:import": "docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Basisdata_0000_Norge_25833_Kommuner_POSTGIS.sql",
-    "db:kommuner:heroku": "psql $DATABASE_URL < tmp/Basisdata_0000_Norge_25833_Kommuner_POSTGIS.sql",
+    "db:kommuner:heroku": "npm run db:kommuner:download && psql $DATABASE_URL < tmp/Basisdata_0000_Norge_25833_Kommuner_POSTGIS.sql",
     "db:schools": "npm run db:schools:download && npm run db:schools:import",
     "db:schools:download": "download --extract --out tmp https://nedlasting.geonorge.no/geonorge/Befolkning/Grunnskoler/PostGIS/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.zip",
     "db:schools:import": "docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql",
-    "db:schools:heroku": "psql $DATABASE_URL < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql",
+    "db:schools:heroku": "npm run db:schools:download && psql $DATABASE_URL < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql",
     "db:fylker2023": "npm run db:fylker2023:download && npm run db:fylker2023:import",
     "db:fylker2023:download": "download --extract --out tmp https://nedlasting.geonorge.no/geonorge/Basisdata/Fylker2023/PostGIS/Basisdata_0000_Norge_25833_Fylker2023_PostGIS.zip",
     "db:fylker2023:import": "docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Basisdata_0000_Norge_25833_Fylker_PostGIS.sql",
-    "db:fylker2023:heroku": "psql $DATABASE_URL < tmp/Basisdata_0000_Norge_25833_Fylker_PostGIS.sql",
-    "db:heroku": "echo 'create extension postgis' | psql $DATABASE_URL && npm install --include=dev && npm run db:schools:download && npm run db:schools:heroku && npm run db:fylker2023:download && npm run db:fylker2023:heroku",
+    "db:fylker2023:heroku": "npm run db:fylker2023:download && psql $DATABASE_URL < tmp/Basisdata_0000_Norge_25833_Fylker_PostGIS.sql",
+    "db:heroku:postgis": "echo 'create extension postgis' | psql $DATABASE_URL",
+    "db:heroku": "echo 'create extension postgis' | psql $DATABASE_URL && npm run db:schools:heroku && npm run db:fylker2023:heroku",
     "postinstall": "cd server && npm install",
     "build": "vite build"
   },
@@ -38,13 +39,13 @@
   "devDependencies": {
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
-    "download-cli": "^1.1.1",
     "husky": "^9.1.7",
     "prettier": "^3.4.2",
     "typescript": "^5.7.3",
     "vite": "^6.0.11"
   },
   "dependencies": {
+    "download-cli": "^1.1.1",
     "ol": "^10.4.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
