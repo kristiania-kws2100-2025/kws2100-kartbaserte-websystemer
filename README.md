@@ -81,15 +81,18 @@ In this lecture, we will provide our own datasource by importing datasets from G
 - [Statistiske enheter - grunnkretser](https://kartkatalog.geonorge.no/metadata/statistiske-enheter-grunnkretser/51d279f8-e2be-4f5e-9f72-1a53f7535ec1)
 - [Grunnskoler](https://kartkatalog.geonorge.no/metadata/grunnskoler/db4b872f-264d-434c-9574-57232f1e90d2)
 
-### Lecture 6: Deployment to Heroku
+### Lecture 6: Deployment to Heroku AND tile vector layers
 
 [![Lecture 6 code](https://img.shields.io/badge/Lecture_6-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/06)
 [![Lecture 6 reference](https://img.shields.io/badge/Lecture_6-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/06)
 
 We will publish a basic React + Hono application with TypeScript and Vite to Heroku and add a map to the application.
-This lets us deploy with a geographic database 
+This lets us deploy with a geographic database
 
-### Lecture 7: Vector layers as data
+We will also look at how to use the fact that we get data from the database to optimize how much data is sent to the
+client.
+
+### Lecture 7: Vector layers as data AND assignment
 
 [![Lecture 7 code](https://img.shields.io/badge/Lecture_7-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/07)
 [![Lecture 7 reference](https://img.shields.io/badge/Lecture_7-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/07)
