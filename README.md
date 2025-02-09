@@ -44,3 +44,6 @@ We can simulate this by doing:
 - No longer serve under `/kws2100-kartbaserte-websystemer`
 
 ### Deploy to Heroku
+
+1. `heroku apps:create`
+2. `git push heroku`
