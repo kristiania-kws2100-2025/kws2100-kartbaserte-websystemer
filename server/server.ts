@@ -1,14 +1,12 @@
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import pg from "pg";
+import { serveStatic } from "@hono/node-server/serve-static";
 
 const postgresql = new pg.Pool({ user: "postgres" });
 
 const app = new Hono();
-app.get("/", async (c) => {
-  return c.text("Hello somebody");
-});
-app.get("/kws2100-kartbaserte-websystemer/api/skoler", async (c) => {
+app.get("/api/skoler", async (c) => {
   const result = await postgresql.query(
     `
       select skolenavn, fylke.fylkesnummer, st_transform(posisjon, 4326)::json as geometry
@@ -35,4 +33,9 @@ app.get("/kws2100-kartbaserte-websystemer/api/skoler", async (c) => {
     ),
   });
 });
-serve(app);
+app.use("*", serveStatic({ root: "../dist/" }));
+
+serve({
+  fetch: app.fetch,
+  port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
+});
