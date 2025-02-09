@@ -47,3 +47,11 @@ We can simulate this by doing:
 
 1. `heroku apps:create`
 2. `git push heroku`
+
+### Setup database
+
+1. `heroku addons:create heroku-postgresql`
+2. Wait for it to be ready
+3. Update the database connection settings and add import to package.json
+4. `git push heroku`
+5. `heroku run "npm run db:heroku"`
