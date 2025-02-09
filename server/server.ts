@@ -18,23 +18,24 @@ const crs = {
   },
 };
 
-app.get("/api/kommuner", async (c) => {
-  const result = await postgresql.query(
-    `
-    select kommunenummer, kommunenavn, st_transform(st_simplify(omrade, 100), 4326)::json as geometry
-    from kommuner_4d2a1f720b994f11baaeae13ee600c8e.kommune
-    `,
-  );
-  return c.json({
-    type: "FeatureCollection",
-    crs,
-    features: result.rows.map(
-      ({ geometry: { coordinates }, ...properties }) => ({
-        type: "Feature",
-        properties,
-        geometry: { type: "MultiPolygon", coordinates },
-      }),
-    ),
+app.get("/api/kommuner/:z/:x/:y", async (c) => {
+  const { x, y, z } = c.req.param();
+  const simplification = parseInt(z) > 10 ? 10 : 100;
+  const sql = `
+    select st_asmvt(tile)
+    from (select kommunenummer,
+                 kommunenavn,
+                 ST_AsMVTGeom(
+                         st_transform(st_simplify(omrade, $4), 3857),
+                         st_tileenvelope($1, $2, $3),
+                         4096, 256, true
+                 ) geometry
+        from kommuner_4d2a1f720b994f11baaeae13ee600c8e.kommune
+    ) tile
+    `;
+  const result = await postgresql.query(sql, [z, x, y, simplification]);
+  return c.body(result.rows[0].st_asmvt, 200, {
+    "Content-Type": "application/vnd.mapbox-vector-tile",
   });
 });
 

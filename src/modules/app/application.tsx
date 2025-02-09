@@ -1,19 +1,23 @@
 import React, { useEffect, useRef } from "react";
 import { Map, View } from "ol";
 import TileLayer from "ol/layer/Tile";
-import { OSM } from "ol/source";
+import { OSM, VectorTile } from "ol/source";
 import { useGeographic } from "ol/proj";
 
 import "ol/ol.css";
-import { GeoJSON } from "ol/format";
+import { GeoJSON, MVT } from "ol/format";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
+import VectorTileLayer from "ol/layer/VectorTile";
 
 useGeographic();
 
 const osmLayer = new TileLayer({ source: new OSM() });
-const municipalityLayer = new VectorLayer({
-  source: new VectorSource({ url: "/api/kommuner", format: new GeoJSON() }),
+const municipalityLayer = new VectorTileLayer({
+  source: new VectorTile({
+    url: "/api/kommuner/{z}/{x}/{y}",
+    format: new MVT(),
+  }),
 });
 const schoolLayer = new VectorLayer({
   source: new VectorSource({ url: "/api/skoler", format: new GeoJSON() }),

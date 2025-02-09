@@ -19,6 +19,69 @@ See [reference material](https://github.com/kristiania-kws2100-2025/kws2100-kart
 1. Create a `server` with a `package.json`
 2. Install `hono`, `@hono/node-server` and `tsx`
 
+### A geojson layer in Hono
+
+```typescript
+app.get("/api/skoler", async (c) => {
+  const result = await postgresql.query(
+    `
+      select skolenavn, fylke.fylkesnummer, st_transform(posisjon, 4326)::json as geometry
+      from grunnskole
+    `,
+  );
+  return c.json({
+    type: "FeatureCollection",
+    crs,
+    features: result.rows.map(
+      ({ geometry: { coordinates }, ...properties }) => ({
+        type: "Feature",
+        properties,
+        geometry: { type: "Point", coordinates },
+      }),
+    ),
+  });
+});
+```
+
+### A Vector Tile Layer
+
+In OpenLayers
+
+```tsx
+const municipalityLayer = new VectorTileLayer({
+  source: new VectorTile({
+    url: "/api/kommuner/{z}/{x}/{y}",
+    format: new MVT(),
+  }),
+});
+```
+
+In Hono. This API returns kommuner within each tile requested by the client,
+but when the client is zoomed out (and we get many tiles), we remove some detail of the polygons:
+
+```typescript
+app.get("/api/kommuner/:z/:x/:y", async (c) => {
+  const { x, y, z } = c.req.param();
+  const simplification = parseInt(z) > 10 ? 10 : 100;
+  const sql = `
+    select st_asmvt(tile)
+    from (select kommunenummer,
+                 kommunenavn,
+                 ST_AsMVTGeom(
+                         st_transform(st_simplify(omrade, $4), 3857),
+                         st_tileenvelope($1, $2, $3),
+                         4096, 256, true
+                 ) geometry
+        from kommune
+    ) tile
+    `;
+  const result = await postgresql.query(sql, [z, x, y, simplification]);
+  return c.body(result.rows[0].st_asmvt, 200, {
+    "Content-Type": "application/vnd.mapbox-vector-tile",
+  });
+});
+```
+
 ## Deploying to Heroku
 
 Heroku uses a Git repository as basis for deployment.
