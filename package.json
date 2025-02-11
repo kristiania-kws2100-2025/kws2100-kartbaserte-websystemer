@@ -15,7 +15,8 @@
     "db:fylker2023:download": "download --extract --out tmp https://nedlasting.geonorge.no/geonorge/Basisdata/Fylker2023/PostGIS/Basisdata_0000_Norge_25833_Fylker2023_PostGIS.zip",
     "db:fylker2023:import": "docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Basisdata_0000_Norge_25833_Fylker_PostGIS.sql",
     "db:fylker2023:heroku": "npm run db:fylker2023:download && psql $DATABASE_URL < tmp/Basisdata_0000_Norge_25833_Fylker_PostGIS.sql",
-    "db:heroku": "npm run db:schools:heroku && npm run db:fylker2023:heroku",
+    "db:heroku:postgis": "echo 'create extension postgis' | psql $DATABASE_URL",
+    "db:heroku": "npm run db:heroku:postgis && npm run db:schools:heroku && npm run db:fylker2023:heroku",
     "postinstall": "cd server && npm install",
     "build": "vite build"
   },
