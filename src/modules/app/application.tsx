@@ -26,7 +26,7 @@ const schoolLayer = new VectorLayer({
 });
 
 const map = new Map({
-  view: new View({ center: [10.8, 59.9], zoom: 8 }),
+  view: new View({ center: [11.05, 59.95], zoom: 14 }),
   layers: [osmLayer, municipalityLayer, schoolLayer],
 });
 
