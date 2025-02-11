@@ -1,6 +1,6 @@
 # KWS2100 Geographic Information Web Systems
 
-[![Running website](https://img.shields.io/badge/Course-website-green)](https://kristiania-kws2100-2025.github.io/kws2100-kartbaserte-websystemer/)
+[![Running website](https://img.shields.io/badge/Course-website-green)](https://kws2100-lecture-517b0f6baf73.herokuapp.com/)
 
 Welcome to this course in Geographic Information Systems (GIS) for the web. In this course, we will use popular and
 powerful open-source software to explore geographic information systems on the web. The course will

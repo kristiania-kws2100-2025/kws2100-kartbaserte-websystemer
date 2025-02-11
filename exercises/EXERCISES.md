@@ -542,12 +542,22 @@ site like Google Pages.
       ? new pg.Pool({ connectionString, ssl: { rejectUnauthorized: false } })
       : new pg.Pool({ user: "postgres" });
     ```
-5. Heroku starts your server by running `npm start` at the top level
+5. We need Hono to serve the code built by vite in the `dist` directory. Add the following to `server/server.ts`
+```typescript
+// This should be on the top with the other import statements
+import { serveStatic } from "@hono/node-server/serve-static";
+
+// .. the rest of the code goes here
+
+// Make sure this is after you define "/api/skoler" or it will replace the API definition
+app.use("*", serveStatic({ root: "../dist/" }));
+```
+1. Heroku starts your server by running `npm start` at the top level
    - Update `package.json` at the top level to run `"cd server && npm start"`
    - Update `server/package.json` at the top level to run `"tsx server.ts"`
-6. Make sure `npm start` at the top level works correctly (it should start the server so you can access the React
+   - Update `server/package.json`: Move `tsx` from a `devDependency` to a `dependency` (otherwise, Heroku will not install it when you push your code)
+2. Make sure `npm start` at the top level works correctly (it should start the server so you can access the React
    application at http://localhost:3000)
-7. Create a repository on GitHub and push your code there
 
 ### Create the Heroku app
 
@@ -583,9 +593,17 @@ site like Google Pages.
         "db:heroku:postgis": "echo 'create extension postgis' | psql $DATABASE_URL",
         "db:heroku": "npm run db:heroku:postgis && npm run db:schools:heroku && npm run db:fylker2023:heroku",
     ```
-4. Run the db:heroku script on Heroku's servers to access the database: `heroku run "npm run db:heroku"`
+4. Update the `download-cli` dependency: Move it from the `devDependency` to the `dependency` section
+5. Push your code to Heroku
+6. Run the db:heroku script on Heroku's servers to access the database: `heroku run "npm run db:heroku"`
+7. Your application should now show the schools as well
 
+</details>
+
+## Exercise 7
 #### Vector Tile Layers
+
+<details>
 
 Vector Tile Layers are used to get the client to only fetch the necessary data for displaying what the user sees. We
 can use this to transform the municipality layers that we currently have in the `public/geojson` folder into objects
