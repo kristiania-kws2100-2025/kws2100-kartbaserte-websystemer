@@ -8,7 +8,7 @@ const app = new Hono();
 app.get("/", async (c) => {
   return c.text("Hello somebody");
 });
-app.get("/kws2100-kartbaserte-websystemer/api/skoler", async (c) => {
+app.get("/api/skoler", async (c) => {
   const result = await postgresql.query(
     `
       select skolenavn, fylke.fylkesnummer, st_transform(posisjon, 4326)::json as geometry
