@@ -1,13 +1,11 @@
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
+import { serveStatic } from "@hono/node-server/serve-static";
 import pg from "pg";
 
 const postgresql = new pg.Pool({ user: "postgres" });
 
 const app = new Hono();
-app.get("/", async (c) => {
-  return c.text("Hello somebody");
-});
 app.get("/api/skoler", async (c) => {
   const result = await postgresql.query(
     `
@@ -34,6 +32,9 @@ app.get("/api/skoler", async (c) => {
       }),
     ),
   });
+});
+serveStatic({
+  path: "../dist",
 });
 const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 serve({
