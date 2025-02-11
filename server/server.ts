@@ -9,6 +9,32 @@ const postgresql = connectionString
   : new pg.Pool({ user: "postgres" });
 
 const app = new Hono();
+
+const crs = {
+  type: "name",
+  properties: {
+    name: "urn:ogc:def:crs:OGC:1.3:CRS84",
+  },
+};
+app.get("/api/kommuner", async (c) => {
+  const result = await postgresql.query(
+    `
+    select kommunenummer, kommunenavn, st_transform(omrade, 4326)::json geometry
+    from kommuner_4d2a1f720b994f11baaeae13ee600c8e.kommune
+    `,
+  );
+  return c.json({
+    type: "FeatureCollection",
+    crs,
+    features: result.rows.map(
+      ({ geometry: { coordinates }, ...properties }) => ({
+        type: "Feature",
+        properties,
+        geometry: { type: "MultiPolygon", coordinates },
+      }),
+    ),
+  });
+});
 app.get("/api/skoler", async (c) => {
   const result = await postgresql.query(
     `
@@ -21,12 +47,7 @@ app.get("/api/skoler", async (c) => {
   );
   return c.json({
     type: "FeatureCollection",
-    crs: {
-      type: "name",
-      properties: {
-        name: "urn:ogc:def:crs:OGC:1.3:CRS84",
-      },
-    },
+    crs,
     features: result.rows.map(
       ({ geometry: { coordinates }, ...properties }) => ({
         type: "Feature",
