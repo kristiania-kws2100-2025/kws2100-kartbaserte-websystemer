@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import pg from "pg";
+import { serveStatic } from "@hono/node-server/serve-static";
 
 const postgresql = new pg.Pool({ user: "postgres" });
 
@@ -26,6 +27,7 @@ app.get("/api/kommuner", async (c) => {
     ),
   });
 });
+app.use("*", serveStatic({ root: "../dist" }));
 
 const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 serve({ fetch: app.fetch, port });
