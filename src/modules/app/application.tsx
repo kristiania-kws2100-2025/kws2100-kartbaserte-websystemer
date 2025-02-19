@@ -6,9 +6,9 @@ import { useGeographic } from "ol/proj";
 
 // Styling of OpenLayers components like zoom and pan controls
 import "ol/ol.css";
-import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
-import { GeoJSON } from "ol/format";
+import VectorTileLayer from "ol/layer/VectorTile";
+import VectorTileSource from "ol/source/VectorTile";
+import { MVT } from "ol/format";
 
 // By calling the "useGeographic" function in OpenLayers, we tell that we want coordinates to be in degrees
 //  instead of meters, which is the default. Without this `center: [10.6, 59.9]` brings us to "null island"
@@ -19,14 +19,14 @@ useGeographic();
 const map = new Map({
   // The map will be centered on a position in longitude (x-coordinate, east) and latitude (y-coordinate, north),
   //   with a certain zoom level
-  view: new View({ center: [10.8, 59.9], zoom: 13 }),
+  view: new View({ center: [11.05, 59.95], zoom: 14 }),
   // map tile images will be from the Open Street Map (OSM) tile layer
   layers: [
     new TileLayer({ source: new OSM() }),
-    new VectorLayer({
-      source: new VectorSource({
-        url: "/api/kommuner",
-        format: new GeoJSON(),
+    new VectorTileLayer({
+      source: new VectorTileSource({
+        url: "/api/kommuner/{z}/{x}/{y}",
+        format: new MVT(),
       }),
     }),
   ],
