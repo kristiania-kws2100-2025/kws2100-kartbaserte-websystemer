@@ -313,9 +313,7 @@ services:
 
 ### Importing a dataset into a PostGIS server in docker (for lecture 6)
 
-`docker exec -i /postgis /usr/bin/psql --user postgres norway_data < tmp/Basisdata_0000_Norge_25833_Kommuner_PostGIS.sql`
-
-Downloading and importing data into Postgis can be useful scripts to include in your package.json. Here is an example using schoole:
+Downloading and importing data into Postgis can be useful scripts to include in your package.json. Here is an example using schools:
 
 1. We want to execute "download" as a command with npm: `npm install -D download-cli`
 2. Getting schools involves downloading and then importing the data: `npm pkg set scripts.db:schools="npm run db:schools:download && npm run db:schools:import"`
@@ -323,33 +321,98 @@ Downloading and importing data into Postgis can be useful scripts to include in 
 4. Install into Postgis using docker: `npm pkg set scripts.db:schools:import="docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql"` (replace file name when downloading another data set)
 5. Import the data using `npm run db:schools` (running the command multiple times will result in an error since the data already exists)
 
+**Here is a complete summary for downloading municipalities:**
+
+```shell
+npm install download-cli
+npm pkg set scripts.db:municipalities="npm run db:municipalities:download && npm run db:municipalities:import"
+npm pkg set scripts.db:municipalities:download="download --extract --out tmp/ https://nedlasting.geonorge.no/geonorge/Basisdata/Kommuner/POSTGIS/Basisdata_0000_Norge_25833_Kommuner_POSTGIS.zip"
+npm pkg set scripts.db:municipalities:import="docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Basisdata_0000_Norge_25833_Kommuner_PostGIS.sql"
+npm pkg set scripts.db:municipalities:heroku="npm run db:municipalities:download && psql $DATABASE_URL < tmp/Basisdata_0000_Norge_25833_Kommuner_PostGIS.sql",
+```
 
 ### Creating a PostGIS API in Hono (for lecture 6)
+
+1. `mkdir server`
+2. `cd server`
+3. `npm init -y`
+4. `npm install hono @hono/node-server pg`
+5. `npm install --save-dev tsx @types/pg`
+6. `npm pkg set scripts.dev="tsx --watch server.ts"`
+
+**`server/server.ts`**
 
 ```typescript
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import pg from "pg";
+import { serveStatic } from "@hono/node-server/serve-static";
 
-const postgresql = new pg.Pool({ user: "postgres" });
+// For Heroku
+const connectionString = process.env.DATABASE_URL;
+
+const postgresql = connectionString
+        ? new pg.Pool({ connectionString, ssl: { rejectUnauthorized: false } })
+        : new pg.Pool({ user: "postgres" });
 
 const app = new Hono();
-app.get("/api/fylker", async (c) => {
+app.get("/api/kommuner", async (c) => {
   const result = await postgresql.query(
-    "select fylkesnummer, fylkesnavn, st_transform(st_simplify(omrade, 10), 4326)::json as geometry from fylke",
+    "select kommunenummer, kommunenavn, st_transform(st_simplify(omrade, 100), 4326)::json as geometry from kommune",
   );
   return c.json({
     type: "FeatureCollection",
-    features: result.rows.map(({ fylkesnummer, fylkesnavn, geometry }) => ({
-      type: "Feature",
-      geometry,
-      properties: { fylkesnummer, fylkesnavn },
-    })),
+    crs: {
+      type: "name",
+      properties: {
+        name: "urn:ogc:def:crs:OGC:1.3:CRS84",
+      },
+    },
+    features: result.rows.map(
+      ({ kommunenummer, kommunenavn, geometry: { coordinates } }) => ({
+        type: "Feature",
+        geometry: { type: "MultiPolygon", coordinates },
+        properties: { kommunenummer, kommunenavn },
+      }),
+    ),
   });
 });
+app.use("*", serveStatic({ root: "../dist" }));
 
-serve(app);
+const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+serve({ fetch: app.fetch, port });
 ```
+
+**`vite.config.ts`**
+
+```
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  server: {
+    proxy: {
+      "/api": "http://localhost:3000",
+    },
+  },
+});
+```
+
+#### Deploying to Heroku
+
+Download the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
+
+1. `npm pkg set scripts.start="cd server && npm start"`
+2. `cd server`
+3. `npm pkg set scripts.start="tsx server.ts"`
+4. `heroku apps:create kws2100-reference`
+5. `git push heroku`
+
+#### Setup database on Heroku
+
+1. `heroku addons:create heroku-postgresql`
+2. `npm pkg set scripts.db:heroku:postgis="echo 'create extension postgis' | psql $DATABASE_URL"`
+3. `npm pkg set scripts.db:heroku="npm run db:heroku:postgis && npm run db:municipalities:heroku"`
+4. `heroku run npm run db:heroku`
 
 ### Generating TypeScript definitions from a `.proto` (protobuf) specification (for lecture 10)
 
