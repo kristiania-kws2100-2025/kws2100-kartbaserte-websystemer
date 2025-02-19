@@ -19,13 +19,19 @@ useGeographic();
 const map = new Map({
   // The map will be centered on a position in longitude (x-coordinate, east) and latitude (y-coordinate, north),
   //   with a certain zoom level
-  view: new View({ center: [11.05, 59.95], zoom: 14 }),
+  view: new View({ center: [10.79, 59.895], zoom: 16 }),
   // map tile images will be from the Open Street Map (OSM) tile layer
   layers: [
     new TileLayer({ source: new OSM() }),
     new VectorTileLayer({
       source: new VectorTileSource({
         url: "/api/kommuner/{z}/{x}/{y}",
+        format: new MVT(),
+      }),
+    }),
+    new VectorTileLayer({
+      source: new VectorTileSource({
+        url: "/api/adresser/{z}/{x}/{y}",
         format: new MVT(),
       }),
     }),

@@ -10,6 +10,38 @@ const postgresql = connectionString
   : new pg.Pool({ user: "postgres" });
 
 const app = new Hono();
+app.get("/api/adresser/:z/:x/:y", async (c) => {
+  const { x, y, z } = c.req.param();
+  const zoom = parseInt(z);
+  if (zoom < 16) {
+    const result = await postgresql.query(
+      `SELECT ST_AsMVT(tile, 'layer_name', 4096, 'geom') FROM (SELECT NULL::geometry AS geom WHERE FALSE) AS tile`,
+    );
+    return c.body(result.rows[0].st_asmvt, 200, {
+      "Content-Type": "application/vnd.mapbox-vector-tile",
+    });
+  } else {
+    const sql = `
+        WITH mvtgeom AS
+                 (select adresseid,
+                         adressetekst,
+                         adressenavn,
+                         bokstav,
+                         nummer,
+                         st_asmvtgeom(
+                                 representasjonspunkt_3857, st_tileenvelope($1, $2, $3)
+                         ) as geometry
+                  from vegadresse
+                  where representasjonspunkt_3857 && st_tileenvelope($1, $2, $3))
+        select st_asmvt(mvtgeom.*)
+        from mvtgeom
+    `;
+    const result = await postgresql.query(sql, [z, x, y]);
+    return c.body(result.rows[0].st_asmvt, 200, {
+      "Content-Type": "application/vnd.mapbox-vector-tile",
+    });
+  }
+});
 app.get("/api/kommuner/:z/:x/:y", async (c) => {
   const { x, y, z } = c.req.param();
   const sql =
