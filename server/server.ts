@@ -3,7 +3,11 @@ import { serve } from "@hono/node-server";
 import pg from "pg";
 import { serveStatic } from "@hono/node-server/serve-static";
 
-const postgresql = new pg.Pool({ user: "postgres" });
+const connectionString = process.env.DATABASE_URL;
+
+const postgresql = connectionString
+  ? new pg.Pool({ connectionString, ssl: { rejectUnauthorized: false } })
+  : new pg.Pool({ user: "postgres" });
 
 const app = new Hono();
 app.get("/api/kommuner", async (c) => {
