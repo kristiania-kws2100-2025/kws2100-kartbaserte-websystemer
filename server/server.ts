@@ -12,13 +12,26 @@ const postgresql = connectionString
 const app = new Hono();
 app.get("/api/kommuner/:z/:x/:y", async (c) => {
   const { x, y, z } = c.req.param();
-  const sql = `
+  const sql =
+    parseInt(z) > 10
+      ? `
       WITH mvtgeom AS
                (select kommunenummer,
                        kommunenavn,
                        st_asmvtgeom(
-                               omrade_3857,
-                               st_tileenvelope($1, $2, $3)
+                               omrade_3857, st_tileenvelope($1, $2, $3)
+                       ) as geometry
+                from kommune
+                where omrade_3857 && st_tileenvelope($1, $2, $3))
+      select st_asmvt(mvtgeom.*)
+      from mvtgeom
+      `
+      : `
+      WITH mvtgeom AS
+               (select kommunenummer,
+                       kommunenavn,
+                       st_asmvtgeom(
+                               omrade_3857_simple, st_tileenvelope($1, $2, $3)
                        ) as geometry
                 from kommune
                 where omrade_3857 && st_tileenvelope($1, $2, $3))
