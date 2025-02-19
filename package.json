@@ -21,7 +21,7 @@
     "postinstall": "cd server && npm install --include=dev",
     "db:heroku:postgis": "echo 'create extension postgis' | psql $DATABASE_URL",
     "db:heroku:prepare": "psql $DATABASE_URL < scripts/prepare-data.sql",
-    "db:heroku": "npm run db:heroku:postgis && npm run db:municipalities:heroku && npm run db:heroku:prepare"
+    "db:heroku": "npm run db:heroku:postgis && npm run db:municipalities:heroku && npm run db:addresses:heroku && npm run db:heroku:prepare"
   },
   "repository": {
     "type": "git",
