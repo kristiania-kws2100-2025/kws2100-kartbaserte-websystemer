@@ -240,8 +240,9 @@ jobs:
       - uses: actions/deploy-pages@v4
 
     permissions:
-      id-token: write
-      pages: write
+       id-token: write # to verify the deployment originates from an appropriate source
+       pages: write # to deploy to Pages
+       contents: read # to checkout private repositories
 ```
 </details>
 
