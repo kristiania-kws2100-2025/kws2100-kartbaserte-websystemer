@@ -17,11 +17,11 @@ app.get("/api/kommuner/:z/:x/:y", async (c) => {
                (select kommunenummer,
                        kommunenavn,
                        st_asmvtgeom(
-                               st_transform(omrade, 3857),
+                               omrade_3857,
                                st_tileenvelope($1, $2, $3)
                        ) as geometry
-                from kommuner_4d2a1f720b994f11baaeae13ee600c8e.kommune
-                where st_transform(omrade, 3857) && st_tileenvelope($1, $2, $3))
+                from kommune
+                where omrade_3857 && st_tileenvelope($1, $2, $3))
       select st_asmvt(mvtgeom.*)
       from mvtgeom
   `;
