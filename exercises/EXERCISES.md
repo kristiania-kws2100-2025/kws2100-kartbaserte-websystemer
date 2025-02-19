@@ -484,7 +484,7 @@ for hints
 ## Exercise 6
 ### Deploy your map application to Heroku
 
-<details open>
+<details>
 
 This exercise has two parts: First we will deploy our server on Heroku. Second, we will use tiled vector layers to avoid
 fetching unnecessary data.
@@ -603,7 +603,7 @@ app.use("*", serveStatic({ root: "../dist/" }));
 ## Exercise 7
 #### Vector Tile Layers
 
-<details>
+<details open>
 
 Vector Tile Layers are used to get the client to only fetch the necessary data for displaying what the user sees. We
 can use this to transform the municipality layers that we currently have in the `public/geojson` folder into objects
@@ -654,9 +654,13 @@ in the database, where we simplified data when the user zooms out and exact data
     ```
 The tiles will now use little data at all zoom levels, but when you zoom in, the simplified polygons will be replaced by
 precise ones. Notice that the tiles will load slowly as Node doesn't support multiple requests at the same time.
-
 (NodeJs isn't ideal for a map backend server for this reason, but it's simpler to work with fewer technologies)
 
 Make sure you deploy your code to Heroku!
+
+To speed it up, can you find a way to preprocess the transformations while importing the data?
+
+Can you implement a vector tile layer that shows [addresses](https://kartkatalog.geonorge.no/metadata/matrikkelen-vegadresse/e628729b-90fc-4f32-b018-655e045c541d)
+when the zoom level is 15 or higher?
 
 </details>

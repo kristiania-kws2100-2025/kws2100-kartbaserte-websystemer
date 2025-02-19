@@ -90,33 +90,35 @@ In this lecture, we will provide our own datasource by importing datasets from G
 We will publish a basic React + Hono application with TypeScript and Vite to Heroku and add a map to the application.
 This lets us deploy with a geographic database
 
-We will also look at how to use the fact that we get data from the database to optimize how much data is sent to the
-client.
 
-### Lecture 7: Vector layers as data AND assignment
+### Lecture 7: Vector tile layers as data AND assignment
 
 [![Lecture 7 code](https://img.shields.io/badge/Lecture_7-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/07)
 [![Lecture 7 reference](https://img.shields.io/badge/Lecture_7-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/07)
+[![Lecture 7 exercise](https://img.shields.io/badge/Lecture_7-exercise-pink)](./exercises/EXERCISES.md#exercise-7)
 
-In this lecture, we will continue out exploration of vector layers. We will start with an "empty" map and add
-a [polygon feature layer](https://www.eriksmistad.no/norges-fylker-og-kommuner-i-geojson-format/) with an aside that
-stays in sync with the visible object on the map. We will then add more feature layers
-from [international](https://github.com/datasets/geo-countries) and [Norwegian](https://kart.dsb.no/) sources.
-
-- Starting point: Empty map
-- Add kommune layer with checkbox
-- Add kommune aside with list of kommune
-- Understanding GeoJSON properties
-- Limit kommune aside to current view
-- Add fylker (why are polygons `number[][][]`)
-- Highlight active features in map
-- Add layers with countries and stations (points)
-
-### Lecture 9: Vector Tile Layers
+We will look at how to use the fact that we get data from the database to optimize how much data is sent to the
+client.
 
 - [Administrative enheter - kommuner](https://kartkatalog.geonorge.no/metadata/administrative-enheter-kommuner/041f1e6e-bdbc-4091-b48f-8a5990f3cc5b)
 - [Statistiske enheter - grunnkretser](https://kartkatalog.geonorge.no/metadata/statistiske-enheter-grunnkretser/51d279f8-e2be-4f5e-9f72-1a53f7535ec1)
 - [Matrikkelen - adresse](https://kartkatalog.geonorge.no/metadata/matrikkelen-adresse/f7df7a18-b30f-4745-bd64-d0863812350c)
+
+### Lecture 8: Drawing on the map
+
+[![Lecture 8 code](https://img.shields.io/badge/Lecture_8-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/08)
+[![Lecture 8 reference](https://img.shields.io/badge/Lecture_8-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/08)
+[![Lecture 8 exercise](https://img.shields.io/badge/Lecture_8-exercise-pink)](./exercises/EXERCISES.md#exercise-8)
+
+
+
+### Lecture 9: Exploring vector objects
+
+[![Lecture 9 code](https://img.shields.io/badge/Lecture_9-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/09)
+[![Lecture 9 reference](https://img.shields.io/badge/Lecture_9-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/09)
+[![Lecture 9 exercise](https://img.shields.io/badge/Lecture_9-exercise-pink)](./exercises/EXERCISES.md#exercise-9)
+
+
 
 ### Lecture 10: Points that move
 
@@ -149,7 +151,7 @@ not be given.
 [![Lecture 11 code](https://img.shields.io/badge/Lecture_11-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/11)
 [![Lecture 11 reference](https://img.shields.io/badge/Lecture_11-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/11)
 
-In this lecture, we will create a map where we can add out own points and polygons by [drawing with the mouse]().
+In this lecture, we will create a map where we can add out own points and polygons by [drawing with the mouse](https://openlayers.org/en/latest/examples/draw-features-style.html).
 
 ### Exercise:
 
