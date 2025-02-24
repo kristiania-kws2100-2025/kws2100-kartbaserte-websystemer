@@ -110,7 +110,7 @@ client.
 [![Lecture 8 reference](https://img.shields.io/badge/Lecture_8-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/08)
 [![Lecture 8 exercise](https://img.shields.io/badge/Lecture_8-exercise-pink)](./exercises/EXERCISES.md#exercise-8)
 
-
+In this lecture, we will create a map where we can add out own points and polygons by [drawing with the mouse](https://openlayers.org/en/latest/examples/draw-features-style.html).
 
 ### Lecture 9: Exploring vector objects
 
@@ -118,6 +118,7 @@ client.
 [![Lecture 9 reference](https://img.shields.io/badge/Lecture_9-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/09)
 [![Lecture 9 exercise](https://img.shields.io/badge/Lecture_9-exercise-pink)](./exercises/EXERCISES.md#exercise-9)
 
+In this lecture, we will show how to use vector features as React objects and explore styling a bit more
 
 
 ### Lecture 10: Points that move
@@ -146,12 +147,11 @@ something that OpenLayers will be happy to consume.
 This week's exercise will be to recreate the map from the lecture. Due to time constraints, a detailed description will
 not be given.
 
-### Lecture 11: Drawing on the map
+### Lecture 11: More movement
 
 [![Lecture 11 code](https://img.shields.io/badge/Lecture_11-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/11)
 [![Lecture 11 reference](https://img.shields.io/badge/Lecture_11-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/11)
 
-In this lecture, we will create a map where we can add out own points and polygons by [drawing with the mouse](https://openlayers.org/en/latest/examples/draw-features-style.html).
 
 ### Exercise:
 
