@@ -13,8 +13,9 @@ const postgresql = connectionString
 
 app.get("/api/kommuner/:z/:x/:y", async (c) => {
   const { x, y, z } = c.req.param();
-  const query = await postgresql.query(
-    `
+  if (parseInt(z) > 14) {
+    const query = await postgresql.query(
+      `
      with mvt as (select kommunenummer,
                          kommunenavn,
                          st_asmvtgeom(
@@ -26,11 +27,31 @@ app.get("/api/kommuner/:z/:x/:y", async (c) => {
     )
      select st_asmvt(mvt.*) from mvt
   `,
-    [z, x, y],
-  );
-  return c.body(query.rows[0].st_asmvt, 200, {
-    "Content-Type": "application/vnd.mapbox-vector-tile",
-  });
+      [z, x, y],
+    );
+    return c.body(query.rows[0].st_asmvt, 200, {
+      "Content-Type": "application/vnd.mapbox-vector-tile",
+    });
+  } else {
+    const query = await postgresql.query(
+      `
+     with mvt as (select kommunenummer,
+                         kommunenavn,
+                         st_asmvtgeom(
+                                 st_simplify(omrade_3857, 100),
+                                 st_tileenvelope($1, $2, $3)
+                         ) geometry
+                  from public.kommune
+                  where omrade_3857 && st_tileenvelope($1, $2, $3)
+    )
+     select st_asmvt(mvt.*) from mvt
+  `,
+      [z, x, y],
+    );
+    return c.body(query.rows[0].st_asmvt, 200, {
+      "Content-Type": "application/vnd.mapbox-vector-tile",
+    });
+  }
 });
 app.get("/api/kommuner", async (c) => {
   const query = await postgresql.query(`
