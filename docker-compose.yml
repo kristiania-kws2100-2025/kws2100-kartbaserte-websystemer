@@ -1,0 +1,9 @@
+services:
+  postgis:
+    container_name: postgis
+    image: postgis/postgis
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+    ports:
+      - "5432:5432"
