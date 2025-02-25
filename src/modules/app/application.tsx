@@ -19,7 +19,7 @@ useGeographic();
 const map = new Map({
   // The map will be centered on a position in longitude (x-coordinate, east) and latitude (y-coordinate, north),
   //   with a certain zoom level
-  view: new View({ center: [10.79, 59.895], zoom: 16 }),
+  view: new View({ center: [10.765, 59.915], zoom: 17 }),
   // map tile images will be from the Open Street Map (OSM) tile layer
   layers: [
     new TileLayer({ source: new OSM() }),
