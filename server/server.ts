@@ -13,7 +13,10 @@ const postgresql = connectionString
 
 app.get("/api/kommuner", async (c) => {
   const query = await postgresql.query(`
-      select kommunenummer, kommunenavn, st_transform(omrade, 4326)::json geometry
+      select
+          kommunenummer,
+          kommunenavn,
+          st_transform(st_simplify(omrade, 100), 4326)::json geometry
       from kommuner_4d2a1f720b994f11baaeae13ee600c8e.kommune
   `);
 
