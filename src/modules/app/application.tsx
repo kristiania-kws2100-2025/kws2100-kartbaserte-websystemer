@@ -23,6 +23,12 @@ const map = new Map({
     }),
     new VectorTileLayer({
       source: new VectorTileSource({
+        url: "/api/schools/{z}/{x}/{y}",
+        format: new MVT(),
+      }),
+    }),
+    new VectorTileLayer({
+      source: new VectorTileSource({
         url: "/api/vegadresse/{z}/{x}/{y}",
         format: new MVT(),
       }),
