@@ -17,13 +17,15 @@ const schoolLayer = new VectorTileLayer({
     url: "/api/schools/{z}/{x}/{y}",
     format: new MVT(),
   }),
-  style: (feature) =>
+  style: (feature) => [
     new Style({
       text: new Text({
         text: feature.getProperties().skolenavn,
         offsetY: 20,
         font: "15px sans-serif",
       }),
+    }),
+    new Style({
       image: new Circle({
         radius: 8 + feature.getProperties().antallelever / 80,
         stroke: new Stroke({ color: "black", width: 3 }),
@@ -35,6 +37,7 @@ const schoolLayer = new VectorTileLayer({
         }),
       }),
     }),
+  ],
 });
 const map = new Map({
   view: new View({ center: [10.755, 59.915], zoom: 14 }),
