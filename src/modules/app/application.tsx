@@ -8,11 +8,25 @@ import "ol/ol.css";
 import { MVT } from "ol/format";
 import VectorTileLayer from "ol/layer/VectorTile";
 import VectorTileSource from "ol/source/VectorTile";
+import { Circle, Fill, Stroke, Style } from "ol/style";
 
 useGeographic();
 
+const schoolLayer = new VectorTileLayer({
+  source: new VectorTileSource({
+    url: "/api/schools/{z}/{x}/{y}",
+    format: new MVT(),
+  }),
+  style: new Style({
+    image: new Circle({
+      radius: 10,
+      stroke: new Stroke({ color: "black", width: 3 }),
+      fill: new Fill({ color: "blue" }),
+    }),
+  }),
+});
 const map = new Map({
-  view: new View({ center: [10.755, 59.915], zoom: 16 }),
+  view: new View({ center: [10.755, 59.915], zoom: 14 }),
   layers: [
     new TileLayer({ source: new OSM() }),
     new VectorTileLayer({
@@ -21,12 +35,7 @@ const map = new Map({
         format: new MVT(),
       }),
     }),
-    new VectorTileLayer({
-      source: new VectorTileSource({
-        url: "/api/schools/{z}/{x}/{y}",
-        format: new MVT(),
-      }),
-    }),
+    schoolLayer,
     new VectorTileLayer({
       source: new VectorTileSource({
         url: "/api/vegadresse/{z}/{x}/{y}",
