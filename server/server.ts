@@ -32,6 +32,28 @@ app.get("/api/kommuner/:z/:x/:y", async (c) => {
     "Content-Type": "application/vnd.mapbox-vector-tile",
   });
 });
+app.get("/api/vegadresse/:z/:x/:y", async (c) => {
+  const { x, y, z } = c.req.param();
+  const query = await postgresql.query(
+    `
+     with mvt as (select adressetekst,
+                         adresseid,
+                         st_asmvtgeom(
+                                 representasjonspunkt_3857,
+                                 st_tileenvelope($1, $2, $3)
+                         ) geometry
+                  from vegadresse
+                  where representasjonspunkt_3857 && st_tileenvelope($1, $2, $3)
+    )
+     select st_asmvt(mvt.*) from mvt
+  `,
+    [z, x, y],
+  );
+  return c.body(query.rows[0].st_asmvt, 200, {
+    "Content-Type": "application/vnd.mapbox-vector-tile",
+  });
+});
+
 const crs = {
   type: "name",
   properties: {

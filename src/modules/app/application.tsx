@@ -12,12 +12,18 @@ import VectorTileSource from "ol/source/VectorTile";
 useGeographic();
 
 const map = new Map({
-  view: new View({ center: [11.05, 59.95], zoom: 14 }),
+  view: new View({ center: [10.755, 59.915], zoom: 16 }),
   layers: [
     new TileLayer({ source: new OSM() }),
     new VectorTileLayer({
       source: new VectorTileSource({
         url: "/api/kommuner/{z}/{x}/{y}",
+        format: new MVT(),
+      }),
+    }),
+    new VectorTileLayer({
+      source: new VectorTileSource({
+        url: "/api/vegadresse/{z}/{x}/{y}",
         format: new MVT(),
       }),
     }),
