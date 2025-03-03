@@ -17,3 +17,4 @@ select
     representasjonspunkt,
     st_transform(representasjonspunkt, 3857) as representasjonspunkt_3857
 from matrikkelenadresse_49f3a8437d6443de8b4e042d78436756.vegadresse;
+create index vegadresse_rep_3857_index on vegadresse using gist(representasjonspunkt_3857);
