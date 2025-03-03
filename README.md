@@ -104,21 +104,24 @@ client.
 - [Statistiske enheter - grunnkretser](https://kartkatalog.geonorge.no/metadata/statistiske-enheter-grunnkretser/51d279f8-e2be-4f5e-9f72-1a53f7535ec1)
 - [Matrikkelen - adresse](https://kartkatalog.geonorge.no/metadata/matrikkelen-adresse/f7df7a18-b30f-4745-bd64-d0863812350c)
 
-### Lecture 8: Drawing on the map
+### Lecture 8: Exploring vector objects
 
 [![Lecture 8 code](https://img.shields.io/badge/Lecture_8-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/08)
 [![Lecture 8 reference](https://img.shields.io/badge/Lecture_8-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/08)
 [![Lecture 8 exercise](https://img.shields.io/badge/Lecture_8-exercise-pink)](./exercises/EXERCISES.md#exercise-8)
 
-In this lecture, we will create a map where we can add out own points and polygons by [drawing with the mouse](https://openlayers.org/en/latest/examples/draw-features-style.html).
+In the last lecture, we worked with optimizing vector tile maps
 
-### Lecture 9: Exploring vector objects
+In this lecture, we will show how to use vector features as React objects and explore styling a bit more
+
+
+### Lecture 9: Drawing on the map
 
 [![Lecture 9 code](https://img.shields.io/badge/Lecture_9-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/09)
 [![Lecture 9 reference](https://img.shields.io/badge/Lecture_9-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/09)
 [![Lecture 9 exercise](https://img.shields.io/badge/Lecture_9-exercise-pink)](./exercises/EXERCISES.md#exercise-9)
 
-In this lecture, we will show how to use vector features as React objects and explore styling a bit more
+In this lecture, we will create a map where we can add out own points and polygons by [drawing with the mouse](https://openlayers.org/en/latest/examples/draw-features-style.html).
 
 
 ### Lecture 10: Points that move
