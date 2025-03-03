@@ -34,6 +34,9 @@ app.get("/api/kommuner/:z/:x/:y", async (c) => {
 });
 app.get("/api/vegadresse/:z/:x/:y", async (c) => {
   const { x, y, z } = c.req.param();
+  if (parseInt(z) < 16) {
+    return c.body(null, 204);
+  }
   const query = await postgresql.query(
     `
      with mvt as (select adressetekst,
