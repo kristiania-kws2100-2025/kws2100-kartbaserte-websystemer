@@ -23,3 +23,13 @@ FROM matrikkelenvegadresse_c817ee4e6249443d8bc14426eb6cbab0.vegadresse;
 create index vegadresse_representasjonspunkt on vegadresse
 using gist(representasjonspunkt_3857);
 
+drop table if exists grunnskole;
+create table grunnskole
+as
+select st_transform(posisjon, 3857) posisjon_3857,
+       skolenavn,
+       eierforhold,
+       antallelever
+from grunnskoler_3697913259634315b061b324a3f2cf59.grunnskole;
+create index grunnskole_posisjon on grunnskole
+using gist(posisjon_3857);

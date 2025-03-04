@@ -15,6 +15,8 @@
     "db:municipalities:heroku": "npm run db:municipalities:download && psql $DATABASE_URL < tmp/Basisdata_0000_Norge_25833_Kommuner_PostGIS.sql",
     "db:addresses:download": "download --extract --out tmp/ https://nedlasting.geonorge.no/geonorge/Basisdata/MatrikkelenVegadresse/PostGIS/Basisdata_0000_Norge_25833_MatrikkelenVegadresse_PostGIS.zip",
     "db:addresses:import": "npm run psql:docker < tmp/Basisdata_0000_Norge_25833_MatrikkelenVegadresse_PostGIS.sql",
+    "db:schools:download": "download --extract --out tmp/ https://nedlasting.geonorge.no/geonorge/Befolkning/Grunnskoler/PostGIS/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.zip",
+    "db:schools:import": "npm run psql:docker < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql",
     "psql:docker": "docker exec -i /postgis /usr/bin/psql --user postgres",
     "db:dev:prepare": "npm run psql:docker < scripts/prepare-database.sql",
     "db:heroku:prepare": "psql $DATABASE_URL < scripts/prepare-database.sql"
