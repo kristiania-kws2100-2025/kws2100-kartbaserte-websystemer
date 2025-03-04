@@ -11,6 +11,32 @@ const postgresql = connectionString
   ? new pg.Pool({ connectionString, ssl: { rejectUnauthorized: false } })
   : new pg.Pool({ user: "postgres" });
 
+app.get("/api/adresser/:z/:x/:y", async (c) => {
+  const { x, y, z } = c.req.param();
+  if (parseInt(z) < 16) {
+    return c.body(null, 204);
+  }
+
+  const query = await postgresql.query(
+    `
+        with mvt as (select 
+                            st_asmvtgeom(
+                                    representasjonspunkt_3857,
+                                    st_tileenvelope($1, $2, $3)
+                            ) geometry,
+                         adressenavn, nummer, bokstav, adressetekst, postnummer, poststed
+                     from public.vegadresse
+                     where representasjonspunkt_3857 && st_tileenvelope($1, $2, $3)
+        )
+   select st_asmvt(mvt.*) from mvt
+`,
+    [z, x, y],
+  );
+  return c.body(query.rows[0].st_asmvt, 200, {
+    "Content-Type": "application/vnd.mapbox-vector-tile",
+  });
+});
+
 app.get("/api/kommuner/:z/:x/:y", async (c) => {
   const { x, y, z } = c.req.param();
   const query = await postgresql.query(

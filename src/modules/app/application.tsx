@@ -21,6 +21,12 @@ const map = new Map({
         format: new MVT(),
       }),
     }),
+    new VectorTileLayer({
+      source: new VectorTileSource({
+        url: "/api/adresser/{z}/{x}/{y}",
+        format: new MVT(),
+      }),
+    }),
   ],
 });
 
