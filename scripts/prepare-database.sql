@@ -20,4 +20,6 @@ SELECT
     postnummer,
     poststed
 FROM matrikkelenvegadresse_c817ee4e6249443d8bc14426eb6cbab0.vegadresse;
+create index vegadresse_representasjonspunkt on vegadresse
+using gist(representasjonspunkt_3857);
 
