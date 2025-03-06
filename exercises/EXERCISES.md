@@ -601,9 +601,9 @@ app.use("*", serveStatic({ root: "../dist/" }));
 </details>
 
 ## Exercise 7
-#### Vector Tile Layers
+### Vector Tile Layers
 
-<details open>
+<details>
 
 Vector Tile Layers are used to get the client to only fetch the necessary data for displaying what the user sees. We
 can use this to transform the municipality layers that we currently have in the `public/geojson` folder into objects
