@@ -17,9 +17,10 @@ useGeographic();
 
 const geoJSON = new GeoJSON();
 const drawingSource = new VectorSource();
-drawingSource.addFeatures(
-  geoJSON.readFeatures(localStorage.getItem("features")),
-);
+const savedFeatures = localStorage.getItem("features");
+if (savedFeatures) {
+  drawingSource.addFeatures(geoJSON.readFeatures(savedFeatures));
+}
 
 const map = new Map({
   // The map will be centered on a position in longitude (x-coordinate, east) and latitude (y-coordinate, north),
