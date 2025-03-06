@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { Map, View } from "ol";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
@@ -26,12 +26,15 @@ const map = new Map({
 });
 
 function DrawPointButton({ map, source }: { map: Map; source: VectorSource }) {
+  const draw = useMemo(() => new Draw({ type: "Point", source }), [source]);
+
   function handleClick() {
-    map.addInteraction(new Draw({ type: "Point", source }));
+    map.addInteraction(draw);
   }
 
   function handleAddFeature() {
     console.log("feature added");
+    map.removeInteraction(draw);
   }
 
   useEffect(() => {
