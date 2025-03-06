@@ -664,3 +664,31 @@ Can you implement a vector tile layer that shows [addresses](https://kartkatalog
 when the zoom level is 15 or higher?
 
 </details>
+
+## Exercise 8
+### Assignment with GitHub classroom
+
+<details open>
+
+In order to complete the assignment, you need to create a repository with the invitation link to GitHub classroom. If you don't use this link, your repository will either be public or the teacher will not have access to review the code. Neither option is possible.
+
+1. One of the team members should the link in the assignment to generate a repository which will live under https://github.com/kristiania-kws2100-2025
+2. Go to your repository on GitHub in the web browser. Under Settings > Collaborators, add your team members as Admin and your reviewers as Reader
+3. All team members should go the repository front page. Press the green Code button and copy the URL
+4. In IntelliJ, select File > New > Project from version control... and paste the GitHub URL
+5. Go thought the [setup steps in the reference description](../README.md#creating-a-react-application)
+6. Commit and push you application
+7. Make sure all the team members can work on the application
+
+### ⚠️⚠️⚠️ Are you unable to clone the repository using IntelliJ?
+
+IntelliJ's function "Log In via GitHub..." is broken. Instead you must use the token function.
+
+1. Click "Use token"
+2. In the new dialog that comes up, select "Generate..."
+3. This will bring up a new browser tab. You can leave the suggested choices, but the "Note" field must be unique so you must change it the second time. You may want to change Expiration
+4. Copy the generated token (using the copy button in the browser) and paste it into the Token field in IntelliJ
+
+You should not be able to clone, push and pull to the GitHub repository
+
+</details>
