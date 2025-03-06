@@ -9,7 +9,7 @@
     "build": "vite build",
     "postinstall": "cd server && npm install --include=dev",
     "start": "cd server && npm start",
-    "db:dev": "npm run db:municipalities:dev && npm run db:addresses:dev && npm run db:prepare",
+    "db:dev": "npm run db:municipalities:dev && npm run db:addresses:dev && npm run db:schools:dev && npm run db:prepare",
     "psql:dev": "docker exec -i /postgis /usr/bin/psql --user postgres",
     "db:prepare": "npm run psql:dev < scripts/prepare-database.sql",
     "db:addresses:download": "download --extract --out tmp/ https://nedlasting.geonorge.no/geonorge/Basisdata/MatrikkelenAdresse/PostGIS/Basisdata_0000_Norge_25833_MatrikkelenAdresse_PostGIS.zip",
