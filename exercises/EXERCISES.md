@@ -692,3 +692,33 @@ IntelliJ's function "Log In via GitHub..." is broken. Instead you must use the t
 You should not be able to clone, push and pull to the GitHub repository
 
 </details>
+
+## Exercise 9
+### Drawing points on the Map
+
+<details>
+
+The goal of this exercise is to draw point features on the map. The points should be saved to localStorage so they remain when the user refreshes. Optionally, you can add a way to set properties on the features and make the drawing style reflect these properties.
+
+Preparation:
+
+1. Create a new repository on GitHub pages
+2. Clone the repository to a new IntelliJ project
+3. Create a React Application with OpenLayers and deployment to GitHub pages with GitHub Actions
+
+Drawing points on the map
+
+1. Create a button with the label "Draw point". When the user clicks the button, there should be a point on the map where the user clicked
+   - Hint: When the user presses the button, you need to call `map.addInteraction(new Draw())`
+   - Hint: `new Draw()` takes as an argument a vector source. To see the points the map must contain a layer with this source
+   - Hint: `vectorSource.on("addfeature")` can be used to call `map.removeInteraction()` when the user has clicked
+2. Add a style to the drawing layer
+3. Save the points to localStorage when something is updated
+   - Hint: `vectorSource.on("change")` can be used to trigger behavior when something changes
+   - Hint: `new GeoJSON().writeFeatures(vectorSource.getFeatures())` can be used turn the features to GeoJSON
+   - Hint: `vectorSource.addFeatures(new GeoJSON().readFeature())` can be used turn textual features into feature objects
+4. Show a dialog when the user adds a feature to let the user change feature properties
+   - Hint: Call `feature.setProperties({ name: name })` to change the properties in an `useEffect`. This renders the layer again and triggers the vectorSource `"change"` event
+5. Optional: Clicking on a feature in the map can bring up a dialog to change the properties again or remove the feature from the layer
+
+</details>

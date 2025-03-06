@@ -167,26 +167,32 @@ Experiment with different type of objects as well. Try and save the objects to `
 
 ### Creating a React application
 
+This list of commands:
+
+1. Creates a `package.json`-file
+2. Installs [Vite](https://vite.dev) which transforms `index.html` + `.tsx`-files to JavaScript
+3. Installs [TypeScript](https://www.typescriptlang.org/) to check the correctness of your code
+4. Installs [Prettier](https://prettier.io/) to check the coding style of your code
+5. Installs [Husky](https://typicode.github.io/husky/) which runs checks before each login
+
 ```shell
 npm init -y
 npm install -D vite
 npm install react react-dom
 npm pkg set scripts.dev=vite
+npm pkg set scripts.build="vite build"
 
-npm install -D prettier
-npm pkg set scripts.test="prettier --check ."
-npx prettier --write .
-
-npm i -D typescript
+npm install -D typescript
 npm install -D @types/react @types/react-dom
 npx tsc --init --jsx react
-npx prettier --write tsconfig.json
+
+npm install -D prettier
+npx prettier --write .
 npm pkg set scripts.test="tsc --noEmit && prettier --check ."
 
 npm install -D husky
 npx husky init
 
-npm pkg set scripts.build="vite build"
 ```
 
 #### Minimal `index.html`
@@ -209,48 +215,10 @@ import { createRoot } from "react-dom/client";
 createRoot(document.getElementById("root")).render(<h1>Hello React</h1>);
 ```
 
-#### Minimal `vite.config.ts`
+#### Commiting to Git
 
-```ts
-import { defineConfig } from "vite";
-
-export default defineConfig({
-  base: "/kws2100-kartbaserte-websystemer",
-});
-
-```
-
-#### Minimal `.github/workflows/publish-to-github-pages.yml`
-
-<details>
-
-```yml
-on:
-  push:
-    branches: ["main", "reference/*", "lecture/*"]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 22.x, cache: "npm" }
-      - run: npm ci
-      - run: npm run build
-      - run: npm test
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist
-      - uses: actions/deploy-pages@v4
-
-    permissions:
-       id-token: write # to verify the deployment originates from an appropriate source
-       pages: write # to deploy to Pages
-       contents: read # to checkout private repositories
-```
-</details>
-
+1. Create a `.gitignore`-file that excludes `node_modules`, `dist` and `.idea`
+2. Make sure all files are formatted with Prettier
 
 ### Creating a OpenLayers map in React
 
@@ -301,8 +269,55 @@ export function Application() {
 
 Update `src/main.tsx` to render `<Application />` from `src/modules/app/application.tsx` instead of `<h1>Hello React</h1>`.
 
+## Deployment to GitHub Pages
 
-### Starting PostGIS with Docker Compose (for lecture 6)
+#### Minimal `vite.config.ts`
+
+```ts
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  base: "/kws2100-kartbaserte-websystemer",
+});
+
+```
+
+#### Minimal `.github/workflows/publish-to-github-pages.yml`
+
+<details>
+
+```yml
+on:
+  push:
+    branches: ["main", "reference/*", "lecture/*"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22.x, cache: "npm" }
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+      - uses: actions/deploy-pages@v4
+
+    permissions:
+       id-token: write # to verify the deployment originates from an appropriate source
+       pages: write # to deploy to Pages
+       contents: read # to checkout private repositories
+```
+</details>
+
+## Implementing layer API services with a Hono server and PostGis database
+
+### Starting [PostGIS](https://postgis.net/) with Docker Compose
+
+To use this file, you need to install [Docker Desktop](https://www.docker.com/products/docker-desktop/), which lets you run local versions of all kinds of software on your computer.
 
 ```yaml
 services:
@@ -316,7 +331,11 @@ services:
          - "5432:5432"
 ```
 
-### Importing a dataset into a PostGIS server in docker (for lecture 6)
+Start the Postgis server in Docker by running `docker compose up` (or `docker compose up --detach`). You can now connect to Postgis using for example the IntelliJ database view and adding a new PostgreSQL Data Source.
+
+### Importing a dataset into a PostGIS server in docker
+
+[Full example](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/07)
 
 Downloading and importing data into Postgis can be useful scripts to include in your package.json. Here is an example using schools:
 
@@ -336,7 +355,7 @@ npm pkg set scripts.db:municipalities:import="docker exec -i /postgis /usr/bin/p
 npm pkg set scripts.db:municipalities:heroku="npm run db:municipalities:download && psql $DATABASE_URL < tmp/Basisdata_0000_Norge_25833_Kommuner_PostGIS.sql",
 ```
 
-### Creating a PostGIS API in Hono (for lecture 6)
+### Creating a PostGIS API in Hono
 
 1. `mkdir server`
 2. `cd server`
@@ -418,6 +437,8 @@ Download the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
 2. `npm pkg set scripts.db:heroku:postgis="echo 'create extension postgis' | psql $DATABASE_URL"`
 3. `npm pkg set scripts.db:heroku="npm run db:heroku:postgis && npm run db:municipalities:heroku"`
 4. `heroku run npm run db:heroku`
+
+## Points that move
 
 ### Generating TypeScript definitions from a `.proto` (protobuf) specification (for lecture 10)
 
