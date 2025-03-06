@@ -1,5 +1,5 @@
-import React, { ReactNode, useEffect, useMemo, useRef } from "react";
-import { Map, View } from "ol";
+import React, { ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { Feature, Map, View } from "ol";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
 import { useGeographic } from "ol/proj";
@@ -7,9 +7,11 @@ import { useGeographic } from "ol/proj";
 // Styling of OpenLayers components like zoom and pan controls
 import "ol/ol.css";
 import { Draw } from "ol/interaction";
-import VectorSource from "ol/source/Vector";
+import VectorSource, { VectorSourceEvent } from "ol/source/Vector";
 import VectorLayer from "ol/layer/Vector";
 import { GeoJSON } from "ol/format";
+import { Circle, Fill, Stroke, Style } from "ol/style";
+import { FeatureLike } from "ol/Feature";
 
 // By calling the "useGeographic" function in OpenLayers, we tell that we want coordinates to be in degrees
 //  instead of meters, which is the default. Without this `center: [10.6, 59.9]` brings us to "null island"
@@ -28,9 +30,42 @@ const map = new Map({
   view: new View({ center: [10.8, 59.9], zoom: 13 }),
   layers: [
     new TileLayer({ source: new OSM() }),
-    new VectorLayer({ source: drawingSource }),
+    new VectorLayer({
+      source: drawingSource,
+      style: (feature: FeatureLike) =>
+        new Style({
+          image: new Circle({
+            radius: 10,
+            stroke: new Stroke({ color: "white", width: 3 }),
+            fill: new Fill({ color: feature.getProperties().color || "blue" }),
+          }),
+        }),
+    }),
   ],
 });
+
+function DrawingFeatureForm({ feature }: { feature: Feature }) {
+  const [name, setName] = useState(feature.getProperties().name || "");
+  useEffect(() => feature.setProperties({ name }), [name]);
+  const [color, setColor] = useState(feature.getProperties().color || "");
+  useEffect(() => feature.setProperties({ color }), [color]);
+  return (
+    <>
+      <h2>Adding feature</h2>
+      <div>
+        Name: <input value={name} onChange={(e) => setName(e.target.value)} />
+      </div>
+      <div>
+        Color:{" "}
+        <input
+          type={"color"}
+          value={color}
+          onChange={(e) => setColor(e.target.value)}
+        />
+      </div>
+    </>
+  );
+}
 
 function DrawFeatureButton({
   children,
@@ -44,9 +79,13 @@ function DrawFeatureButton({
   type: "Point" | "Polygon" | "LineString";
 }) {
   const draw = useMemo(() => new Draw({ type, source }), [source]);
+  const dialogRef = useRef<HTMLDialogElement | null>(null);
+  const [currentFeature, setCurrentFeature] = useState<Feature>();
 
-  function handleAddFeature() {
+  function handleAddFeature(event: VectorSourceEvent) {
     map.removeInteraction(draw);
+    setCurrentFeature(event.feature);
+    dialogRef.current?.showModal();
   }
 
   useEffect(() => {
@@ -54,7 +93,15 @@ function DrawFeatureButton({
     return () => source.un("addfeature", handleAddFeature);
   }, [source]);
 
-  return <button onClick={() => map.addInteraction(draw)}>{children}</button>;
+  return (
+    <button onClick={() => map.addInteraction(draw)}>
+      <dialog ref={dialogRef}>
+        {currentFeature && <DrawingFeatureForm feature={currentFeature} />}
+        <button onClick={() => dialogRef.current?.close()}>Submit</button>
+      </dialog>
+      {children}
+    </button>
+  );
 }
 
 // A functional React component
@@ -67,15 +114,16 @@ export function Application() {
     map.setTarget(mapRef.current!);
   }, []);
 
-  function handleAddFeature() {
+  function handleChangeDrawingFeatures() {
     localStorage.setItem(
       "features",
       geoJSON.writeFeatures(drawingSource.getFeatures()).toString(),
     );
   }
+
   useEffect(() => {
-    drawingSource.on("addfeature", handleAddFeature);
-    return () => drawingSource.un("addfeature", handleAddFeature);
+    drawingSource.on("change", handleChangeDrawingFeatures);
+    return () => drawingSource.un("change", handleChangeDrawingFeatures);
   }, [drawingSource]);
 
   // This is the location (in React) where we want the map to be displayed
