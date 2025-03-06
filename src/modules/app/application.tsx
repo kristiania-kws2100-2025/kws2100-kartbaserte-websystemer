@@ -46,10 +46,6 @@ function DrawFeatureButton({
 
   function handleAddFeature() {
     map.removeInteraction(draw);
-    localStorage.setItem(
-      "features",
-      geoJSON.writeFeatures(source.getFeatures()).toString(),
-    );
   }
 
   useEffect(() => {
@@ -69,6 +65,17 @@ export function Application() {
   useEffect(() => {
     map.setTarget(mapRef.current!);
   }, []);
+
+  function handleAddFeature() {
+    localStorage.setItem(
+      "features",
+      geoJSON.writeFeatures(drawingSource.getFeatures()).toString(),
+    );
+  }
+  useEffect(() => {
+    drawingSource.on("addfeature", handleAddFeature);
+    return () => drawingSource.un("addfeature", handleAddFeature);
+  }, [drawingSource]);
 
   // This is the location (in React) where we want the map to be displayed
   return (
