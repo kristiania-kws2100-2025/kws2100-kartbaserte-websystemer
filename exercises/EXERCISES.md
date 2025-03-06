@@ -691,6 +691,16 @@ IntelliJ's function "Log In via GitHub..." is broken. Instead you must use the t
 
 You should not be able to clone, push and pull to the GitHub repository
 
+### ⚠️⚠️⚠️ Have you worked in a different repository and want to keep your commit history?
+
+1. Open IntelliJ with the project you were working in
+2. From the menu, select Git > Manage remotes ...
+3. Double click "origin" and replace the URL with the URL to the GitHub repository you generated from the assignment
+4. Push to the repository.
+   - If given the question, select to "Rebase"
+   - If you get the message that the repository doesn't exist and are offered to log in, follow the steps above
+5. Pushing may fail, in which case you can go the command line and run `git push --force`
+
 </details>
 
 ## Exercise 9
