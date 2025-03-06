@@ -28,12 +28,7 @@ const map = new Map({
 function DrawPointButton({ map, source }: { map: Map; source: VectorSource }) {
   const draw = useMemo(() => new Draw({ type: "Point", source }), [source]);
 
-  function handleClick() {
-    map.addInteraction(draw);
-  }
-
   function handleAddFeature() {
-    console.log("feature added");
     map.removeInteraction(draw);
   }
 
@@ -42,7 +37,7 @@ function DrawPointButton({ map, source }: { map: Map; source: VectorSource }) {
     return () => source.un("addfeature", handleAddFeature);
   }, [source]);
 
-  return <button onClick={handleClick}>Draw point</button>;
+  return <button onClick={() => map.addInteraction(draw)}>Draw point</button>;
 }
 
 // A functional React component
