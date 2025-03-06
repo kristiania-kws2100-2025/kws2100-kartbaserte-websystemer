@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { ReactNode, useEffect, useMemo, useRef } from "react";
 import { Map, View } from "ol";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
@@ -31,8 +31,18 @@ const map = new Map({
   ],
 });
 
-function DrawPointButton({ map, source }: { map: Map; source: VectorSource }) {
-  const draw = useMemo(() => new Draw({ type: "Point", source }), [source]);
+function DrawFeatureButton({
+  children,
+  map,
+  source,
+  type,
+}: {
+  children: ReactNode;
+  map: Map;
+  source: VectorSource;
+  type: "Point" | "Polygon" | "LineString";
+}) {
+  const draw = useMemo(() => new Draw({ type, source }), [source]);
 
   function handleAddFeature() {
     map.removeInteraction(draw);
@@ -47,7 +57,7 @@ function DrawPointButton({ map, source }: { map: Map; source: VectorSource }) {
     return () => source.un("addfeature", handleAddFeature);
   }, [source]);
 
-  return <button onClick={() => map.addInteraction(draw)}>Draw point</button>;
+  return <button onClick={() => map.addInteraction(draw)}>{children}</button>;
 }
 
 // A functional React component
@@ -64,7 +74,12 @@ export function Application() {
   return (
     <>
       <nav>
-        <DrawPointButton map={map} source={drawingSource} />
+        <DrawFeatureButton type={"Point"} map={map} source={drawingSource}>
+          Draw point
+        </DrawFeatureButton>
+        <DrawFeatureButton type={"Polygon"} map={map} source={drawingSource}>
+          Draw polygon
+        </DrawFeatureButton>
       </nav>
       <div ref={mapRef}></div>
     </>
