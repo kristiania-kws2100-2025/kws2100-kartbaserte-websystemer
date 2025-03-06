@@ -10,7 +10,7 @@ import { Draw } from "ol/interaction";
 import VectorSource, { VectorSourceEvent } from "ol/source/Vector";
 import VectorLayer from "ol/layer/Vector";
 import { GeoJSON } from "ol/format";
-import { Circle, Fill, Stroke, Style } from "ol/style";
+import { Circle, Fill, Stroke, Style, Text } from "ol/style";
 import { FeatureLike } from "ol/Feature";
 
 // By calling the "useGeographic" function in OpenLayers, we tell that we want coordinates to be in degrees
@@ -32,14 +32,29 @@ const map = new Map({
     new TileLayer({ source: new OSM() }),
     new VectorLayer({
       source: drawingSource,
-      style: (feature: FeatureLike) =>
+      style: (feature: FeatureLike) => [
         new Style({
+          text: feature.getProperties().name
+            ? new Text({
+                text: feature.getProperties().name,
+                offsetY: 20,
+                fill: new Fill({ color: "black" }),
+                stroke: new Stroke({ color: "white" }),
+              })
+            : undefined,
           image: new Circle({
             radius: 10,
             stroke: new Stroke({ color: "white", width: 3 }),
             fill: new Fill({ color: feature.getProperties().color || "blue" }),
           }),
         }),
+        new Style({
+          image: new Circle({
+            radius: 11,
+            stroke: new Stroke({ color: "black", width: 1 }),
+          }),
+        }),
+      ],
     }),
   ],
 });
@@ -71,14 +86,12 @@ function DrawFeatureButton({
   children,
   map,
   source,
-  type,
 }: {
   children: ReactNode;
   map: Map;
   source: VectorSource;
-  type: "Point" | "Polygon" | "LineString";
 }) {
-  const draw = useMemo(() => new Draw({ type, source }), [source]);
+  const draw = useMemo(() => new Draw({ type: "Point", source }), [source]);
   const dialogRef = useRef<HTMLDialogElement | null>(null);
   const [currentFeature, setCurrentFeature] = useState<Feature>();
 
@@ -130,11 +143,8 @@ export function Application() {
   return (
     <>
       <nav>
-        <DrawFeatureButton type={"Point"} map={map} source={drawingSource}>
+        <DrawFeatureButton map={map} source={drawingSource}>
           Draw point
-        </DrawFeatureButton>
-        <DrawFeatureButton type={"Polygon"} map={map} source={drawingSource}>
-          Draw polygon
         </DrawFeatureButton>
       </nav>
       <div ref={mapRef}></div>
