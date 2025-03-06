@@ -115,13 +115,13 @@ In the last lecture, we worked with optimizing vector tile maps
 In this lecture, we will show how to use vector features as React objects and explore styling a bit more
 
 
-### Lecture 9: Drawing on the map
+### Lecture 9: Drawing points on the map
 
 [![Lecture 9 code](https://img.shields.io/badge/Lecture_9-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/09)
 [![Lecture 9 reference](https://img.shields.io/badge/Lecture_9-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/09)
 [![Lecture 9 exercise](https://img.shields.io/badge/Lecture_9-exercise-pink)](./exercises/EXERCISES.md#exercise-9)
 
-In this lecture, we will create a map where we can add out own points and polygons by [drawing with the mouse](https://openlayers.org/en/latest/examples/draw-features-style.html).
+In this lecture, we will create a map where we can add out own points by [drawing with the mouse](https://openlayers.org/en/latest/examples/draw-features-style.html).
 
 
 ### Lecture 10: Points that move
