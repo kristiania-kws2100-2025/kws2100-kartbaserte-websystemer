@@ -45,7 +45,9 @@ interface DrawPointButtonProps {
 
 function DrawPointButton({ map, source }: DrawPointButtonProps) {
   function handleClick() {
-    map.addInteraction(new Draw({ type: "Point", source }));
+    const draw = new Draw({ type: "Point", source });
+    map.addInteraction(draw);
+    source.once("addfeature", () => map.removeInteraction(draw));
   }
 
   return <button onClick={handleClick}>Add point</button>;
