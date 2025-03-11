@@ -20,7 +20,7 @@ const drawingLayerStyle = (feature: FeatureLike) => [
   new Style({
     image: new Circle({
       radius: 10,
-      stroke: new Stroke({ color: "white", width: 2 }),
+      stroke: new Stroke({ color: "white", width: 3 }),
       fill: new Fill({ color: feature.getProperties().color || "blue" }),
     }),
     text: new Text({
@@ -33,8 +33,8 @@ const drawingLayerStyle = (feature: FeatureLike) => [
   }),
   new Style({
     image: new Circle({
-      radius: 12,
-      stroke: new Stroke({ color: "black", width: 2 }),
+      radius: 11,
+      stroke: new Stroke({ color: "black" }),
     }),
     stroke: new Stroke({ color: "black", width: 2 }),
   }),
