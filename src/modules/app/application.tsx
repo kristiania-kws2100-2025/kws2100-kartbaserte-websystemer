@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Map, View } from "ol";
+import { Feature, Map, View } from "ol";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
 import { useGeographic } from "ol/proj";
@@ -19,6 +19,15 @@ export function Application() {
   const mapRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     map.setTarget(mapRef.current!);
+
+    map.on("click", (e) => {
+      const features = map.getFeaturesAtPixel(e.pixel, {
+        layerFilter: (l) => l === drawingVectorLayer,
+      });
+      for (const feature of features) {
+        drawingVectorSource.removeFeature(feature as Feature);
+      }
+    });
   }, []);
 
   return (
