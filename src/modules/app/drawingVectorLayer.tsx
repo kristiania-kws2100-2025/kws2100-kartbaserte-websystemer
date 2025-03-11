@@ -36,6 +36,7 @@ const drawingLayerStyle = (feature: FeatureLike) => [
       radius: 12,
       stroke: new Stroke({ color: "black", width: 2 }),
     }),
+    stroke: new Stroke({ color: "black", width: 2 }),
   }),
 ];
 export const drawingVectorLayer = new VectorLayer({
