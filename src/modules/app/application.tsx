@@ -8,8 +8,9 @@ import "ol/ol.css";
 import { Draw } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { Circle, Fill, Stroke, Style } from "ol/style";
+import { Circle, Fill, Stroke, Style, Text } from "ol/style";
 import { GeoJSON } from "ol/format";
+import { FeatureLike } from "ol/Feature";
 
 useGeographic();
 
@@ -19,12 +20,19 @@ if (featuresAsJson) {
   drawingVectorSource.addFeatures(new GeoJSON().readFeatures(featuresAsJson));
 }
 
-const drawingLayerStyle = [
+const drawingLayerStyle = (feature: FeatureLike) => [
   new Style({
     image: new Circle({
       radius: 10,
       stroke: new Stroke({ color: "white", width: 2 }),
       fill: new Fill({ color: "blue" }),
+    }),
+    text: new Text({
+      text: feature.getProperties().featureName,
+      offsetY: 20,
+      font: "12pt sans-serif",
+      stroke: new Stroke({ color: "white", width: 2 }),
+      fill: new Fill({ color: "black" }),
     }),
   }),
   new Style({
