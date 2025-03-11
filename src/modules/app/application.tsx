@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import { Map, View } from "ol";
+import React, { useEffect, useRef, useState } from "react";
+import { Feature, Map, View } from "ol";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
 import { useGeographic } from "ol/proj";
@@ -47,14 +47,39 @@ interface DrawPointButtonProps {
   source: VectorSource;
 }
 
+interface PointFeatureFormProps {
+  feature: Feature;
+}
+
+function PointFeatureForm({ feature }: PointFeatureFormProps) {
+  const [featureName, setFeatureName] = useState("");
+  useEffect(() => {
+    feature.setProperties({ featureName });
+  }, [featureName]);
+  return (
+    <>
+      <h2>Update point properties</h2>
+      <div>
+        Feature name:{" "}
+        <input
+          value={featureName}
+          onChange={(e) => setFeatureName(e.target.value)}
+        />
+      </div>
+    </>
+  );
+}
+
 function DrawPointButton({ map, source }: DrawPointButtonProps) {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
+  const [currentFeature, setCurrentFeature] = useState<Feature>();
 
   function handleClick() {
     const draw = new Draw({ type: "Point", source });
     map.addInteraction(draw);
-    source.once("addfeature", () => {
+    source.once("addfeature", (e) => {
       map.removeInteraction(draw);
+      setCurrentFeature(e.feature);
       dialogRef.current?.showModal();
     });
   }
@@ -63,7 +88,7 @@ function DrawPointButton({ map, source }: DrawPointButtonProps) {
     <button onClick={handleClick}>
       Add point
       <dialog ref={dialogRef}>
-        <h2>Feature properties</h2>
+        {currentFeature && <PointFeatureForm feature={currentFeature} />}
         <button onClick={() => dialogRef.current?.close()}>Close</button>
       </dialog>
     </button>
