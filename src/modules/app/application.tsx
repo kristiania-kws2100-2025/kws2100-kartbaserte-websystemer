@@ -9,6 +9,7 @@ import { Draw } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { Circle, Fill, Stroke, Style } from "ol/style";
+import { GeoJSON } from "ol/format";
 
 useGeographic();
 
@@ -57,7 +58,14 @@ export function Application() {
   const mapRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     map.setTarget(mapRef.current!);
+    drawingVectorSource.on("change", () => {
+      const featuresAsJson = new GeoJSON().writeFeatures(
+        drawingVectorSource.getFeatures(),
+      );
+      localStorage.setItem("features", featuresAsJson);
+    });
   }, []);
+
   return (
     <>
       <DrawPointButton map={map} source={drawingVectorSource} />
