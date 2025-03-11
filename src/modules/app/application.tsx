@@ -19,28 +19,26 @@ if (featuresAsJson) {
   drawingVectorSource.addFeatures(new GeoJSON().readFeatures(featuresAsJson));
 }
 
+const drawingLayerStyle = [
+  new Style({
+    image: new Circle({
+      radius: 10,
+      stroke: new Stroke({ color: "white", width: 2 }),
+      fill: new Fill({ color: "blue" }),
+    }),
+  }),
+  new Style({
+    image: new Circle({
+      radius: 12,
+      stroke: new Stroke({ color: "black", width: 2 }),
+    }),
+  }),
+];
 const map = new Map({
   view: new View({ center: [10.8, 59.9], zoom: 13 }),
   layers: [
     new TileLayer({ source: new OSM() }),
-    new VectorLayer({
-      source: drawingVectorSource,
-      style: [
-        new Style({
-          image: new Circle({
-            radius: 10,
-            stroke: new Stroke({ color: "white", width: 2 }),
-            fill: new Fill({ color: "blue" }),
-          }),
-        }),
-        new Style({
-          image: new Circle({
-            radius: 12,
-            stroke: new Stroke({ color: "black", width: 2 }),
-          }),
-        }),
-      ],
-    }),
+    new VectorLayer({ source: drawingVectorSource, style: drawingLayerStyle }),
   ],
 });
 
@@ -50,13 +48,26 @@ interface DrawPointButtonProps {
 }
 
 function DrawPointButton({ map, source }: DrawPointButtonProps) {
+  const dialogRef = useRef<HTMLDialogElement | null>(null);
+
   function handleClick() {
     const draw = new Draw({ type: "Point", source });
     map.addInteraction(draw);
-    source.once("addfeature", () => map.removeInteraction(draw));
+    source.once("addfeature", () => {
+      map.removeInteraction(draw);
+      dialogRef.current?.showModal();
+    });
   }
 
-  return <button onClick={handleClick}>Add point</button>;
+  return (
+    <button onClick={handleClick}>
+      Add point
+      <dialog ref={dialogRef}>
+        <h2>Feature properties</h2>
+        <button onClick={() => dialogRef.current?.close()}>Close</button>
+      </dialog>
+    </button>
+  );
 }
 
 export function Application() {
