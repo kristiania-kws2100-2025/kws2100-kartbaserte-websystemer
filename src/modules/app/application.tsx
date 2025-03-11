@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Feature, Map, View } from "ol";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
@@ -9,7 +9,6 @@ import { DrawPointButton } from "./drawPointButton";
 import { drawingVectorLayer, drawingVectorSource } from "./drawingVectorLayer";
 import VectorSource from "ol/source/Vector";
 import { Draw } from "ol/interaction";
-import { PointFeatureForm } from "./pointFeatureForm";
 
 useGeographic();
 
@@ -36,6 +35,18 @@ function DrawPolygonButton({
   return <button onClick={handleClick}>Add polygon</button>;
 }
 
+function DrawCircleButton({ source, map }: { map: Map; source: VectorSource }) {
+  function handleClick() {
+    const draw = new Draw({ type: "Circle", source });
+    map.addInteraction(draw);
+    source.once("addfeature", (e) => {
+      map.removeInteraction(draw);
+    });
+  }
+
+  return <button onClick={handleClick}>Add circle</button>;
+}
+
 export function Application() {
   const mapRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
@@ -55,6 +66,7 @@ export function Application() {
     <>
       <DrawPointButton map={map} source={drawingVectorSource} />
       <DrawPolygonButton map={map} source={drawingVectorSource} />
+      <DrawCircleButton map={map} source={drawingVectorSource} />
       <div ref={mapRef}></div>
     </>
   );
