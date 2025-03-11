@@ -14,6 +14,10 @@ import { GeoJSON } from "ol/format";
 useGeographic();
 
 const drawingVectorSource = new VectorSource();
+drawingVectorSource.addFeatures(
+  new GeoJSON().readFeatures(localStorage.getItem("features")),
+);
+
 const map = new Map({
   view: new View({ center: [10.8, 59.9], zoom: 13 }),
   layers: [
