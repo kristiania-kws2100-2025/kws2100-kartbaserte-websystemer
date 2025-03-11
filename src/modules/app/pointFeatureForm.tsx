@@ -16,14 +16,14 @@ export function PointFeatureForm({ feature }: PointFeatureFormProps) {
     <>
       <h2>Update point properties</h2>
       <div>
-        Feature name:{" "}
+        <>Feature name: </>
         <input
           value={featureName}
           onChange={(e) => setFeatureName(e.target.value)}
         />
       </div>
       <div>
-        Color:{" "}
+        <>Color: </>
         <input
           type="color"
           value={color}
