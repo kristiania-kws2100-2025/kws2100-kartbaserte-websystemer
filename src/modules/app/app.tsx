@@ -18,10 +18,7 @@ const map = new Map({
   layers: [new TileLayer({ source: new OSM() }), vehicleLayer],
 });
 
-export function Application() {
-  const mapRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => map.setTarget(mapRef.current!), []);
-
+function useVehicleVectorSource() {
   async function fetchFeed() {
     const res = await fetch(
       "https://api.entur.io/realtime/v1/gtfs-rt/vehicle-positions",
@@ -33,30 +30,32 @@ export function Application() {
       .entity.map((e) => e.vehicle)
       .filter((e) => !!e)
       .map((vehicle) => {
-        return { position: vehicle.position!, timestamp: vehicle.timestamp! };
+        const position = vehicle?.position!;
+        const { latitude, longitude } = position;
+        return new Feature({
+          geometry: new Point([longitude, latitude]),
+        });
       });
   }
 
-  const [vehicles, setVehicles] = useState<
-    { timestamp?: number; position: Position }[]
-  >([]);
+  const [vehicles, setVehicles] = useState<Feature[]>([]);
   const vehicleSource = useMemo(
-    () =>
-      new VectorSource({
-        features: vehicles.map(
-          ({ position: { latitude, longitude } }) =>
-            new Feature({
-              geometry: new Point([longitude, latitude]),
-            }),
-        ),
-      }),
+    () => new VectorSource({ features: vehicles }),
     [vehicles],
   );
-  useEffect(() => vehicleLayer.setSource(vehicleSource), [vehicleSource]);
 
   useEffect(() => {
     fetchFeed().then(setVehicles);
   }, []);
+  return vehicleSource;
+}
+
+export function Application() {
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => map.setTarget(mapRef.current!), []);
+
+  const vehicleSource = useVehicleVectorSource();
+  useEffect(() => vehicleLayer.setSource(vehicleSource), [vehicleSource]);
 
   return <div ref={mapRef}></div>;
 }
