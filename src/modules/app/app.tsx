@@ -5,6 +5,7 @@ import { OSM } from "ol/source";
 import { useGeographic } from "ol/proj";
 
 import "ol/ol.css";
+import { FeedMessage } from "../../../generated/gtfs-realtime";
 
 useGeographic();
 
@@ -16,6 +17,20 @@ const map = new Map({
 export function Application() {
   const mapRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => map.setTarget(mapRef.current!), []);
+
+  async function fetchFeed() {
+    const res = await fetch(
+      "https://api.entur.io/realtime/v1/gtfs-rt/vehicle-positions",
+    );
+    if (!res.ok) {
+      throw `Failed to fetch ${res.url}: ${res}`;
+    }
+    return FeedMessage.decode(new Uint8Array(await res.arrayBuffer()));
+  }
+
+  useEffect(() => {
+    fetchFeed().then((message) => console.log(message));
+  }, []);
 
   return <div ref={mapRef}></div>;
 }
