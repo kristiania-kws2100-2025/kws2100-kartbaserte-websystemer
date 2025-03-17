@@ -9,20 +9,26 @@ import { FeedMessage } from "../../../generated/gtfs-realtime";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { Point } from "ol/geom";
-import { Circle, Fill, Stroke, Style } from "ol/style";
+import { Circle, Fill, Stroke, Style, Text } from "ol/style";
 
 import "./application.css";
 
 useGeographic();
 
 const vehicleLayer = new VectorLayer({
-  style: new Style({
-    image: new Circle({
-      radius: 10,
-      stroke: new Stroke({ color: "black" }),
-      fill: new Fill({ color: "blue" }),
+  style: (feature) =>
+    new Style({
+      image: new Circle({
+        radius: 10,
+        stroke: new Stroke({ color: "black" }),
+        fill: new Fill({
+          color: feature.getProperties().speed > 0 ? "red" : "blue",
+        }),
+      }),
+      text: new Text({
+        text: feature.getProperties().routeId,
+      }),
     }),
-  }),
 });
 const overlay = new Overlay({});
 const map = new Map({
@@ -43,12 +49,18 @@ function useVehicleVectorSource() {
       .filter((e) => !!e)
       .map((vehicle) => {
         const position = vehicle?.position!;
-        const { latitude, longitude } = position;
+        const { latitude, longitude, speed } = position;
         const timestamp = new Date(vehicle?.timestamp! * 1000);
         const routeId = vehicle?.trip?.routeId;
+        const stationary =
+          new Date().getTime() - timestamp.getTime() > 5 * 60 * 1000;
         return new Feature({
           geometry: new Point([longitude, latitude]),
-          properties: { routeId, timestamp, vehicle },
+          routeId,
+          speed,
+          timestamp,
+          stationary,
+          vehicle,
         });
       });
   }
