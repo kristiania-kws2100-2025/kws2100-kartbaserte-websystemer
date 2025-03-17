@@ -61,6 +61,9 @@ function useVehicleVectorSource() {
 
   useEffect(() => {
     fetchFeed().then(setVehicles);
+    setInterval(() => {
+      fetchFeed().then(setVehicles);
+    }, 15_000);
   }, []);
   return vehicleSource;
 }
