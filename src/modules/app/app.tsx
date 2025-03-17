@@ -44,8 +44,11 @@ function useVehicleVectorSource() {
       .map((vehicle) => {
         const position = vehicle?.position!;
         const { latitude, longitude } = position;
+        const timestamp = new Date(vehicle?.timestamp! * 1000);
+        const routeId = vehicle?.trip?.routeId;
         return new Feature({
           geometry: new Point([longitude, latitude]),
+          properties: { routeId, timestamp, vehicle },
         });
       });
   }
@@ -88,7 +91,22 @@ export function Application() {
 
   return (
     <div ref={mapRef}>
-      <div ref={overlayRef}>{selectedFeatures.length} selected features</div>
+      <div ref={overlayRef}>
+        <SelectedFeaturesOverlay features={selectedFeatures} />
+      </div>
     </div>
   );
+}
+
+function SelectedFeaturesOverlay({ features }: { features: Feature[] }) {
+  if (features.length == 1) {
+    const { geometry, ...properties } = features[0].getProperties();
+    return (
+      <div>
+        A single feature
+        <pre>{JSON.stringify(properties, null, 2)}</pre>
+      </div>
+    );
+  }
+  return <div>{features.length} selected features</div>;
 }
