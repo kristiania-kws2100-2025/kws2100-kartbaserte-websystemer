@@ -6,7 +6,9 @@
     "test": "tsc --noEmit && prettier --check .",
     "dev": "vite",
     "build": "vite build",
-    "prepare": "husky"
+    "prepare": "husky",
+    "protoc": "./tmp/protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=generated/ --ts_proto_opt=esModuleInterop=true ./gtfs-realtime.proto",
+    "protoc:win": ".\\tmp\\protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto.cmd --ts_proto_out=generated/ --ts_proto_opt=esModuleInterop=true ./gtfs-realtime.proto"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +25,7 @@
   "dependencies": {
     "ol": "^10.4.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "ts-proto": "^2.6.1"
   }
 }
