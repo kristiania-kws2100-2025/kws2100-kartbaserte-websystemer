@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Map, View } from "ol";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
 import { useGeographic } from "ol/proj";
 
 import "ol/ol.css";
-import { FeedMessage } from "../../../generated/gtfs-realtime";
+import { FeedMessage, Position } from "../../../generated/gtfs-realtime";
 
 useGeographic();
 
@@ -25,11 +25,21 @@ export function Application() {
     if (!res.ok) {
       throw `Failed to fetch ${res.url}: ${res}`;
     }
-    return FeedMessage.decode(new Uint8Array(await res.arrayBuffer()));
+    return FeedMessage.decode(new Uint8Array(await res.arrayBuffer()))
+      .entity.map((e) => e.vehicle)
+      .filter((e) => !!e)
+      .map((vehicle) => {
+        const { position, timestamp } = vehicle;
+        return { position, timestamp };
+      });
   }
 
+  const [vehicles, setVehicles] = useState<
+    { timestamp?: number; position?: Position }[]
+  >([]);
+
   useEffect(() => {
-    fetchFeed().then((message) => console.log(message));
+    fetchFeed().then(setVehicles);
   }, []);
 
   return <div ref={mapRef}></div>;
