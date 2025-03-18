@@ -6,6 +6,7 @@ import { useGeographic } from "ol/proj";
 
 import "ol/ol.css";
 import { MapboxVectorLayer } from "ol-mapbox-style";
+import { FeedMessage } from "../../../generated/gtfs-realtime";
 
 useGeographic();
 
@@ -23,5 +24,20 @@ const map = new Map({
 export function Application() {
   const mapRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => map.setTarget(mapRef.current!), []);
+
+  async function loadTransitFeed() {
+    const res = await fetch(
+      "https://api.entur.io/realtime/v1/gtfs-rt/vehicle-positions",
+    );
+    const messages = FeedMessage.decode(
+      new Uint8Array(await res.arrayBuffer()),
+    );
+    console.log(messages);
+  }
+
+  useEffect(() => {
+    loadTransitFeed();
+  }, []);
+
   return <div ref={mapRef}></div>;
 }
