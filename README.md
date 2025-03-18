@@ -129,8 +129,11 @@ create a map where we can add out own points by
 
 ### Lecture 10: Points that move
 
+[![Lecture 10 Mentimeter](https://img.shields.io/badge/Lecture_10-mentimenter-yellow)](https://www.menti.com/al8mce67e2hf)
+
 [![Lecture 10 code](https://img.shields.io/badge/Lecture_10-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/10)
 [![Lecture 10 reference](https://img.shields.io/badge/Lecture_10-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/10)
+[![Lecture 10 exercise](https://img.shields.io/badge/Lecture_10-exercise-pink)](./exercises/EXERCISES.md#exercise-10)
 
 In this lecture, we will create a map that shows public transit in Norway. As a bonus content, we will touch
 on [Vector Tile Layers](https://openlayers.org/en/latest/examples/mapbox-vector-layer.html)
@@ -148,10 +151,36 @@ into TypeScript.
 gtfs-realtime provides a fairly low level interface to the vehicle data, and we will need to work to make this into
 something that OpenLayers will be happy to consume.
 
-#### Exercise:
+#### How to read data from ENTUR
 
-This week's exercise will be to recreate the map from the lecture. Due to time constraints, a detailed description will
-not be given.
+1. Download [`protoc`](https://github.com/protocolbuffers/protobuf/releases) and store it locally (but `.gitignored` - it's pretty big)
+2. `npm install ts-proto` for TypeScript bindings
+3. Download the [gtfs-realtime.proto spec](https://github.com/google/transit/blob/master/gtfs-realtime/proto/gtfs-realtime.proto)
+4. Run `protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=generated/ --ts_proto_opt=esModuleInterop=true ./gtfs-realtime.proto`
+   - Note: ⚠ On Windows, you have to replace `protoc-gen-ts_proto` with `protoc-gen-ts_proto.cmd`, so the full command is
+     `protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto.cmd --ts_proto_out=generated/ --ts_proto_opt=esModuleInterop=true ./gtfs-realtime.proto`
+   - Note: You may want to add a `script` in `package.json` for this
+5. Read the binary data from ENTUR: `const res = await fetch("https://api.entur.io/realtime/v1/gtfs-rt/vehicle-positions")`
+6. Parse the data using the generated spec: `FeedMessage.decode(new Uint8Array(await res.arrayBuffer()))`
+7. Create features using `vehicle.position.longitude` and `vehicle.position.latitude` from `Feedmessage.entity`
+
+Complete code:
+
+```typescript
+const res = await fetch(
+        "https://api.entur.io/realtime/v1/gtfs-rt/vehicle-positions",
+);
+const features = FeedMessage.decode(new Uint8Array(await res.arrayBuffer()))
+  .entity.map((e) => e.vehicle)
+  .filter((e) => !!e)
+  .map((vehicle) => {
+     const position = vehicle?.position!;
+     const { latitude, longitude } = position;
+     // Here you may want to include other properties in the Feature
+     return new Feature({ geometry: new Point([longitude, latitude]) });
+  });
+const vectorSource = new VectorSource({ features })
+```
 
 ### Lecture 11: More movement
 
@@ -441,19 +470,3 @@ Download the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
 3. `npm pkg set scripts.db:heroku="npm run db:heroku:postgis && npm run db:municipalities:heroku"`
 4. `heroku run npm run db:heroku`
 
-## Points that move
-
-### Generating TypeScript definitions from a `.proto` (protobuf) specification (for lecture 10)
-
-1. Download [`protoc`](https://github.com/protocolbuffers/protobuf/releases) and store it locally (but `.gitignored` -
-   it's pretty big)
-2. `npm install ts-proto` for TypeScript bindings
-3. Download
-   the [gtfs-realtime.proto spec](https://github.com/google/transit/blob/master/gtfs-realtime/proto/gtfs-realtime.proto) (
-   or whatever spec you want to use)
-4.
-Run `protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=generated/ --ts_proto_opt=esModuleInterop=true ./gtfs-realtime.proto`
-- Note: ⚠ On Windows, you have to replace `protoc-gen-ts_proto` with `protoc-gen-ts_proto.cmd`, so the \
-full command
-is `protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto.cmd --ts_proto_out=generated/ --ts_proto_opt=esModuleInterop=true ./gtfs-realtime.proto`
-- Note: You may want to add a `script` in `package.json` for this

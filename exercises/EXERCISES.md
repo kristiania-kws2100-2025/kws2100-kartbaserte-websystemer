@@ -668,7 +668,7 @@ when the zoom level is 15 or higher?
 ## Exercise 8
 ### Assignment with GitHub classroom
 
-<details open>
+<details>
 
 In order to complete the assignment, you need to create a repository with the invitation link to GitHub classroom. If you don't use this link, your repository will either be public or the teacher will not have access to review the code. Neither option is possible.
 
@@ -730,5 +730,19 @@ Drawing points on the map
 4. Show a dialog when the user adds a feature to let the user change feature properties
    - Hint: Call `feature.setProperties({ name: name })` to change the properties in an `useEffect`. This renders the layer again and triggers the vectorSource `"change"` event
 5. Optional: Clicking on a feature in the map can bring up a dialog to change the properties again or remove the feature from the layer
+
+</details>
+
+## Exercise 10
+### Points that move
+
+<details open>
+
+1. Using the notes from [lecture 10](../README.md#lecture-10-points-that-move), create a map with public transportation in Norway.
+2. Try to use [MapboxVectorLayer](https://openlayers.org/en/latest/examples/mapbox-vector-layer.html) to show the background map from a vector source
+   - `npm install ol-mapbox-style`
+   - `const backgroundLayer = new MapboxVectorLayer({ styleUrl: "mapbox://styles/mapbox/bright-v9" });`
+   - To deploy to GitHub pages, you need to sign up and create an accessToken for your GitHub pages domain
+3. Create and retain React State objects from the ENTUR Feed with a history of positions. Create two Vector Layers from the vehicles: The Point-based one with the current position and a VectorSource with LineStrings for the historical positions of the vehicles0
 
 </details>
