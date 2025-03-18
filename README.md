@@ -195,6 +195,11 @@ Experiment with different type of objects as well. Try and save the objects to `
 
 ### Lecture 12: Getting ready for the exam
 
+[![Lecture 12 code](https://img.shields.io/badge/Lecture_12-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/12)
+
+This week's lecture, we will talk a little about the exam. We start then with a simple map and then discuss how to move forward based on the wishes of the audience, so the lecture has no reference code.
+
+
 ## Reference material
 
 ### Creating a React application
