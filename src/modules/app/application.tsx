@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Map, View } from "ol";
+import { Feature, Map, View } from "ol";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
 import { useGeographic } from "ol/proj";
@@ -7,6 +7,9 @@ import { useGeographic } from "ol/proj";
 import "ol/ol.css";
 import { MapboxVectorLayer } from "ol-mapbox-style";
 import { FeedMessage } from "../../../generated/gtfs-realtime";
+import { Point } from "ol/geom";
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
 
 useGeographic();
 
@@ -16,8 +19,11 @@ const mapBoxLayer = new MapboxVectorLayer({
   accessToken:
     "pk.eyJ1Ijoiamhhbm5lcyIsImEiOiJjbThlYW0xbXAyamZ5MmpyNzRidDJzejhpIn0.K7d7tNzdXnU0kZYiqttLpw",
 });
+
+const vehicleLayer = new VectorLayer({});
+
 const map = new Map({
-  layers: [mapBoxLayer],
+  layers: [mapBoxLayer, vehicleLayer],
   view: new View({ center: [10.9, 59.9], zoom: 10 }),
 });
 
@@ -32,7 +38,16 @@ export function Application() {
     const messages = FeedMessage.decode(
       new Uint8Array(await res.arrayBuffer()),
     );
-    console.log(messages);
+    const features = messages.entity.map((entity) => {
+      const position = entity.vehicle?.position!;
+      const { latitude, longitude } = position;
+      return new Feature({
+        geometry: new Point([longitude, latitude]),
+      });
+    });
+
+    console.log(features);
+    vehicleLayer.setSource(new VectorSource({ features }));
   }
 
   useEffect(() => {
