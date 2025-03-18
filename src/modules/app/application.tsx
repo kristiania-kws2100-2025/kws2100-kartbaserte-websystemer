@@ -11,9 +11,9 @@ useGeographic();
 
 const osmLayer = new TileLayer({ source: new OSM() });
 const mapBoxLayer = new MapboxVectorLayer({
-  styleUrl: "mapbox://styles/mapbox/dark-v11",
+  styleUrl: "mapbox://styles/mapbox/bright-v9",
   accessToken:
-    "pk.eyJ1Ijoiamhhbm5lcyIsImEiOiJjbHVmaHJxcnAwczVyMmpvYzB2aXh6bDI5In0.lrAcWw8waJKbUNyBF8Vzqw",
+    "pk.eyJ1Ijoiamhhbm5lcyIsImEiOiJjbThlYW0xbXAyamZ5MmpyNzRidDJzejhpIn0.K7d7tNzdXnU0kZYiqttLpw",
 });
 const map = new Map({
   layers: [mapBoxLayer],
