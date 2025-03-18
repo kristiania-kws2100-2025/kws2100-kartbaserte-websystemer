@@ -10,7 +10,7 @@ import { FeedMessage } from "../../../generated/gtfs-realtime";
 import { Point } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { Circle, Fill, Stroke, Style } from "ol/style";
+import { Circle, Fill, Stroke, Style, Text } from "ol/style";
 
 import "./application.css";
 
@@ -24,13 +24,17 @@ const mapBoxLayer = new MapboxVectorLayer({
 });
 
 const vehicleLayer = new VectorLayer({
-  style: new Style({
-    image: new Circle({
-      radius: 8,
-      fill: new Fill({ color: "blue" }),
-      stroke: new Stroke({ color: "white", width: 2 }),
+  style: (feature) =>
+    new Style({
+      image: new Circle({
+        radius: 8,
+        fill: new Fill({ color: "blue" }),
+        stroke: new Stroke({ color: "white", width: 2 }),
+      }),
+      text: new Text({
+        text: feature.getProperties().routeId,
+      }),
     }),
-  }),
 });
 
 const map = new Map({
@@ -47,7 +51,9 @@ function SelectedFeaturesOverlay({ features }: { features: Feature[] }) {
       Clicked on {features.length} features
       <pre>
         {JSON.stringify(
-          features.map((f) => f.getProperties()),
+          features
+            .map((f) => f.getProperties())
+            .map(({ geometry, ...properties }) => properties),
           null,
           2,
         )}
@@ -89,9 +95,11 @@ export function Application() {
     const features = messages.entity.map((entity) => {
       const position = entity.vehicle?.position!;
       const { latitude, longitude } = position;
+      const routeId = entity?.vehicle?.trip?.routeId;
       return new Feature({
         geometry: new Point([longitude, latitude]),
         properties: entity!.vehicle,
+        routeId: routeId,
       });
     });
 
