@@ -67,10 +67,15 @@ export function Application() {
     overlay.setElement(overlayRef.current!);
     map.addOverlay(overlay);
     map.on("click", (e) => {
-      overlay.setPosition(e.coordinate);
-
-      const selectedFeatures = map.getFeaturesAtPixel(e.pixel);
+      const selectedFeatures = map.getFeaturesAtPixel(e.pixel, {
+        layerFilter: (l) => l === vehicleLayer,
+      });
       setSelectedFeatures(selectedFeatures as Feature[]);
+      if (selectedFeatures.length === 0) {
+        overlay.setPosition(undefined);
+      } else {
+        overlay.setPosition(e.coordinate);
+      }
     });
   }, []);
 
