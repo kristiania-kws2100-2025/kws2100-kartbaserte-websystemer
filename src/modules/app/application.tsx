@@ -12,6 +12,8 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { Circle, Fill, Stroke, Style } from "ol/style";
 
+import "./application.css";
+
 useGeographic();
 
 const osmLayer = new TileLayer({ source: new OSM() });
@@ -35,7 +37,9 @@ const map = new Map({
   layers: [mapBoxLayer, vehicleLayer],
   view: new View({ center: [10.9, 59.9], zoom: 10 }),
 });
-const overlay = new Overlay({});
+const overlay = new Overlay({
+  positioning: "top-center",
+});
 
 export function Application() {
   const mapRef = useRef<HTMLDivElement | null>(null);
