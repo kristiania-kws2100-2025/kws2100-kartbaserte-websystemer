@@ -10,6 +10,7 @@ import { FeedMessage } from "../../../generated/gtfs-realtime";
 import { Point } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
+import { Circle, Fill, Stroke, Style } from "ol/style";
 
 useGeographic();
 
@@ -20,7 +21,15 @@ const mapBoxLayer = new MapboxVectorLayer({
     "pk.eyJ1Ijoiamhhbm5lcyIsImEiOiJjbThlYW0xbXAyamZ5MmpyNzRidDJzejhpIn0.K7d7tNzdXnU0kZYiqttLpw",
 });
 
-const vehicleLayer = new VectorLayer({});
+const vehicleLayer = new VectorLayer({
+  style: new Style({
+    image: new Circle({
+      radius: 8,
+      fill: new Fill({ color: "blue" }),
+      stroke: new Stroke({ color: "white", width: 2 }),
+    }),
+  }),
+});
 
 const map = new Map({
   layers: [mapBoxLayer, vehicleLayer],
