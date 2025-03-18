@@ -45,13 +45,27 @@ function useVehicleVectorSource() {
     const res = await fetch(
       "https://api.entur.io/realtime/v1/gtfs-rt/vehicle-positions",
     );
+    if (!res.ok) {
+      throw `Failed to fetch ${res.url}: ${res}`;
+    }
     return FeedMessage.decode(new Uint8Array(await res.arrayBuffer()))
       .entity.map((e) => e.vehicle)
       .filter((e) => !!e)
       .map((vehicle) => {
         const position = vehicle?.position!;
-        const { latitude, longitude } = position;
-        return new Feature({ geometry: new Point([longitude, latitude]) });
+        const { latitude, longitude, speed } = position;
+        const timestamp = new Date(vehicle?.timestamp! * 1000);
+        const routeId = vehicle?.trip?.routeId;
+        const stationary =
+          new Date().getTime() - timestamp.getTime() > 5 * 60 * 1000;
+        return new Feature({
+          geometry: new Point([longitude, latitude]),
+          routeId,
+          speed,
+          timestamp,
+          stationary,
+          vehicle,
+        });
       });
   }
 
@@ -77,7 +91,9 @@ export function Application() {
   useEffect(() => {
     map.setTarget(mapRef.current!);
     map.on("click", (e) => {
-      const activeFeatures = map.getFeaturesAtPixel(e.pixel) as Feature[];
+      const activeFeatures = map.getFeaturesAtPixel(e.pixel, {
+        layerFilter: (l) => l === vehicleLayer,
+      }) as Feature[];
       setSelectedFeatures(activeFeatures);
       if (activeFeatures.length > 0) {
         overlay.setPosition(e.coordinate);
