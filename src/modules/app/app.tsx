@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Feature, Map, Overlay, View } from "ol";
-import TileLayer from "ol/layer/Tile";
-import { OSM } from "ol/source";
 import { useGeographic } from "ol/proj";
 
 import "ol/ol.css";
@@ -10,11 +8,17 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { Point } from "ol/geom";
 import { Circle, Fill, Stroke, Style, Text } from "ol/style";
+import { MapboxVectorLayer } from "ol-mapbox-style";
 
 import "./application.css";
 
 useGeographic();
 
+const backgroundLayer = new MapboxVectorLayer({
+  styleUrl: "mapbox://styles/mapbox/bright-v9",
+  accessToken:
+    "pk.eyJ1Ijoiamhhbm5lcyIsImEiOiJjbHVmaHJxcnAwczVyMmpvYzB2aXh6bDI5In0.lrAcWw8waJKbUNyBF8Vzqw",
+});
 const vehicleLayer = new VectorLayer({
   style: (feature) =>
     new Style({
@@ -33,7 +37,7 @@ const vehicleLayer = new VectorLayer({
 const overlay = new Overlay({});
 const map = new Map({
   view: new View({ center: [10.8, 59.9], zoom: 10 }),
-  layers: [new TileLayer({ source: new OSM() }), vehicleLayer],
+  layers: [backgroundLayer, vehicleLayer],
 });
 
 function useVehicleVectorSource() {
@@ -41,27 +45,13 @@ function useVehicleVectorSource() {
     const res = await fetch(
       "https://api.entur.io/realtime/v1/gtfs-rt/vehicle-positions",
     );
-    if (!res.ok) {
-      throw `Failed to fetch ${res.url}: ${res}`;
-    }
     return FeedMessage.decode(new Uint8Array(await res.arrayBuffer()))
       .entity.map((e) => e.vehicle)
       .filter((e) => !!e)
       .map((vehicle) => {
         const position = vehicle?.position!;
-        const { latitude, longitude, speed } = position;
-        const timestamp = new Date(vehicle?.timestamp! * 1000);
-        const routeId = vehicle?.trip?.routeId;
-        const stationary =
-          new Date().getTime() - timestamp.getTime() > 5 * 60 * 1000;
-        return new Feature({
-          geometry: new Point([longitude, latitude]),
-          routeId,
-          speed,
-          timestamp,
-          stationary,
-          vehicle,
-        });
+        const { latitude, longitude } = position;
+        return new Feature({ geometry: new Point([longitude, latitude]) });
       });
   }
 
