@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Feature, Map, View } from "ol";
+import { Feature, Map, Overlay, View } from "ol";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
 import { useGeographic } from "ol/proj";
@@ -35,10 +35,19 @@ const map = new Map({
   layers: [mapBoxLayer, vehicleLayer],
   view: new View({ center: [10.9, 59.9], zoom: 10 }),
 });
+const overlay = new Overlay({});
 
 export function Application() {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => map.setTarget(mapRef.current!), []);
+  const overlayRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    map.setTarget(mapRef.current!);
+    overlay.setElement(overlayRef.current!);
+    map.addOverlay(overlay);
+    map.on("click", (e) => {
+      overlay.setPosition(e.coordinate);
+    });
+  }, []);
 
   async function loadTransitFeed() {
     const res = await fetch(
@@ -63,5 +72,9 @@ export function Application() {
     loadTransitFeed();
   }, []);
 
-  return <div ref={mapRef}></div>;
+  return (
+    <div ref={mapRef}>
+      <div ref={overlayRef}>Here is the clicked overlay</div>
+    </div>
+  );
 }
