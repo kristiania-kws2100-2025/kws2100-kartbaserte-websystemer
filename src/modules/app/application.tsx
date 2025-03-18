@@ -109,6 +109,7 @@ export function Application() {
 
   useEffect(() => {
     loadTransitFeed();
+    setInterval(() => loadTransitFeed(), 15_000);
   }, []);
 
   return (
