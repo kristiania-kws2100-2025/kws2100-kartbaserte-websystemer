@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Feature, Map, Overlay, View } from "ol";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
@@ -41,15 +41,36 @@ const overlay = new Overlay({
   positioning: "top-center",
 });
 
+function SelectedFeaturesOverlay({ features }: { features: Feature[] }) {
+  return (
+    <>
+      Clicked on {features.length} features
+      <pre>
+        {JSON.stringify(
+          features.map((f) => f.getProperties()),
+          null,
+          2,
+        )}
+      </pre>
+    </>
+  );
+}
+
 export function Application() {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const overlayRef = useRef<HTMLDivElement | null>(null);
+
+  const [selectedFeatures, setSelectedFeatures] = useState<Feature[]>([]);
+
   useEffect(() => {
     map.setTarget(mapRef.current!);
     overlay.setElement(overlayRef.current!);
     map.addOverlay(overlay);
     map.on("click", (e) => {
       overlay.setPosition(e.coordinate);
+
+      const selectedFeatures = map.getFeaturesAtPixel(e.pixel);
+      setSelectedFeatures(selectedFeatures as Feature[]);
     });
   }, []);
 
@@ -65,6 +86,7 @@ export function Application() {
       const { latitude, longitude } = position;
       return new Feature({
         geometry: new Point([longitude, latitude]),
+        properties: entity!.vehicle,
       });
     });
 
@@ -78,7 +100,9 @@ export function Application() {
 
   return (
     <div ref={mapRef}>
-      <div ref={overlayRef}>Here is the clicked overlay</div>
+      <div ref={overlayRef}>
+        <SelectedFeaturesOverlay features={selectedFeatures} />
+      </div>
     </div>
   );
 }
