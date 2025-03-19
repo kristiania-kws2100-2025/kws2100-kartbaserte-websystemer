@@ -182,7 +182,7 @@ const features = FeedMessage.decode(new Uint8Array(await res.arrayBuffer()))
 const vectorSource = new VectorSource({ features })
 ```
 
-### Lecture 11: More movement
+### Lecture 11: Review of PostGIS and Heroku (with slow-coding)
 
 [![Lecture 11 code](https://img.shields.io/badge/Lecture_11-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/11)
 [![Lecture 11 reference](https://img.shields.io/badge/Lecture_11-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/11)
