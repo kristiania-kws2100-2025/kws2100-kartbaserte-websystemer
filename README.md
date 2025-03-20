@@ -108,6 +108,8 @@ We can simulate this by doing:
 
 ### Deploy to Heroku
 
+First download the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
+
 1. `heroku apps:create`
 2. `git push heroku`
 
