@@ -8,7 +8,7 @@ import { Map, Overlay, View } from "ol";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { GeoJSON } from "ol/format";
-import { Fill, Style } from "ol/style";
+import { Fill, Stroke, Style } from "ol/style";
 import { FeatureLike } from "ol/Feature";
 
 import "./application.css";
@@ -39,6 +39,31 @@ const schoolProximityLayer = new VectorLayer({
   source: schoolProximitySource,
   style: schoolProximityStyle,
 });
+
+function getColor(value: number) {
+  if (value == 0) return `rgba(0, 255, 0, 0.75)`;
+
+  value = Math.min(1, Math.max(0, value));
+  const red = Math.floor(192 * value);
+  const green = Math.floor(192 * (1 - value));
+  return `rgba(${red}, ${green}, 0, ${0.75})`;
+}
+
+const areaSchoolCoverageLayer = new VectorLayer({
+  source: new VectorSource({
+    url: "/api/skolenaerhet/perGrunnkrets",
+    format: new GeoJSON(),
+  }),
+  style: (f) =>
+    new Style({
+      stroke: new Stroke({ color: "gray" }),
+      fill:
+        f.getProperties().antall_adresser < 20
+          ? undefined
+          : new Fill({ color: getColor(f.getProperties().andel_over_750m) }),
+    }),
+});
+
 const map = new Map({ view: new View({ center: [10.8, 59.9], zoom: 12 }) });
 const overlay = new Overlay({ positioning: "bottom-center" });
 map.addOverlay(overlay);
@@ -67,7 +92,7 @@ export function Application() {
     overlay.setElement(overlayRef.current!);
     map.on("click", (e) => {
       const selectedFeatures = map.getFeaturesAtPixel(e.pixel, {
-        layerFilter: (l) => l === schoolLayer,
+        layerFilter: (l) => l === areaSchoolCoverageLayer,
       });
       setSelectedFeatures(selectedFeatures);
       overlay.setPosition(
@@ -78,7 +103,7 @@ export function Application() {
 
   const [layers, setLayers] = useState([
     osmLayer,
-    schoolProximityLayer,
+    areaSchoolCoverageLayer,
     schoolLayer,
   ]);
   useEffect(() => map.setLayers(layers), [layers]);

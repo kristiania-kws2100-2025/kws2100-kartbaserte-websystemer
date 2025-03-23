@@ -45,10 +45,10 @@ app.get("/api/naerskoler", async (c) => {
       where fylke_2023.navn in ('Oslo') and hoyestetrinn = 10
   `);
   const features = [...school500mZone.rows, ...school1000mZone.rows].map(
-    ({ omraade: { coordinates }, ...properties }) => ({
+    ({ omraade: { type, coordinates }, ...properties }) => ({
       type: "Feature",
       properties,
-      geometry: { type: "Polygon", coordinates },
+      geometry: { type, coordinates },
     }),
   );
   return c.json({
@@ -62,25 +62,36 @@ app.get("/api/skolenaerhet/perGrunnkrets", async (c) => {
       with skolerapport as (
         select grunnkretsnavn,
              grunnkretsnummer,
+             omrade_4326::json as geometry,
              (select count(*) from vegadresse where st_contains(omrade, representasjonspunkt_25833)) 
                  as antall_adresser,
              (select count(*)
-              from vegadresse v left outer join grunnskole s on st_dwithin(s.posisjon, v.representasjonspunkt_25833, 500)
+              from vegadresse v left outer join grunnskole s on st_dwithin(s.posisjon, v.representasjonspunkt_25833, 750)
               where s.organisasjonsnummer is null and st_contains(omrade, representasjonspunkt_25833))
-                 as antall_litt_unna,
+                 as antall_over_750m,
              (select count(*)
-              from vegadresse v left outer join grunnskole s on st_dwithin(s.posisjon, v.representasjonspunkt_25833, 1000)
+              from vegadresse v left outer join grunnskole s on st_dwithin(s.posisjon, v.representasjonspunkt_25833, 1500)
               where s.organisasjonsnummer is null and st_contains(omrade, representasjonspunkt_25833))
-                 as antall_langt_unna
+                 as antall_over_1500m
         from grunnkrets
       )
       select *,
-             antall_litt_unna::float/antall_adresser as andel_litt_unna,
-             antall_langt_unna::float/antall_adresser as andel_langt_unna
+             antall_over_750m::float/antall_adresser as andel_over_750m,
+             antall_over_1500m::float/antall_adresser as andel_over_1500m
       from skolerapport
       where antall_adresser > 0 
   `);
-  return c.json(result.rows);
+  return c.json({
+    type: "FeatureCollection",
+    crs: latitudeLongitude,
+    features: result.rows.map(
+      ({ geometry: { coordinates, type }, ...properties }) => ({
+        type: "Feature",
+        properties,
+        geometry: { type, coordinates },
+      }),
+    ),
+  });
 });
 
 app.use("*", serveStatic({ root: "../dist/" }));
