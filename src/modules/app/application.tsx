@@ -18,17 +18,26 @@ useGeographic();
 const osmLayer = new TileLayer({
   source: new StadiaMaps({ layer: "stamen_toner_lite" }),
 });
-const schoolLayer = new VectorLayer({
-  source: new VectorSource({ url: "/api/skoler", format: new GeoJSON() }),
+const schoolSource = new VectorSource({
+  url: "/api/skoler",
+  format: new GeoJSON(),
 });
+const schoolLayer = new VectorLayer({ source: schoolSource });
+const schoolProximitySource = new VectorSource({
+  url: "/api/naerskoler",
+  format: new GeoJSON(),
+});
+
+function schoolProximityStyle(feature: FeatureLike) {
+  const { distance } = feature.getProperties();
+  const color = distance === "500m" ? "#88ff8888" : "#ffff8888";
+  const zIndex = distance === "500m" ? 2 : 1;
+  return new Style({ fill: new Fill({ color }), zIndex });
+}
+
 const schoolProximityLayer = new VectorLayer({
-  source: new VectorSource({ url: "/api/naerskoler", format: new GeoJSON() }),
-  style: (features) => {
-    const { distance } = features.getProperties();
-    const color = distance === "500m" ? "#88ff8888" : "#ffff8888";
-    const zIndex = distance === "500m" ? 2 : 1;
-    return new Style({ fill: new Fill({ color }), zIndex });
-  },
+  source: schoolProximitySource,
+  style: schoolProximityStyle,
 });
 const map = new Map({ view: new View({ center: [10.8, 59.9], zoom: 12 }) });
 const overlay = new Overlay({ positioning: "bottom-center" });
@@ -57,7 +66,9 @@ export function Application() {
     map.setTarget(mapRef.current!);
     overlay.setElement(overlayRef.current!);
     map.on("click", (e) => {
-      const selectedFeatures = map.getFeaturesAtPixel(e.pixel);
+      const selectedFeatures = map.getFeaturesAtPixel(e.pixel, {
+        layerFilter: (l) => l === schoolLayer,
+      });
       setSelectedFeatures(selectedFeatures);
       overlay.setPosition(
         selectedFeatures.length > 0 ? e.coordinate : undefined,

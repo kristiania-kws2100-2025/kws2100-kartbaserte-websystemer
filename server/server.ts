@@ -14,10 +14,10 @@ const app = new Hono();
 
 app.get("/api/skoler", async (c) => {
   const result = await postgresql.query(`
-      select skolenavn, skole.posisjon_4326::json as posisjon
+      select skolenavn, skole.posisjon_4326::json as posisjon, lavestetrinn, hoyestetrinn, organisasjonsnummer
       from grunnskole skole
           inner join fylke_2023 on st_contains(fylke_2023.omrade, skole.posisjon)
-      where fylke_2023.navn in ('Viken', 'Oslo')
+      where fylke_2023.navn in ('Oslo') and hoyestetrinn = 10
   `);
   return c.json({
     type: "FeatureCollection",
@@ -33,12 +33,16 @@ app.get("/api/skoler", async (c) => {
 });
 app.get("/api/naerskoler", async (c) => {
   const school500mZone = await postgresql.query(`
-      select skolenavn, '500m' as distance, st_transform(st_buffer(posisjon, 500), 4326)::json omraade
+      select skolenavn, '500m' as distance, st_transform(st_buffer(posisjon, 500), 4326)::json omraade, organisasjonsnummer
       from grunnskole
+               inner join fylke_2023 on st_contains(fylke_2023.omrade, grunnskole.posisjon)
+      where fylke_2023.navn in ('Oslo') and hoyestetrinn = 10
   `);
   const school1000mZone = await postgresql.query(`
-      select skolenavn, '1000m' as distance, st_transform(st_buffer(posisjon, 1000), 4326)::json omraade
+      select skolenavn, '1000m' as distance, st_transform(st_buffer(posisjon, 1000), 4326)::json omraade, organisasjonsnummer
       from grunnskole
+               inner join fylke_2023 on st_contains(fylke_2023.omrade, grunnskole.posisjon)
+      where fylke_2023.navn in ('Oslo') and hoyestetrinn = 10
   `);
   const rows = [...school500mZone.rows, ...school1000mZone.rows];
   return c.json({
