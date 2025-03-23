@@ -8,22 +8,16 @@ const connectionString = process.env.DATABASE_URL;
 const postgresql = connectionString
   ? new pg.Pool({ connectionString, ssl: { rejectUnauthorized: false } })
   : new pg.Pool({ user: "postgres" });
-const latitudeLongitude = {
-  type: "name",
-  properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
-};
+const latitudeLongitude = { type: "name", properties: { name: "ESPG:4326" } };
 
 const app = new Hono();
 
-app.get("/api/hello", async (c) => {
-  return c.text("Hello World!");
-});
 app.get("/api/skoler", async (c) => {
   const result = await postgresql.query(`
       select skolenavn, skole.posisjon_4326::json as posisjon
-      from grunnskole skole inner join fylke_2023
-          on st_contains(fylke_2023.omrade, skole.posisjon)
-      where fylke_2023.navn = 'Viken'
+      from grunnskole skole
+          inner join fylke_2023 on st_contains(fylke_2023.omrade, skole.posisjon)
+      where fylke_2023.navn in ('Viken', 'Oslo')
   `);
   return c.json({
     type: "FeatureCollection",
@@ -33,6 +27,24 @@ app.get("/api/skoler", async (c) => {
         type: "Feature",
         properties,
         geometry: { type: "Point", coordinates },
+      }),
+    ),
+  });
+});
+app.get("/api/naerskoler", async (c) => {
+  const result = await postgresql.query(`
+      select skolenavn,
+             st_transform(st_buffer(posisjon, 500), 4326)::json omraade
+      from grunnskole
+  `);
+  return c.json({
+    type: "FeatureCollection",
+    crs: latitudeLongitude,
+    features: result.rows.map(
+      ({ omraade: { coordinates }, ...properties }) => ({
+        type: "Feature",
+        properties,
+        geometry: { type: "Polygon", coordinates },
       }),
     ),
   });
