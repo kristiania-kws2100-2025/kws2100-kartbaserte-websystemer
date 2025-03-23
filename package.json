@@ -10,8 +10,10 @@
     "prepare": "husky",
     "postinstall": "cd server && npm install --include=dev",
     "start": "cd server && npm start",
-    "pg:exec:docker": "docker exec -i /postgis /usr/bin/psql --user postgres",
-    "db:dev": "npm run db:schools:dev && npm run db:fylker2023:dev && npm run db:prepare",
+    "db:dev": "npm run db:dev:data && npm run db:dev:prepare",
+    "db:heroku": "npm run db:heroku:postgis && npm run db:heroku:data && npm run db:heroku:prepare",
+    "db:dev:data": "npm run db:schools:dev && npm run db:fylker2023:dev && npm run db:grunnkrets:dev && npm run db:addresses:dev",
+    "db:heroku:data": "npm run db:schools:heroku && npm run db:fylker2023:heroku && npm run db:grunnkrets:heroku && npm run db:addresses:heroku",
     "db:grunnkrets:download": "download --extract --out tmp/ https://nedlasting.geonorge.no/geonorge/Basisdata/Grunnkretser/PostGIS/Basisdata_03_Oslo_25833_Grunnkretser_PostGIS.zip",
     "db:grunnkrets:dev": "npm run db:grunnkrets:download && npm run pg:exec:docker < tmp/Basisdata_03_Oslo_25833_Grunnkretser_PostGIS.sql",
     "db:grunnkrets:heroku": "npm run db:grunnkrets:download && psql $DATABASE_URL < tmp/Basisdata_03_Oslo_25833_Grunnkretser_PostGIS.sql",
@@ -24,10 +26,10 @@
     "db:fylker2023:download": "download --extract --out tmp/ https://nedlasting.geonorge.no/geonorge/Basisdata/Fylker2023/PostGIS/Basisdata_0000_Norge_25833_Fylker2023_PostGIS.zip",
     "db:fylker2023:dev": "npm run db:fylker2023:download && npm run pg:exec:docker < tmp/Basisdata_0000_Norge_25833_Fylker_PostGIS.sql",
     "db:fylker2023:heroku": "npm run db:fylker2023:download && psql $DATABASE_URL < tmp/Basisdata_0000_Norge_25833_Fylker_PostGIS.sql",
-    "db:prepare": "npm run pg:exec:docker < scripts/prepare-db.sql",
-    "db:heroku": "npm run db:heroku:postgis && npm run db:schools:heroku && npm run db:fylker2023:heroku && npm run db:prepare:heroku",
+    "pg:exec:docker": "docker exec -i /postgis /usr/bin/psql --user postgres",
     "db:heroku:postgis": "echo 'create extension postgis' | psql $DATABASE_URL",
-    "db:prepare:heroku": "psql $DATABASE_URL < scripts/prepare-db.sql"
+    "db:dev:prepare": "npm run pg:exec:docker < scripts/prepare-db.sql",
+    "db:heroku:prepare": "psql $DATABASE_URL < scripts/prepare-db.sql"
   },
   "repository": {
     "type": "git",
