@@ -32,21 +32,23 @@ app.get("/api/skoler", async (c) => {
   });
 });
 app.get("/api/naerskoler", async (c) => {
-  const result = await postgresql.query(`
-      select skolenavn,
-             st_transform(st_buffer(posisjon, 500), 4326)::json omraade
+  const school500mZone = await postgresql.query(`
+      select skolenavn, '500m' as distance, st_transform(st_buffer(posisjon, 500), 4326)::json omraade
       from grunnskole
   `);
+  const school1000mZone = await postgresql.query(`
+      select skolenavn, '1000m' as distance, st_transform(st_buffer(posisjon, 1000), 4326)::json omraade
+      from grunnskole
+  `);
+  const rows = [...school500mZone.rows, ...school1000mZone.rows];
   return c.json({
     type: "FeatureCollection",
     crs: latitudeLongitude,
-    features: result.rows.map(
-      ({ omraade: { coordinates }, ...properties }) => ({
-        type: "Feature",
-        properties,
-        geometry: { type: "Polygon", coordinates },
-      }),
-    ),
+    features: rows.map(({ omraade: { coordinates }, ...properties }) => ({
+      type: "Feature",
+      properties,
+      geometry: { type: "Polygon", coordinates },
+    })),
   });
 });
 app.use("*", serveStatic({ root: "../dist/" }));

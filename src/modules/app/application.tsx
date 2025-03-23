@@ -20,7 +20,12 @@ const schoolLayer = new VectorLayer({
 });
 const schoolProximityLayer = new VectorLayer({
   source: new VectorSource({ url: "/api/naerskoler", format: new GeoJSON() }),
-  style: new Style({ fill: new Fill({ color: "#88ff8844" }) }),
+  style: (features) => {
+    const { distance } = features.getProperties();
+    const color = distance === "500m" ? "#88ff8888" : "#ffff8888";
+    const zIndex = distance === "500m" ? 2 : 1;
+    return new Style({ fill: new Fill({ color }), zIndex });
+  },
 });
 const map = new Map({ view: new View({ center: [10.8, 59.9], zoom: 12 }) });
 
