@@ -44,17 +44,45 @@ app.get("/api/naerskoler", async (c) => {
                inner join fylke_2023 on st_contains(fylke_2023.omrade, grunnskole.posisjon)
       where fylke_2023.navn in ('Oslo') and hoyestetrinn = 10
   `);
-  const rows = [...school500mZone.rows, ...school1000mZone.rows];
-  return c.json({
-    type: "FeatureCollection",
-    crs: latitudeLongitude,
-    features: rows.map(({ omraade: { coordinates }, ...properties }) => ({
+  const features = [...school500mZone.rows, ...school1000mZone.rows].map(
+    ({ omraade: { coordinates }, ...properties }) => ({
       type: "Feature",
       properties,
       geometry: { type: "Polygon", coordinates },
-    })),
+    }),
+  );
+  return c.json({
+    type: "FeatureCollection",
+    crs: latitudeLongitude,
+    features,
   });
 });
+app.get("/api/skolenaerhet/perGrunnkrets", async (c) => {
+  const result = await postgresql.query(`
+      with skolerapport as (
+        select grunnkretsnavn,
+             grunnkretsnummer,
+             (select count(*) from vegadresse where st_contains(omrade, representasjonspunkt_25833)) 
+                 as antall_adresser,
+             (select count(*)
+              from vegadresse v left outer join grunnskole s on st_dwithin(s.posisjon, v.representasjonspunkt_25833, 500)
+              where s.organisasjonsnummer is null and st_contains(omrade, representasjonspunkt_25833))
+                 as antall_litt_unna,
+             (select count(*)
+              from vegadresse v left outer join grunnskole s on st_dwithin(s.posisjon, v.representasjonspunkt_25833, 1000)
+              where s.organisasjonsnummer is null and st_contains(omrade, representasjonspunkt_25833))
+                 as antall_langt_unna
+        from grunnkrets
+      )
+      select *,
+             antall_litt_unna::float/antall_adresser as andel_litt_unna,
+             antall_langt_unna::float/antall_adresser as andel_langt_unna
+      from skolerapport
+      where antall_adresser > 0 
+  `);
+  return c.json(result.rows);
+});
+
 app.use("*", serveStatic({ root: "../dist/" }));
 
 serve({
