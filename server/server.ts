@@ -1,8 +1,13 @@
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import pg from "pg";
+import { serveStatic } from "@hono/node-server/serve-static";
 
-const postgresql = new pg.Pool({ user: "postgres" });
+const connectionString = process.env.DATABASE_URL;
+
+const postgresql = connectionString
+  ? new pg.Pool({ connectionString, ssl: { rejectUnauthorized: false } })
+  : new pg.Pool({ user: "postgres" });
 const latitudeLongitude = {
   type: "name",
   properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
@@ -32,4 +37,9 @@ app.get("/api/skoler", async (c) => {
     ),
   });
 });
-serve(app);
+app.use("*", serveStatic({ root: "../dist/" }));
+
+serve({
+  fetch: app.fetch,
+  port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
+});
