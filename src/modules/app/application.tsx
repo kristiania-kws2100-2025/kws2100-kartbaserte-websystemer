@@ -15,7 +15,7 @@ const osmLayer = new TileLayer({ source: new OSM() });
 const schoolLayer = new VectorLayer({
   source: new VectorSource({ url: "/api/skoler", format: new GeoJSON() }),
 });
-const map = new Map({ view: new View({ center: [10.8, 59.9], zoom: 11 }) });
+const map = new Map({ view: new View({ center: [10.8, 59.9], zoom: 8 }) });
 
 export function Application() {
   const mapRef = useRef<HTMLDivElement | null>(null);
