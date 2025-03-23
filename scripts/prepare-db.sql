@@ -33,5 +33,5 @@ drop table if exists grunnkrets;
 create table grunnkrets
 as
 select grunnkretsnummer, grunnkretsnavn, kommunenummer, omrade, st_transform(omrade, 4326) as omrade_4326
-from grunnkretser_4ca4b8be44e74932bc6073a9b223ea66.grunnkrets
+from grunnkretser_4ca4b8be44e74932bc6073a9b223ea66.grunnkrets;
 create index grunnkrets_omrade_idx on grunnkrets using gist (omrade);
