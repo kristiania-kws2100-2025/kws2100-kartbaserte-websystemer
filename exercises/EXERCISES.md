@@ -485,10 +485,7 @@ In `server/server.ts`, create an API to return the data:
 import pg from "pg";
 
 const postgresql = new pg.Pool({ user: "postgres" });
-const latitudeLongitude = {
-   type: "name",
-   properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
-};
+const latitudeLongitude = { type: "name", properties: { name: "ESPG:4326" } };
 
 app.get("/api/skoler", async (c) => {
   const result = await postgresql.query(/* the SQL from before */);
@@ -496,10 +493,10 @@ app.get("/api/skoler", async (c) => {
     type: "FeatureCollection",
     crs: latitudeLongitude,
     features: result.rows.map(
-      ({ posisjon: { coordinates }, ...properties }) => ({
+      ({ posisjon: { coordinates, type }, ...properties }) => ({
         type: "Feature",
         properties,
-        geometry: { type: "Point", coordinates },
+        geometry: { type, coordinates },
       }),
     ),
   });

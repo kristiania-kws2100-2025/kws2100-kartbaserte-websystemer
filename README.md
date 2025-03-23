@@ -395,7 +395,6 @@ npm install download-cli
 npm pkg set scripts.db:municipalities="npm run db:municipalities:download && npm run db:municipalities:import"
 npm pkg set scripts.db:municipalities:download="download --extract --out tmp/ https://nedlasting.geonorge.no/geonorge/Basisdata/Kommuner/POSTGIS/Basisdata_0000_Norge_25833_Kommuner_POSTGIS.zip"
 npm pkg set scripts.db:municipalities:import="docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Basisdata_0000_Norge_25833_Kommuner_PostGIS.sql"
-npm pkg set scripts.db:municipalities:heroku="npm run db:municipalities:download && psql $DATABASE_URL < tmp/Basisdata_0000_Norge_25833_Kommuner_PostGIS.sql",
 ```
 
 ### Creating a PostGIS API in Hono
@@ -417,7 +416,6 @@ import { serveStatic } from "@hono/node-server/serve-static";
 
 // For Heroku
 const connectionString = process.env.DATABASE_URL;
-
 const postgresql = connectionString
         ? new pg.Pool({ connectionString, ssl: { rejectUnauthorized: false } })
         : new pg.Pool({ user: "postgres" });
@@ -429,16 +427,11 @@ app.get("/api/kommuner", async (c) => {
   );
   return c.json({
     type: "FeatureCollection",
-    crs: {
-      type: "name",
-      properties: {
-        name: "urn:ogc:def:crs:OGC:1.3:CRS84",
-      },
-    },
+    crs: { type: "name", properties: { name: "ESPG:4326" } },
     features: result.rows.map(
-      ({ kommunenummer, kommunenavn, geometry: { coordinates } }) => ({
+      ({ kommunenummer, kommunenavn, geometry: { coordinates, type } }) => ({
         type: "Feature",
-        geometry: { type: "MultiPolygon", coordinates },
+        geometry: { type, coordinates },
         properties: { kommunenummer, kommunenavn },
       }),
     ),
@@ -477,7 +470,9 @@ Download the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
 #### Setup database on Heroku
 
 1. `heroku addons:create heroku-postgresql`
-2. `npm pkg set scripts.db:heroku:postgis="echo 'create extension postgis' | psql $DATABASE_URL"`
-3. `npm pkg set scripts.db:heroku="npm run db:heroku:postgis && npm run db:municipalities:heroku"`
-4. `heroku run npm run db:heroku`
+2. Wait for the database to be created
+3. `npm pkg set scripts.db:heroku:postgis="echo 'create extension postgis' | psql $DATABASE_URL"`
+4. `npm pkg set scripts.db:municipalities:heroku="npm run db:municipalities:download && psql $DATABASE_URL < tmp/Basisdata_0000_Norge_25833_Kommuner_PostGIS.sql"`
+5. `npm pkg set scripts.db:heroku="npm run db:heroku:postgis && npm run db:municipalities:heroku"`
+6. `heroku run "npm run db:heroku"`
 
