@@ -91,13 +91,19 @@ export function Application() {
     map.setTarget(mapRef.current!);
     overlay.setElement(overlayRef.current!);
     map.on("click", (e) => {
-      const selectedFeatures = map.getFeaturesAtPixel(e.pixel, {
+      const selectedSchools = map.getFeaturesAtPixel(e.pixel, {
+        layerFilter: (l) => l === schoolLayer,
+      });
+      if (selectedSchools.length > 0) {
+        setSelectedFeatures(selectedSchools);
+        overlay.setPosition(e.coordinate);
+        return;
+      }
+      const selectedAreas = map.getFeaturesAtPixel(e.pixel, {
         layerFilter: (l) => l === areaSchoolCoverageLayer,
       });
-      setSelectedFeatures(selectedFeatures);
-      overlay.setPosition(
-        selectedFeatures.length > 0 ? e.coordinate : undefined,
-      );
+      setSelectedFeatures(selectedAreas);
+      overlay.setPosition(selectedAreas.length > 0 ? e.coordinate : undefined);
     });
   }, []);
 

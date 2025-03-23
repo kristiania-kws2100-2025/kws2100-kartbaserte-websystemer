@@ -17,7 +17,7 @@ app.get("/api/skoler", async (c) => {
       select skolenavn, skole.posisjon_4326::json as posisjon, lavestetrinn, hoyestetrinn, organisasjonsnummer
       from grunnskole skole
           inner join fylke_2023 on st_contains(fylke_2023.omrade, skole.posisjon)
-      where fylke_2023.navn in ('Oslo') and hoyestetrinn = 10
+      where fylke_2023.navn in ('Oslo')
   `);
   return c.json({
     type: "FeatureCollection",
