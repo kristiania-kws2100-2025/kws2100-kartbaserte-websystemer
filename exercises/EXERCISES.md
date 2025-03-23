@@ -394,7 +394,8 @@ user's preferences?
 ## Exercise 5
 #### Reading vector layers from a database
 
-<details>
+<details open>
+
 The goals of this exercise is to use the old administrative borders to select a list of schools to show on a map.
 
 Use the following sources:
@@ -403,17 +404,6 @@ Use the following sources:
 - [Grunnskoler](https://kartkatalog.geonorge.no/metadata/grunnskoler/db4b872f-264d-434c-9574-57232f1e90d2)
 
 **Instructions:**
-
-### Preparations
-
-You can continue on a previous repository or add a new one
-
-1. Create a repository in your GitHub account and clone into IntelliJ
-2. [Create a React Application](../README.md#creating-a-react-application) as described in the reference material
-3. Add a minimal [`index.html`](../README.md#minimal-indexhtml) and [`src/main.tsx`](../README.md#minimal-srcmaintsx) file
-4. Optionally, add [`.vite.config.ts`](../README.md#minimal-viteconfigts) and [`.github/workflows/publish-to-pages.yaml`](../README.md#minimal-githubworkflowspublish-to-github-pagesyml)
-   to deploy your application to GitHub pages
-5. [Add a basic OpenLayers Map](../README.md#creating-a-openlayers-map-in-react) to your application
 
 ### Install the datasets into PostgreSQL
 
@@ -428,20 +418,40 @@ In order to query datasets, you need to have a database server. The easiest opti
         image: postgis/postgis
         environment:
           POSTGRES_PASSWORD: "postgres"
-          POSTGRES_HOST_AUTH_METHOD: "trust"
         ports:
           - "5432:5432"
    ```
 3. Start Postgis by running `docker compose up --detach` (you can also add a command to do this in your `package.json`)
+   > NOTE: You could achieve the same this by running a single command (`docker run -p 5432:5432 --env POSTGRES_PASSWORD=postgres --env POSTRES_HOST_AUTH_METHOD=true postgis/postgis`), but the `docker-compose.yaml` documents which command must be run
 4. Download the school dataset (I got the URL from [Geonorge](https://kartkatalog.geonorge.no/metadata/grunnskoler/db4b872f-264d-434c-9574-57232f1e90d2):
-   * Install the `download` NPM command for your scripts: `npm install -D download-cli`
+   * Install the `download` NPM command for your scripts: `npm install download-cli`
    * `npm pkg set scripts.db:schools="npm run db:schools:download && npm run db:schools:import"`
    * `npm pkg set scripts.db:schools:download="download --extract --out tmp/ https://nedlasting.geonorge.no/geonorge/Befolkning/Grunnskoler/PostGIS/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.zip"`
    * `npm pkg set scripts.db:schools:import="docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql"`
    * `npm run db:schools`
 5. You can now add Postgresql as a data source in IntelliJ. Be sure to include the skole_* schema.
 6. You can now experiment with querying for schools
-7. Repeat step 4 for [the old county boundaries](https://kartkatalog.geonorge.no/metadata/administrative-enheter-fylker-historiske-data-2023/7284fe8e-fed6-4172-ae56-a7f7c9fd4759)
+7. Repeat step 4 for [the old county boundaries](https://kartkatalog.geonorge.no/metadata/administrative-enheter-fylker-historiske-data-2023/7284fe8e-fed6-4172-ae56-a7f7c9fd4759). The name of the `npm`-scripts, the download URL and the sql-file should be updated to be counties instead of schools
+8. In the database view of IntelliJ, see if you can query the schools that are inside the old Viken fylke
+
+Here is an example of finding schools in the old Viken country:
+
+```postgresql
+select skolenavn, st_transform(skole.posisjon, 4326)::json as posisjon
+from grunnskoler_3697913259634315b061b324a3f2cf59.grunnskole skole
+         inner join fylker_ba7aea2735714391a98b1a585644e98a.fylke fylke
+                    on st_contains(fylke.omrade, skole.posisjon)
+         inner join fylker_ba7aea2735714391a98b1a585644e98a.administrativenhetnavn navn
+                    on fylke.objid = navn.fylke_fk and navn.sprak = 'nor'
+where navn.navn = 'Viken'
+```
+
+### Preparation: Create a basic OpenLayers application
+
+1. Create a repository in your GitHub account and clone into IntelliJ
+2. [Create a React Application](../README.md#creating-a-react-application) as described in the reference material
+3. Add a minimal [`index.html`](../README.md#minimal-indexhtml) and [`src/main.tsx`](../README.md#minimal-srcmaintsx) file
+4. [Add a basic OpenLayers Map](../README.md#creating-a-openlayers-map-in-react) to your application
 
 ### Creating a server application with Hono
 
@@ -467,19 +477,58 @@ Start the server by running `npm run dev` in the `server/`-directory and check t
 
 #### Serve GeoJSON from Hono
 
-This is the hardest part and some assembly is necessary:
+First: Install postgresql: `npm install pg` and `npm install -D @types/pg`
 
-1. You have to update `vite.config.ts` to point to the Hono server
-2. You have to change the Vector Layer source to use a Hono-served URL
-3. You have to create a `app.get` endpoint in Hono that returns a FeatureCollection
+In `server/server.ts`, create an API to return the data:
 
-See the [lecture reference code](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/05)
-for hints
+```typescript
+import pg from "pg";
 
+const postgresql = new pg.Pool({ user: "postgres" });
+const latitudeLongitude = {
+   type: "name",
+   properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
+};
+
+app.get("/api/skoler", async (c) => {
+  const result = await postgresql.query(/* the SQL from before */);
+  return c.json({
+    type: "FeatureCollection",
+    crs: latitudeLongitude,
+    features: result.rows.map(
+      ({ posisjon: { coordinates }, ...properties }) => ({
+        type: "Feature",
+        properties,
+        geometry: { type: "Point", coordinates },
+      }),
+    ),
+  });
+});
+```
+
+Test by going to http://localhost:3000/api/skoler
+
+#### Display the layer from Hono in OpenLayers
+
+Add to the layers of the OpenLayers map: `new VectorLayer({ source: new VectorSource({ url: "/api/skoler", format: new GeoJSON() }) })`
+
+If you see in the Developer Tools > Network view, this will return the contents of `index.html`.
+This is because Vite returns `index.html` for any request it doesn't know how to handle. But we want vite to
+forward this to Hono. This can be achieved by creating a `vite.config.ts`-file and restarting vite:
+
+```typescript
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  server: {
+    proxy: {
+      "/api": "http://localhost:3000",
+    },
+  },
+});
+```
 
 </details>
-
-
 
 ## Exercise 6
 ### Deploy your map application to Heroku
@@ -492,7 +541,7 @@ fetching unnecessary data.
 ### Be prepared:
 
 1. Make sure you have solved [exercise 5](#exercise-5) before your start. You need to have a working React application
-   with a Hono backend
+   with a [Hono] backend
 2. Make sure you are signed up for [GitHub Student Developer Pack](https://education.github.com/pack) so you don't have to pay for the hosting
 3. Read through the documentation about [Heroku for GitHub Students](https://www.heroku.com/github-students) so you understand how to avoid cloud bills
 
@@ -500,18 +549,18 @@ Your application structure should look like this:
 
 ```
 <root-directory>/
+  .gitignore       # should ignore dist, node_modules and other generated files
   dist/            # The output from the build process - generated by vite (add to .gitignore)
   node_modules/    # The local copy of dependencies - generated by npm (add to .gitignore)
-  src/main.jsx     # The starting point for React
+  src/             # The client application
   package.json     # Contains scripts to run and dependencies
   index.html       # The starting point for the client code
-  vite.config.js   # Configuration for Vite, contains React plugin and proxy settings
+  vite.config.ts   # Configuration for Vite, contains React plugin and proxy settings
   server/
     node_modules/    # The local copy of dependencies - generated by npm (add to .gitignore)
     package.json     # Contains scripts to run and dependencies
-    server.js        # The starting point for the server
+    server.ts        # The starting point for the server
   node_modules/    # The local copy of dependencies - generated by npm (add to .gitignore)
-  package.json       # Scripts to run both client and server in combination
 ```
 
 ### Make your application ready for Heroku
@@ -520,12 +569,9 @@ Running an application on a hosting provider like Heroku is a little different f
 site like Google Pages.
 
 1. Since we have our own domain, we don't need to use our repository name as `base` in `vite.config.ts`
-   - Remove the `base` parameter from `vite.config.ts`
-   - Remove the prefix from vector source URLs and Hono API names
-2. Heroku doesn't install dev dependencies. This is the easiest fix:
-   - In the top level `package.json`, move `download-cli` from `devDependencies` to `dependencies`
-   - In `server/package.json`, move `tsx` from `devDependencies` to `dependencies`
-3. Heroku wants to decide the port by using the `PORT` environment variable
+   - Remove the `base` parameter from `vite.config.ts` (not needed if you started with exercise 5)
+   - Remove the prefix from vector source URLs (not needed if you started with exercise 5)
+2. Heroku wants to decide the port by using the `PORT` environment variable
    - in `server/server.ts`, change the `serve()` call to include the port:
      ```typescript
      serve({
@@ -533,7 +579,7 @@ site like Google Pages.
        port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
      });
      ```
-4. Heroku sets up the connection to the database in the environment variable `DATABASE_URL`.
+3. Heroku sets up the connection to the database in the environment variable `DATABASE_URL`.
    - In `server/server.ts` update how you create the database
     ```typescript
     const connectionString = process.env.DATABASE_URL;
@@ -542,7 +588,8 @@ site like Google Pages.
       ? new pg.Pool({ connectionString, ssl: { rejectUnauthorized: false } })
       : new pg.Pool({ user: "postgres" });
     ```
-5. We need Hono to serve the code built by vite in the `dist` directory. Add the following to `server/server.ts`
+   - (the option of `{ssl: { rejectUnathorized: false } }` is needed because of the way Heroku runs the database)
+4. We need Hono to serve the code built by vite in the `dist` directory. Add the following to `server/server.ts`
 ```typescript
 // This should be on the top with the other import statements
 import { serveStatic } from "@hono/node-server/serve-static";
@@ -552,51 +599,56 @@ import { serveStatic } from "@hono/node-server/serve-static";
 // Make sure this is after you define "/api/skoler" or it will replace the API definition
 app.use("*", serveStatic({ root: "../dist/" }));
 ```
-1. Heroku starts your server by running `npm start` at the top level
-   - Update `package.json` at the top level to run `"cd server && npm start"`
-   - Update `server/package.json` at the top level to run `"tsx server.ts"`
-   - Update `server/package.json`: Move `tsx` from a `devDependency` to a `dependency` (otherwise, Heroku will not install it when you push your code)
-2. Make sure `npm start` at the top level works correctly (it should start the server so you can access the React
+
+The scripts also need to be set up to run with Heroku:
+
+1. Heroku only installs the top-level dependencies, by default. We need to make it install `server` dependencies:
+   - `npm pkg set scripts.postinstall="cd server && npm install --include=dev"`
+2. When starting the application, Heroku runs `npm start` at the top level. We need this to start Hono:
+   - `npm pkg set scripts.start="cd server && npm start"`
+   - `cd server`
+   - `npm pkg set scripts.start="tsx server.ts"`
+3. Make sure `npm start` at the top level works correctly (it should start the server so you can access the React
    application at http://localhost:3000)
 
 ### Create the Heroku app
 
-1. Go to the [Heroku Dashboard](https://dashboard.heroku.com/apps)
-2. Select New > Create New App
-3. Under Deployment for your new app, select Heroku Git as Deployment Method
-4. Download the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-command-line)
-5. From the command line, push your repository to Heroku
-    1. `heroku login`
-    2. `heroku git:remote -a <app name>`
-    3. `git push heroku`
-    4. `heroku open` (optional: opens a web browser to your Heroku application)
-    5. `heroku logs --tail` (optional): See the logs from Heroku in your console
-6. You can see the deployment log under Activity in the Heroku Dashboard for your app and the runtime log under More > View logs
-7. Share the link to your repositories to your classmates on
-   [Mattermost](https://mattermost.kristiania.no/it2022/channels/pg6301-webutvikling-og-api-design)
+This approach uses the command line as much as possible. You can also create and manage your app using the
+[Heroku Dashboard](https://dashboard.heroku.com/apps). Here you can see the deployment log under Activity in the Heroku Dashboard for your app
+and the runtime log under More > View logs.
+
+1. Download the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-command-line)
+2. `heroku login`
+3. `heroku apps:create -a <app name>`
+4. `heroku git:remote -a <app name>`
+   - NOTE: This isn't always needed, but `apps:create` sometimes fails to set this up correctly
+5. `git push heroku`
+   - NOTE: If you are on a branch other than `main`, you can use `git push heroku HEAD:main`
+6. `heroku open` (optional: opens a web browser to your Heroku application)
+7. `heroku logs --tail` (optional): See the logs from Heroku in your console
 
 ### Setup the database on Heroku
 
+The application will now display the map, but not the data from the database. If you look at the output
+from `heroku logs --tail`, you will see "`Error: connect ECONNREFUSED 127.0.0.1:5432`". This means that Heroku
+is trying to connect to PostgreSQL on localhost and fails. We need to create a database.
+
 1. Create a database at Heroku: `heroku addons:create heroku-postgresql`
-2. Wait for it to be ready. You can see this in the Heroku dashboard
-3. Update your `package.json` file to load files into the database with Heroku. Here is a fragment:
-    ```
-      "scripts": {
-        "db:schools": "npm run db:schools:download && npm run db:schools:import",
-        "db:schools:download": "download --extract --out tmp https://nedlasting.geonorge.no/geonorge/Befolkning/Grunnskoler/PostGIS/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.zip",
-        "db:schools:import": "docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql",
-        "db:schools:heroku": "npm run db:schools:download && psql $DATABASE_URL < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql",
-        "db:fylker2023": "npm run db:fylker2023:download && npm run db:fylker2023:import",
-        "db:fylker2023:download": "download --extract --out tmp https://nedlasting.geonorge.no/geonorge/Basisdata/Fylker2023/PostGIS/Basisdata_0000_Norge_25833_Fylker2023_PostGIS.zip",
-        "db:fylker2023:import": "docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Basisdata_0000_Norge_25833_Fylker_PostGIS.sql",
-        "db:fylker2023:heroku": "npm run db:fylker2023:download && psql $DATABASE_URL < tmp/Basisdata_0000_Norge_25833_Fylker_PostGIS.sql",
-        "db:heroku:postgis": "echo 'create extension postgis' | psql $DATABASE_URL",
-        "db:heroku": "npm run db:heroku:postgis && npm run db:schools:heroku && npm run db:fylker2023:heroku",
-    ```
-4. Update the `download-cli` dependency: Move it from the `devDependency` to the `dependency` section
-5. Push your code to Heroku
-6. Run the db:heroku script on Heroku's servers to access the database: `heroku run "npm run db:heroku"`
+2. Wait for it to be ready. You can see this in the Heroku dashboard or with `heroku addons:info`
+3. If you retry your application on Heroku and look at the logs, you will now see the following error: `relation "grunnskole" does not exist`,
+   This means that the tables aren't created on Heroku's database.
+4. Update your `package.json` file to load files into the database with Heroku. Here is a fragment:
+   - `npm pkg set scripts.db:heroku="npm run db:heroku:postgis && npm run db:schools:heroku && npm run db:fylker2023:heroku && npm run db:prepare:heroku"`
+   - `npm pkg set scripts.db:heroku:postgis="echo 'create extension postgis' | psql $DATABASE_URL"`
+   - `npm pkg set scripts.db:schools:heroku="npm run db:schools:download && psql $DATABASE_URL < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql"`
+   - `npm pkg set scripts.db:fylker2023:heroku="npm run db:fylker2023:download && psql $DATABASE_URL < tmp/Basisdata_0000_Norge_25833_Fylker_PostGIS.sql"`
+   - `npm pkg set scripts.db:prepare:heroku="psql $DATABASE_URL < scripts/prepare-db.sql"`
+5. Commit and push your code to Heroku
+6. Run the db:heroku script on Heroku's servers to set up the database: `heroku run "npm run db:heroku"`
+   - If something small goes wrong and you need to run something again, you can run `heroku run bash` to execute commands in a Heroku terminal
 7. Your application should now show the schools as well
+
+NOTE: To avoid occurring charges, delete your application with `heroku apps:destroy`
 
 </details>
 
@@ -736,7 +788,7 @@ Drawing points on the map
 ## Exercise 10
 ### Points that move
 
-<details open>
+<details>
 
 1. Using the notes from [lecture 10](../README.md#lecture-10-points-that-move), create a map with public transportation in Norway.
 2. Try to use [MapboxVectorLayer](https://openlayers.org/en/latest/examples/mapbox-vector-layer.html) to show the background map from a vector source

@@ -1,6 +1,6 @@
 # KWS2100 Geographic Information Web Systems
 
-[![Running website](https://img.shields.io/badge/Course-website-green)](https://kristiania-kws2100-2025.github.io/kws2100-kartbaserte-websystemer/)
+[![Running website](https://img.shields.io/badge/Course-website-green)](https://tranquil-beach-92001-8a1882b3b345.herokuapp.com/)
 
 Welcome to this course in Geographic Information Systems (GIS) for the web. In this course, we will use popular and
 powerful open-source software to explore geographic information systems on the web. The course will
@@ -87,7 +87,7 @@ In this lecture, we will provide our own datasource by importing datasets from G
 [![Lecture 6 reference](https://img.shields.io/badge/Lecture_6-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/06)
 [![Lecture 6 exercise](https://img.shields.io/badge/Lecture_6-exercise-pink)](./exercises/EXERCISES.md#exercise-6)
 
-We will publish a basic React + Hono application with TypeScript and Vite to Heroku and add a map to the application.
+We will publish a basic React + [Hono](https://hono.dev/) application with TypeScript and Vite to [Heroku](https://heroku.com/) and add a map to the application.
 This lets us deploy with a geographic database
 
 
@@ -126,6 +126,11 @@ In this lecture, we will start by talking about
 together will a [relevant news story](https://www.budstikka.no/savnet-kvinne-er-funnet/s/5-55-1920412). We will then
 create a map where we can add out own points by
 [drawing with the mouse](https://openlayers.org/en/latest/examples/draw-features-style.html).
+
+### Exercise:
+
+This week's exercise is to draw objects on a map using OpenLayers `map.addInteraction(new Draw(...))` function.
+Experiment with different type of objects as well. Try and save the objects to `localStorage` and load them at startup.
 
 ### Lecture 10: Points that move
 
@@ -186,12 +191,9 @@ const vectorSource = new VectorSource({ features })
 
 [![Lecture 11 code](https://img.shields.io/badge/Lecture_11-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/11)
 [![Lecture 11 reference](https://img.shields.io/badge/Lecture_11-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/11)
+[![Lecture 5 exercise](https://img.shields.io/badge/Lecture_5-exercise-pink)](./exercises/EXERCISES.md#exercise-5)
+[![Lecture 6 exercise](https://img.shields.io/badge/Lecture_6-exercise-pink)](./exercises/EXERCISES.md#exercise-6)
 
-
-### Exercise:
-
-This week's exercise is to draw objects on a map using OpenLayers `map.addInteraction(new Draw(...))` function.
-Experiment with different type of objects as well. Try and save the objects to `localStorage` and load them at startup.
 
 ### Lecture 12: Getting ready for the exam
 
@@ -363,7 +365,6 @@ services:
       image: postgis/postgis
       environment:
          POSTGRES_PASSWORD: "postgres"
-         POSTGRES_HOST_AUTH_METHOD: "trust"
       ports:
          - "5432:5432"
 ```
@@ -446,7 +447,7 @@ serve({ fetch: app.fetch, port });
 
 **`vite.config.ts`**
 
-```
+```typescript
 import { defineConfig } from "vite";
 
 export default defineConfig({
