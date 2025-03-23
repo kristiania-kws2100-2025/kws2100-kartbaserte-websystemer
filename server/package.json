@@ -12,9 +12,11 @@
   "description": "",
   "dependencies": {
     "@hono/node-server": "^1.14.0",
-    "hono": "^4.7.5"
+    "hono": "^4.7.5",
+    "pg": "^8.14.1"
   },
   "devDependencies": {
+    "@types/pg": "^8.11.11",
     "tsx": "^4.19.3"
   }
 }
