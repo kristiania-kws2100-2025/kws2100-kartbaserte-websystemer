@@ -194,6 +194,11 @@ const vectorSource = new VectorSource({ features })
 [![Lecture 5 exercise](https://img.shields.io/badge/Lecture_5-exercise-pink)](./exercises/EXERCISES.md#exercise-5)
 [![Lecture 6 exercise](https://img.shields.io/badge/Lecture_6-exercise-pink)](./exercises/EXERCISES.md#exercise-6)
 
+In this lecture, we will review how to get data from PostgreSQL to the OpenLayers. We will also explore some more
+feature of PostGIS, including creating buffers around features in the database.
+
+The exercise will be a repeat of exercise 5 and 6, with slow coding.
+
 
 ### Lecture 12: Getting ready for the exam
 
