@@ -10,7 +10,8 @@
     "db:docker": "docker exec -i kws2100-kartbaserte-websystemer-skoleprosjektet-1 /usr/bin/psql --user postgres",
     "prepare": "husky",
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "start": "cd server && npm start"
   },
   "dependencies": {
     "download-cli": "^1.1.1",
