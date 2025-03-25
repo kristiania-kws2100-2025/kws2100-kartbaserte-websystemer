@@ -1,6 +1,6 @@
 # KWS2100 Geographic Information Web Systems
 
-[![Running website](https://img.shields.io/badge/Course-website-green)](https://tranquil-beach-92001-8a1882b3b345.herokuapp.com/)
+[![Running website](https://img.shields.io/badge/Course-website-green)](https://intense-bastion-76625-2df72b0fc0e6.herokuapp.com/)
 
 Welcome to this course in Geographic Information Systems (GIS) for the web. In this course, we will use popular and
 powerful open-source software to explore geographic information systems on the web. The course will
