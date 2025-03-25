@@ -11,9 +11,21 @@ const postgres = new pg.Pool({
 
 app.get("/api/schools", async (c) => {
   const result = await postgres.query(
-    "select skolenavn, organisasjonsnummer, lavestetrinn, hoyestetrinn, antallelever from grunnskole",
+    `select st_transform(posisjon, 4326)::json as geometry, 
+       skolenavn, organisasjonsnummer, lavestetrinn, hoyestetrinn, antallelever, antallansatte
+      from grunnskole
+      `,
   );
-  return c.json(result.rows);
+  return c.json({
+    type: "FeatureCollection",
+    crs: { type: "name", properties: { name: "ESPG:4326" } },
+    features: result.rows.map(
+      ({ geometry: { type, coordinates }, ...properties }) => ({
+        geometry: { type, coordinates },
+        properties,
+      }),
+    ),
+  });
 });
 
 serve(app);
