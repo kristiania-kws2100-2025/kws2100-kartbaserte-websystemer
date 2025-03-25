@@ -11,7 +11,7 @@
     "db:fylker2023:docker": "npm run db:fylker2023:download && npm run db:docker < tmp/Basisdata_0000_Norge_25833_Fylker_PostGIS.sql",
     "db:fylker2023:download": "download --extract --out tmp/ https://nedlasting.geonorge.no/geonorge/Basisdata/Fylker2023/PostGIS/Basisdata_0000_Norge_25833_Fylker2023_PostGIS.zip",
     "db:docker": "docker exec -i kws2100-kartbaserte-websystemer-skoleprosjektet-1 /usr/bin/psql --user postgres",
-    "db:heroku": "npm run db:heroku:setup && npm db:school:heroku && npm db:fylker2023:heroku && npm run db:heroku:prepare",
+    "db:heroku": "npm run db:heroku:setup && npm run db:school:heroku && npm run db:fylker2023:heroku && npm run db:heroku:prepare",
     "db:heroku:setup": "echo 'create extension postgis' | psql $DATABASE_URL",
     "prepare": "husky",
     "dev": "vite",
