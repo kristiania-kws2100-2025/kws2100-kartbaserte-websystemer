@@ -11,10 +11,17 @@ const postgres = new pg.Pool({
 
 app.get("/api/schools", async (c) => {
   const result = await postgres.query(
-    `select st_transform(posisjon, 4326)::json as geometry, 
-       skolenavn, organisasjonsnummer, lavestetrinn, hoyestetrinn, antallelever, antallansatte
-      from grunnskole
-      `,
+    `select st_transform(posisjon, 4326)::json as geometry,
+            skolenavn,
+            organisasjonsnummer,
+            lavestetrinn,
+            hoyestetrinn,
+            antallelever,
+            antallansatte
+     from grunnskole
+              inner join fylke on st_contains(fylke.omrade, grunnskole.posisjon)
+     where navn = 'Viken'
+    `,
   );
   return c.json({
     type: "FeatureCollection",
