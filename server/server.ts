@@ -5,10 +5,15 @@ import { serveStatic } from "@hono/node-server/serve-static";
 
 const app = new Hono();
 
-const postgres = new pg.Pool({
-  user: "postgres",
-  password: "mitt_eget_passord",
-});
+const postgres = process.env.DATABASE_URL
+  ? new pg.Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false },
+    })
+  : new pg.Pool({
+      user: "postgres",
+      password: "mitt_eget_passord",
+    });
 
 app.get("/api/schools", async (c) => {
   const result = await postgres.query(
