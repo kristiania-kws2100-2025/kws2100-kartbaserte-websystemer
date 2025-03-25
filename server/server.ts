@@ -21,6 +21,7 @@ app.get("/api/schools", async (c) => {
     crs: { type: "name", properties: { name: "ESPG:4326" } },
     features: result.rows.map(
       ({ geometry: { type, coordinates }, ...properties }) => ({
+        type: "Feature",
         geometry: { type, coordinates },
         properties,
       }),
