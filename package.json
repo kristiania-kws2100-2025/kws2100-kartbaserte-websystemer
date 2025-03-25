@@ -11,7 +11,8 @@
     "prepare": "husky",
     "dev": "vite",
     "build": "vite build",
-    "start": "cd server && npm start"
+    "start": "cd server && npm start",
+    "postinstall": "cd server && npm install --include=dev"
   },
   "dependencies": {
     "download-cli": "^1.1.1",
