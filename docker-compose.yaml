@@ -1,0 +1,7 @@
+services:
+  skoleprosjektet:
+    image: postgis/postgis
+    environment:
+      - POSTGRES_PASSWORD=mitt_eget_passord
+    ports:
+      - "5432:5432"
