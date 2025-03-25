@@ -1,0 +1,21 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@hono/node-server": "^1.14.0",
+    "hono": "^4.7.5",
+    "pg": "^8.14.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.3"
+  }
+}
