@@ -1,14 +1,21 @@
 {
   "name": "kws2100-kartbaserte-websystemer",
   "scripts": {
+    "test": "tsc --noEmit && prettier --check .",
     "db:docker:prepare": "npm run db:docker < script/prepare-database.sql",
     "db:school:docker": "npm run db:school:download && npm run db:docker < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql",
     "db:school:download": "download --extract --out tmp/ https://nedlasting.geonorge.no/geonorge/Befolkning/Grunnskoler/PostGIS/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.zip",
     "db:fylker2023:docker": "npm run db:fylker2023:download && npm run db:docker < tmp/Basisdata_0000_Norge_25833_Fylker_PostGIS.sql",
     "db:fylker2023:download": "download --extract --out tmp/ https://nedlasting.geonorge.no/geonorge/Basisdata/Fylker2023/PostGIS/Basisdata_0000_Norge_25833_Fylker2023_PostGIS.zip",
-    "db:docker": "docker exec -i kws2100-kartbaserte-websystemer-skoleprosjektet-1 /usr/bin/psql --user postgres"
+    "db:docker": "docker exec -i kws2100-kartbaserte-websystemer-skoleprosjektet-1 /usr/bin/psql --user postgres",
+    "prepare": "husky"
   },
   "dependencies": {
     "download-cli": "^1.1.1"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2"
   }
 }
