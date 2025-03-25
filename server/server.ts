@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import pg from "pg";
+import { serveStatic } from "@hono/node-server/serve-static";
 
 const app = new Hono();
 
@@ -35,6 +36,7 @@ app.get("/api/schools", async (c) => {
     ),
   });
 });
+app.use("*", serveStatic({ root: "../dist" }));
 
 serve({
   fetch: app.fetch,
