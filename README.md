@@ -202,9 +202,15 @@ The exercise will be a repeat of exercise 5 and 6, with slow coding.
 
 ### Lecture 12: Getting ready for the exam
 
+[![Lecture 12 Mentimeter](https://img.shields.io/badge/Lecture_12-mentimenter-yellow)](https://www.menti.com/alksy5khqc66)
+
 [![Lecture 12 code](https://img.shields.io/badge/Lecture_12-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/12)
 
-This week's lecture, we will talk a little about the exam. We start then with a simple map and then discuss how to move forward based on the wishes of the audience, so the lecture has no reference code.
+This week's lecture, we will talk a [little about the exam](./exercises/exam-prep.md).
+We start then with a simple map and then discuss how to move forward based on the wishes
+of the audience, so the lecture has no reference code.
+
+For the exercise-time start on the last exercise that you haven't completed.
 
 
 ## Reference material
