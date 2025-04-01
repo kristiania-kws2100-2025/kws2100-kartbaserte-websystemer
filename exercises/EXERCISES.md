@@ -394,7 +394,7 @@ user's preferences?
 ## Exercise 5
 #### Reading vector layers from a database
 
-<details open>
+<details>
 
 The goals of this exercise is to use the old administrative borders to select a list of schools to show on a map.
 

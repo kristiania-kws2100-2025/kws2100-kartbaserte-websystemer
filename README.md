@@ -205,6 +205,7 @@ The exercise will be a repeat of exercise 5 and 6, with slow coding.
 [![Lecture 12 Mentimeter](https://img.shields.io/badge/Lecture_12-mentimenter-yellow)](https://www.menti.com/alksy5khqc66)
 
 [![Lecture 12 code](https://img.shields.io/badge/Lecture_12-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/12)
+[![Lecture 12 exercise](https://img.shields.io/badge/Lecture_12-exercise-pink)](./exercises/EXERCISES.md)
 
 This week's lecture, we will talk a [little about the exam](./exercises/exam-prep.md).
 We start then with a simple map and then discuss how to move forward based on the wishes

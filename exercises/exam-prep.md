@@ -9,8 +9,8 @@ The following will count most heavy towards a good grade: Interactions with the 
 
 ## What data should you use?
 
-You are free to find your own data on the exam. I recommend geonorge.no as a sources, but you can also use
-international data that you find.
+You are free to find your own data on the exam. I recommend [Geonorges kartkatalog](https://geonorge.no) as a source, but
+you can also use other Norwegian or international data that you find.
 
 Datasets that have been used in the lectures and the assignment will give partial credit. Data that is from sources that
 I are new to me and data on different formats (WFS, GraphQL, WMS) will be rewarded. As a specific point, using the
