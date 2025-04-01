@@ -370,15 +370,22 @@ jobs:
 
 #### B. Deploying to Heroku
 
+By running on Heroku, you can have a server-side application which accesses a database.
+
 #### Creating a Hono Application
 
-1. `mkdir server`
-2. `npm install -D @types/node`
-3. `cd server`
-4. `npm init -y`
-5. `npm install hono @hono/node-server pg`
-6. `npm install --save-dev tsx @types/pg`
-7. `npm pkg set scripts.dev="tsx --watch server.ts"`
+This sets up your application to have a subdirectory for the server which should have node modules installed and be started by Heroku. Note that this includes commands needed to add the postgresql dependency for the next steps
+
+1. `npm install -D @types/node`
+2. `npm pkg set scripts.postinstall="cd server && npm install --include=dev"`
+3. `npm pkg set scripts.start="cd server && npm start"`
+4. `mkdir server`
+5. `cd server`
+6. `npm init -y`
+7. `npm install hono @hono/node-server pg`
+8. `npm install --save-dev tsx @types/pg`
+9. `npm pkg set scripts.dev="tsx --watch server.ts"`
+10. `npm pkg set scripts.start="tsx server.ts"`
 
 **`server/server.ts`**
 
@@ -400,10 +407,6 @@ In order to deploy to Heroku you need to register an account with [Heroku](https
 
 Download the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
 
-1. `npm pkg set scripts.postinstall="cd server && npm install --include=dev"`
-2. `npm pkg set scripts.start="cd server && npm start"`
-3. `cd server`
-4. `npm pkg set scripts.start="tsx server.ts"`
 
 Now you need to commit your changes. You can then create a Heroku application and push your code to it.
 
