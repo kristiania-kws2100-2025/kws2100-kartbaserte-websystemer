@@ -1,6 +1,6 @@
 # KWS2100 Geographic Information Web Systems
 
-[![Running website](https://img.shields.io/badge/Course-website-green)](https://intense-bastion-76625-2df72b0fc0e6.herokuapp.com/)
+[![Running website](https://img.shields.io/badge/Course-website-green)](https://kristiania-kws2100-2025.github.io/kws2100-kartbaserte-websystemer/)
 
 Welcome to this course in Geographic Information Systems (GIS) for the web. In this course, we will use popular and
 powerful open-source software to explore geographic information systems on the web. The course will
@@ -158,6 +158,8 @@ something that OpenLayers will be happy to consume.
 
 #### How to read data from ENTUR
 
+<details>
+
 1. Download [`protoc`](https://github.com/protocolbuffers/protobuf/releases) and store it locally (but `.gitignored` - it's pretty big)
 2. `npm install ts-proto` for TypeScript bindings
 3. Download the [gtfs-realtime.proto spec](https://github.com/google/transit/blob/master/gtfs-realtime/proto/gtfs-realtime.proto)
@@ -187,6 +189,8 @@ const features = FeedMessage.decode(new Uint8Array(await res.arrayBuffer()))
 const vectorSource = new VectorSource({ features })
 ```
 
+</details>
+
 ### Lecture 11: Review of PostGIS and Heroku (with slow-coding)
 
 [![Lecture 11 code](https://img.shields.io/badge/Lecture_11-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/11)
@@ -205,6 +209,7 @@ The exercise will be a repeat of exercise 5 and 6, with slow coding.
 [![Lecture 12 Mentimeter](https://img.shields.io/badge/Lecture_12-mentimenter-yellow)](https://www.menti.com/alksy5khqc66)
 
 [![Lecture 12 code](https://img.shields.io/badge/Lecture_12-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/12)
+[![Lecture 12 reference](https://img.shields.io/badge/Lecture_12-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/12)
 [![Lecture 12 exercise](https://img.shields.io/badge/Lecture_12-exercise-pink)](./exercises/EXERCISES.md)
 
 This week's lecture, we will talk a [little about the exam](./exercises/exam-prep.md).
@@ -322,7 +327,9 @@ Update `src/main.tsx` to render `<Application />` from `src/modules/app/applicat
 
 ## Deploying your application to the internet
 
-You can either deploy using GitHub pages or Heroku.
+You can either deploy using [GitHub pages](#a-deployment-to-github-pages) or [Heroku](#b-deploying-to-heroku).
+GitHub pages is the simplest option, but it cannot run a database. If you want to include a database, you need
+to use Heroku or a similar service
 
 ### A. Deployment to GitHub Pages
 
@@ -332,6 +339,9 @@ You can either deploy using GitHub pages or Heroku.
 import { defineConfig } from "vite";
 
 export default defineConfig({
+  // This has to be equal to the name of your repository
+  // For example, since this repository is https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer,
+  //  `base` has to be `/kws2100-kartbaserte-websystemer`
   base: "/kws2100-kartbaserte-websystemer",
 });
 
@@ -344,6 +354,8 @@ export default defineConfig({
 ```yml
 on:
   push:
+    # Only deploy when the branch name matches one of these
+    # You probably only need `main`, the others are provided to work with the lecture
     branches: ["main", "reference/*", "lecture/*"]
 
 jobs:
@@ -368,13 +380,14 @@ jobs:
 ```
 </details>
 
-#### B. Deploying to Heroku
+### B. Deploying to Heroku
 
 By running on Heroku, you can have a server-side application which accesses a database.
 
 #### Creating a Hono Application
 
-This sets up your application to have a subdirectory for the server which should have node modules installed and be started by Heroku. Note that this includes commands needed to add the postgresql dependency for the next steps
+This sets up your application to have a subdirectory for the server which should have node modules installed and be started by Heroku.
+Note that this includes commands needed to add the postgresql dependency for the next steps.
 
 1. `npm install -D @types/node`
 2. `npm pkg set scripts.postinstall="cd server && npm install --include=dev"`
@@ -395,8 +408,10 @@ import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 
 const app = new Hono();
+// `serveStatic` makes Hono serve the output from `vite build`
 app.use("*", serveStatic({ root: "../dist" }));
 
+// Heroku provides the port that the server should start on as an environment variable
 const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 serve({ fetch: app.fetch, port });
 ```
@@ -406,7 +421,6 @@ serve({ fetch: app.fetch, port });
 In order to deploy to Heroku you need to register an account with [Heroku](https://heroku.com). Read through the documentation about [Heroku for GitHub Students](https://www.heroku.com/github-students) so you understand how to avoid cloud bills.
 
 Download the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
-
 
 Now you need to commit your changes. You can then create a Heroku application and push your code to it.
 
@@ -438,7 +452,7 @@ Start the Postgis server in Docker by running `docker compose up` (or `docker co
 
 Downloading and importing data into Postgis can be useful scripts to include in your package.json. Here is an example using schools:
 
-1. We want to execute "download" as a command with npm: `npm install -D download-cli`
+1. We want to execute "download" as a command with npm: `npm install download-cli`
 2. Getting schools involves downloading and then importing the data: `npm pkg set scripts.db:schools="npm run db:schools:download && npm run db:schools:import"`
 3. Download the schools from Kartverket: `npm pkg set scripts.db:schools:download="download --extract --out tmp/ https://nedlasting.geonorge.no/geonorge/Befolkning/Grunnskoler/PostGIS/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.zip"` (replace the URL for other data sets)
 4. Install into Postgis using docker: `npm pkg set scripts.db:schools:import="docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql"` (replace file name when downloading another data set)
@@ -453,53 +467,15 @@ npm pkg set scripts.db:municipalities:download="download --extract --out tmp/ ht
 npm pkg set scripts.db:municipalities:import="docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Basisdata_0000_Norge_25833_Kommuner_PostGIS.sql"
 ```
 
+Run `npm run db:municipalities` to import data into your local PostgreSQL database.
+
 ### Creating a PostGIS API in Hono
 
-1. `mkdir server`
-2. `cd server`
-3. `npm init -y`
-4. `npm install hono @hono/node-server pg`
-5. `npm install --save-dev tsx @types/pg`
-6. `npm pkg set scripts.dev="tsx --watch server.ts"`
-
-**`server/server.ts`**
-
-```typescript
-import { Hono } from "hono";
-import { serve } from "@hono/node-server";
-import pg from "pg";
-import { serveStatic } from "@hono/node-server/serve-static";
-
-// For Heroku
-const connectionString = process.env.DATABASE_URL;
-const postgresql = connectionString
-        ? new pg.Pool({ connectionString, ssl: { rejectUnauthorized: false } })
-        : new pg.Pool({ user: "postgres" });
-
-const app = new Hono();
-app.get("/api/kommuner", async (c) => {
-  const result = await postgresql.query(
-    "select kommunenummer, kommunenavn, st_transform(st_simplify(omrade, 100), 4326)::json as geometry from kommune",
-  );
-  return c.json({
-    type: "FeatureCollection",
-    crs: { type: "name", properties: { name: "ESPG:4326" } },
-    features: result.rows.map(
-      ({ kommunenummer, kommunenavn, geometry: { coordinates, type } }) => ({
-        type: "Feature",
-        geometry: { type, coordinates },
-        properties: { kommunenummer, kommunenavn },
-      }),
-    ),
-  });
-});
-app.use("*", serveStatic({ root: "../dist" }));
-
-const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
-serve({ fetch: app.fetch, port });
-```
-
 **`vite.config.ts`**
+
+To use an API in Hono from the Vite development server, you need to update `vite.config.ts`.
+This forwards `http://localhost:5173/api/*` to `http://localhost:3000/api/*` so making an API 
+call to Vite will forward this to Hono:
 
 ```typescript
 import { defineConfig } from "vite";
@@ -513,7 +489,90 @@ export default defineConfig({
 });
 ```
 
+**`server/server.ts`**
+
+```typescript
+import { Hono } from "hono";
+import { serve } from "@hono/node-server";
+import pg from "pg";
+import { serveStatic } from "@hono/node-server/serve-static";
+
+// When you run `heroku addons:create heroku-postgresql` (below),
+// Heroku will provide `DATABASE_URL` as an envionment variable.
+// If this doesn't exist, we assume we're running on localhost with docker-compose
+const connectionString = process.env.DATABASE_URL;
+const postgresql = connectionString
+        ? new pg.Pool({ connectionString, ssl: { rejectUnauthorized: false } })
+        // If you choose a diffent password in `docker-compose.yaml` you must update here as well
+        : new pg.Pool({ user: "postgres", password: "postgres" });
+
+const app = new Hono();
+app.get("/api/kommuner", async (c) => {
+  const result = await postgresql.query(
+    "select kommunenummer, kommunenavn, st_transform(st_simplify(omrade, 100), 4326)::json as geometry from kommune",
+  );
+  return c.json({
+    type: "FeatureCollection",
+    crs: { type: "name", properties: { name: "ESPG:4326" } },
+    features: result.rows.map(
+      // Returns GeoJSON features where each feature has the geometry from the SQL
+      //  and includes all additional columns in the query as properties
+      ({ geometry: { coordinates, type }, ...properties }) => ({
+        type: "Feature",
+        geometry: { type, coordinates },
+        properties,
+      }),
+    ),
+  });
+});
+app.use("*", serveStatic({ root: "../dist" }));
+
+const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+serve({ fetch: app.fetch, port });
+```
+
+**Explaination: What does this `...properties` do?**
+
+<details>
+
+The example contains the following bit of mystical code:
+
+```typescript
+result.rows.map(
+  ({ geometry: { coordinates, type }, ...properties }) => ({
+    type: "Feature",
+    geometry: { type, coordinates },
+    properties
+  })
+);
+```
+
+This is the same as the following:
+
+```typescript
+result.rows.map(row => {
+  const geometry = row.geometry;
+  const coordinates = geometry.coordinates;
+  const type = geometry.type;
+  
+  const properties = Object.create(row);
+  delete properties.geometry;
+  
+  const result = {
+    type: "Feature",
+    geometry: { type: type, coordinates: coordinates},
+    properties: properties
+  };
+  return result;
+});
+```
+
+</details>
+
 #### Setup database on Heroku
+
+The steps above imports the data from geonorge into the database on your workstation. But to access it when running on Heroku,
+you must also create a Postgresql database on Heroku and import the data there.
 
 1. `heroku addons:create heroku-postgresql`
 2. Wait for the database to be created
