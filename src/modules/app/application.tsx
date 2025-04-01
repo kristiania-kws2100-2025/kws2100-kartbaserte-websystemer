@@ -11,6 +11,7 @@ import { GeoJSON } from "ol/format";
 
 import "./application.css";
 import { FeatureLike } from "ol/Feature";
+import { Fill, Stroke, Style } from "ol/style";
 
 useGeographic();
 
@@ -21,11 +22,27 @@ const schoolLayer = new VectorLayer({
     format: new GeoJSON(),
   }),
 });
+
+function getGreenishness(value: number) {
+  if (value >= 1) return "rgba(0, 255, 0, 0.4)";
+
+  const red = Math.floor(192 * (1 - value));
+  const green = Math.floor(192 * value);
+  return `rgba(${red}, ${green}, 0, 0.4)`;
+}
+
 const coverageLayer = new VectorLayer({
   source: new VectorSource({
     url: "/api/grunnkretser",
     format: new GeoJSON(),
   }),
+  style: (f) => {
+    const { andel_over_750m } = f.getProperties();
+    return new Style({
+      fill: new Fill({ color: getGreenishness(1 - andel_over_750m) }),
+      stroke: new Stroke({ color: "white", width: 1 }),
+    });
+  },
 });
 const map = new Map({
   view: new View({ center: [10.8, 59.9], zoom: 13 }),
