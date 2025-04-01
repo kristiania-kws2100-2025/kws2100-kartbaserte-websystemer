@@ -30,7 +30,11 @@ app.get("/api/grunnkretser", async (c) => {
         select grunnkretsnavn,
                grunnkretsnummer,
                omrade_4326::json as geometry,
-               (select count(*) from vegadresse where st_contains(omrade, representasjonspunkt)) as antall_adresser
+               (select count(*) from vegadresse where st_contains(omrade, representasjonspunkt)) as antall_adresser,
+               (select count(*)
+                from vegadresse
+                         left outer join grunnskole on st_dwithin(st_transform(posisjon, 25832), representasjonspunkt, 750)
+                where st_contains(omrade, representasjonspunkt) and organisasjonsnummer is null) as antall_over_750m_fra_skole
         from grunnkrets
   `);
   return c.json({
