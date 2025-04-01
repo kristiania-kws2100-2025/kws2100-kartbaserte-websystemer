@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "prepare": "husky",
-    "start": "cd server && npm start"
+    "start": "cd server && npm start",
+    "postinstall": "cd server && npm install --include=dev"
   },
   "repository": {
     "type": "git",
