@@ -320,7 +320,11 @@ export function Application() {
 
 Update `src/main.tsx` to render `<Application />` from `src/modules/app/application.tsx` instead of `<h1>Hello React</h1>`.
 
-## Deployment to GitHub Pages
+## Deploying your application to the internet
+
+You can either deploy using GitHub pages or Heroku.
+
+### A. Deployment to GitHub Pages
 
 #### Minimal `vite.config.ts`
 
@@ -363,6 +367,22 @@ jobs:
        contents: read # to checkout private repositories
 ```
 </details>
+
+#### B. Deploying to Heroku
+
+In order to deploy to Heroku you need to register an account with [Heroku](https://heroku.com). Read through the documentation about [Heroku for GitHub Students](https://www.heroku.com/github-students) so you understand how to avoid cloud bills.
+
+Download the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
+
+1. `npm pkg set scripts.postinstall="cd server && npm install --include=dev"`
+2. `npm pkg set scripts.start="cd server && npm start"`
+3. `cd server`
+4. `npm pkg set scripts.start="tsx server.ts"`
+
+Now you need to commit your changes. You can then create a Heroku application and push your code to it.
+
+1. `heroku apps:create`
+2. `git push heroku`
 
 ## Implementing layer API services with a Hono server and PostGis database
 
@@ -463,22 +483,6 @@ export default defineConfig({
   },
 });
 ```
-
-#### Deploying to Heroku
-
-In order to deploy to Heroku you need to register an account with [Heroku](https://heroku.com). Read through the documentation about [Heroku for GitHub Students](https://www.heroku.com/github-students) so you understand how to avoid cloud bills.
-
-Download the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
-
-1. `npm pkg set scripts.postinstall="cd server && npm install --include=dev"`
-2. `npm pkg set scripts.start="cd server && npm start"`
-3. `cd server`
-4. `npm pkg set scripts.start="tsx server.ts"`
-
-Now you need to commit your changes. You can then create a Heroku application and push your code to it.
-
-1. `heroku apps:create`
-2. `git push heroku`
 
 #### Setup database on Heroku
 
