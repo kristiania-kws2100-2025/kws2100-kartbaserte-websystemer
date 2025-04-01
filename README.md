@@ -472,7 +472,7 @@ Download the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
 2. `npm pkg set scripts.start="cd server && npm start"`
 3. `cd server`
 4. `npm pkg set scripts.start="tsx server.ts"`
-5. `heroku apps:create kws2100-reference`
+5. `heroku apps:create`
 6. `git push heroku`
 
 #### Setup database on Heroku
