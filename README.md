@@ -373,11 +373,12 @@ jobs:
 #### Creating a Hono Application
 
 1. `mkdir server`
-2. `cd server`
-3. `npm init -y`
-4. `npm install hono @hono/node-server pg`
-5. `npm install --save-dev tsx @types/pg`
-6. `npm pkg set scripts.dev="tsx --watch server.ts"`
+2. `npm install -D @types/node`
+3. `cd server`
+4. `npm init -y`
+5. `npm install hono @hono/node-server pg`
+6. `npm install --save-dev tsx @types/pg`
+7. `npm pkg set scripts.dev="tsx --watch server.ts"`
 
 **`server/server.ts`**
 
