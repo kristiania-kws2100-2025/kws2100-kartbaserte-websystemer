@@ -28,6 +28,12 @@ const map = new Map({
         format: new GeoJSON(),
       }),
     }),
+    new VectorLayer({
+      source: new VectorSource({
+        url: "/api/grunnkretser",
+        format: new GeoJSON(),
+      }),
+    }),
   ],
 });
 

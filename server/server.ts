@@ -25,6 +25,22 @@ app.get("/api/schools", async (c) => {
     ),
   });
 });
+app.get("/api/grunnkretser", async (c) => {
+  const result = await postgresql.query(
+    "select grunnkretsnavn, grunnkretsnummer, st_transform(omrade, 4326)::json as geometry from grunnkretser_e64b0fa8697b467cba35496995f68445.grunnkrets",
+  );
+  return c.json({
+    type: "FeatureCollection",
+    crs: { type: "name", properties: { name: "ESPG:4326" } },
+    features: result.rows.map(
+      ({ geometry: { coordinates, type }, ...properties }) => ({
+        type: "Feature",
+        geometry: { type, coordinates },
+        properties,
+      }),
+    ),
+  });
+});
 
 app.use("*", serveStatic({ root: "../dist" }));
 
