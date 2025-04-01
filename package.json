@@ -9,7 +9,10 @@
     "build": "vite build",
     "prepare": "husky",
     "start": "cd server && npm start",
-    "postinstall": "cd server && npm install --include=dev"
+    "postinstall": "cd server && npm install --include=dev",
+    "db:schools": "npm run db:schools:download && npm run db:schools:import",
+    "db:schools:download": "download --extract --out tmp/ https://nedlasting.geonorge.no/geonorge/Befolkning/Grunnskoler/PostGIS/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.zip",
+    "db:schools:import": "docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql"
   },
   "repository": {
     "type": "git",
@@ -33,6 +36,7 @@
     "vite": "^6.2.4"
   },
   "dependencies": {
+    "download-cli": "^1.1.1",
     "ol": "^10.5.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
