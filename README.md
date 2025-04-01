@@ -466,6 +466,8 @@ export default defineConfig({
 
 #### Deploying to Heroku
 
+In order to deploy to Heroku you need to register an account with [Heroku](https://heroku.com). Read through the documentation about [Heroku for GitHub Students](https://www.heroku.com/github-students) so you understand how to avoid cloud bills.
+
 Download the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
 
 1. `npm pkg set scripts.postinstall="cd server && npm install --include=dev"`
