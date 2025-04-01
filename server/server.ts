@@ -29,7 +29,8 @@ app.get("/api/grunnkretser", async (c) => {
   const result = await postgresql.query(`
         select grunnkretsnavn,
                grunnkretsnummer,
-               omrade_4326::json as geometry
+               omrade_4326::json as geometry,
+               (select count(*) from vegadresse where st_contains(omrade, representasjonspunkt)) as antall_adresser
         from grunnkrets
   `);
   return c.json({
