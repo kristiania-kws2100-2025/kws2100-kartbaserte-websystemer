@@ -370,6 +370,31 @@ jobs:
 
 #### B. Deploying to Heroku
 
+#### Creating a Hono Application
+
+1. `mkdir server`
+2. `cd server`
+3. `npm init -y`
+4. `npm install hono @hono/node-server pg`
+5. `npm install --save-dev tsx @types/pg`
+6. `npm pkg set scripts.dev="tsx --watch server.ts"`
+
+**`server/server.ts`**
+
+```typescript
+import { Hono } from "hono";
+import { serve } from "@hono/node-server";
+import { serveStatic } from "@hono/node-server/serve-static";
+
+const app = new Hono();
+app.use("*", serveStatic({ root: "../dist" }));
+
+const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+serve({ fetch: app.fetch, port });
+```
+
+#### Deploying to Heroku
+
 In order to deploy to Heroku you need to register an account with [Heroku](https://heroku.com). Read through the documentation about [Heroku for GitHub Students](https://www.heroku.com/github-students) so you understand how to avoid cloud bills.
 
 Download the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
