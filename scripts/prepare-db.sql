@@ -17,5 +17,7 @@ create index vegadresse_representasjonspunkt on vegadresse
 drop table if exists grunnskole;
 create table grunnskole
 as
-select skolenavn, organisasjonsnummer, lavestetrinn, hoyestetrinn, antallelever, antallansatte, posisjon
+select skolenavn, organisasjonsnummer, lavestetrinn, hoyestetrinn, antallelever, antallansatte, st_transform(posisjon,25832) as posisjon
 from grunnskoler_3697913259634315b061b324a3f2cf59.grunnskole;
+create index grunnskole_posisjon on grunnskole
+    using gist(posisjon);
