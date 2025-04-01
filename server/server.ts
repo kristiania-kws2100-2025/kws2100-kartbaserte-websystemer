@@ -27,23 +27,6 @@ app.get("/api/schools", async (c) => {
 });
 app.get("/api/grunnkretser", async (c) => {
   const result = await postgresql.query(`
-      with skolerapport as (
-        select grunnkretsnavn,
-               grunnkretsnummer,
-               (select count(*) from vegadresse where st_contains(omrade, representasjonspunkt)) as antall_adresser,
-               (select count(*)
-                from vegadresse
-                         left outer join grunnskole on st_dwithin(posisjon, representasjonspunkt, 750)
-                where st_contains(omrade, representasjonspunkt) and organisasjonsnummer is null
-                ) as antall_over_750m_fra_skole,
-               (select count(*)
-                from vegadresse
-                         left outer join grunnskole on st_dwithin(posisjon, representasjonspunkt, 1500)
-                where st_contains(omrade, representasjonspunkt) and organisasjonsnummer is null
-                ) as antall_over_1500m_fra_skole,
-               omrade_4326::json as geometry
-        from grunnkrets
-      )
       select
           antall_over_750m_fra_skole::float/antall_adresser as andel_over_750m,
           antall_over_1500m_fra_skole::float/antall_adresser as andel_over_1500m,
