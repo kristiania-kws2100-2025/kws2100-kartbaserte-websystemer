@@ -210,7 +210,7 @@ The exercise will be a repeat of exercise 5 and 6, with slow coding.
 
 [![Lecture 12 code](https://img.shields.io/badge/Lecture_12-lecture_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/lecture/12)
 [![Lecture 12 reference](https://img.shields.io/badge/Lecture_12-reference_code-blue)](https://github.com/kristiania-kws2100-2025/kws2100-kartbaserte-websystemer/tree/reference/12)
-[![Lecture 12 exercise](https://img.shields.io/badge/Lecture_12-exercise-pink)](./exercises/EXERCISES.md)
+[![Lecture 12 exercise](https://img.shields.io/badge/Lecture_12-exercise-pink)](./exercises/exam-prep.md)
 
 This week's lecture, we will talk a [little about the exam](./exercises/exam-prep.md).
 We start then with a simple map and then discuss how to move forward based on the wishes
@@ -236,7 +236,6 @@ npm init -y
 npm install -D vite
 npm install react react-dom
 npm pkg set scripts.dev=vite
-npm pkg set scripts.build="vite build"
 
 npm install -D typescript
 npm install -D @types/react @types/react-dom
@@ -387,18 +386,31 @@ By running on Heroku, you can have a server-side application which accesses a da
 #### Creating a Hono Application
 
 This sets up your application to have a subdirectory for the server which should have node modules installed and be started by Heroku.
-Note that this includes commands needed to add the postgresql dependency for the next steps.
 
-1. `npm install -D @types/node`
-2. `npm pkg set scripts.postinstall="cd server && npm install --include=dev"`
-3. `npm pkg set scripts.start="cd server && npm start"`
-4. `mkdir server`
-5. `cd server`
-6. `npm init -y`
-7. `npm install hono @hono/node-server pg`
-8. `npm install --save-dev tsx @types/pg`
-9. `npm pkg set scripts.dev="tsx --watch server.ts"`
-10. `npm pkg set scripts.start="tsx server.ts"`
+This list of commands:
+
+1. Sets up the scripts to build and start the application on Heroku
+2. Creates a directory for the server with a separate `package.json`
+3. Adds dependencies on [Hono](https://hono.dev/) and PostgreSQL to the server
+4. Creates the scripts to develop and run the server
+
+```shell
+npm pkg set scripts.postinstall="cd server && npm install --include=dev"
+npm pkg set scripts.build="vite build"
+npm pkg set scripts.start="cd server && npm start"
+
+npm install -D @types/node
+
+mkdir server
+cd server
+npm init -y
+
+npm install hono @hono/node-server pg
+npm install --save-dev tsx @types/pg
+npm pkg set scripts.dev="tsx --watch server.ts"
+npm pkg set scripts.start="tsx server.ts"
+
+```
 
 **`server/server.ts`**
 
@@ -458,16 +470,15 @@ Downloading and importing data into Postgis can be useful scripts to include in 
 4. Install into Postgis using docker: `npm pkg set scripts.db:schools:import="docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql"` (replace file name when downloading another data set)
 5. Import the data using `npm run db:schools` (running the command multiple times will result in an error since the data already exists)
 
-**Here is a complete summary for downloading municipalities:**
+**Here is a complete summary for downloading the schools:**
 
 ```shell
 npm install download-cli
-npm pkg set scripts.db:municipalities="npm run db:municipalities:download && npm run db:municipalities:import"
-npm pkg set scripts.db:municipalities:download="download --extract --out tmp/ https://nedlasting.geonorge.no/geonorge/Basisdata/Kommuner/POSTGIS/Basisdata_0000_Norge_25833_Kommuner_POSTGIS.zip"
-npm pkg set scripts.db:municipalities:import="docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Basisdata_0000_Norge_25833_Kommuner_PostGIS.sql"
-```
+npm pkg set scripts.db:schools="npm run db:schools:download && npm run db:schools:import"
+npm pkg set scripts.db:schools:download="download --extract --out tmp/ https://nedlasting.geonorge.no/geonorge/Befolkning/Grunnskoler/PostGIS/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.zip"
+npm pkg set scripts.db:schools:import="docker exec -i /postgis /usr/bin/psql --user postgres < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql"
 
-Run `npm run db:municipalities` to import data into your local PostgreSQL database.
+```
 
 ### Creating a PostGIS API in Hono
 
@@ -483,6 +494,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   server: {
     proxy: {
+      // Configures the Vite development server to forward `http://localhost:5173/api/*` to `http://localhost:3000/api/*`
       "/api": "http://localhost:3000",
     },
   },
@@ -507,12 +519,17 @@ const postgresql = connectionString
         : new pg.Pool({ user: "postgres", password: "postgres" });
 
 const app = new Hono();
-app.get("/api/kommuner", async (c) => {
+
+// Configures what Hono should respond with when you fetch http://localhost:3000/api/skoler
+app.get("/api/skoler", async (c) => {
+  // queries the data imported from Geonorge. 4326 is the Coordinate Reference System (CRS) for latitude and longitude
   const result = await postgresql.query(
-    "select kommunenummer, kommunenavn, st_transform(st_simplify(omrade, 100), 4326)::json as geometry from kommune",
+    "select organisasjonsnummer, skolenavn, st_transform(posisjon, 4326)::json as geometry from grunnskole",
   );
+  // Returns the result as a standardized GeoJSON `FeatureCollection`
   return c.json({
     type: "FeatureCollection",
+    // tells the client that we're using latitude and longitude. This must match the `st_transform` in the query
     crs: { type: "name", properties: { name: "ESPG:4326" } },
     features: result.rows.map(
       // Returns GeoJSON features where each feature has the geometry from the SQL
@@ -527,6 +544,7 @@ app.get("/api/kommuner", async (c) => {
 });
 app.use("*", serveStatic({ root: "../dist" }));
 
+// Start on the port specified by the environment (when running on Heroku) or port 3000 by default
 const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 serve({ fetch: app.fetch, port });
 ```
@@ -567,6 +585,8 @@ result.rows.map(row => {
 });
 ```
 
+This is advanced JavaScript syntax that can look confusing at first, but that reduces the visual and conceptual clutter when you have become familiar with it.
+
 </details>
 
 #### Setup database on Heroku
@@ -577,7 +597,7 @@ you must also create a Postgresql database on Heroku and import the data there.
 1. `heroku addons:create heroku-postgresql`
 2. Wait for the database to be created
 3. `npm pkg set scripts.db:heroku:postgis="echo 'create extension postgis' | psql $DATABASE_URL"`
-4. `npm pkg set scripts.db:municipalities:heroku="npm run db:municipalities:download && psql $DATABASE_URL < tmp/Basisdata_0000_Norge_25833_Kommuner_PostGIS.sql"`
-5. `npm pkg set scripts.db:heroku="npm run db:heroku:postgis && npm run db:municipalities:heroku"`
+4. `npm pkg set scripts.db:schools:heroku="npm run db:schools:download && psql $DATABASE_URL < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.sql"`
+5. `npm pkg set scripts.db:heroku="npm run db:heroku:postgis && npm run db:schools:heroku"`
 6. `heroku run "npm run db:heroku"`
 
